@@ -1,0 +1,61 @@
+add_newline = true
+format = "$shell$hostname$directory$git_branch$git_commit$git_state$git_status$jobs$cmd_duration$nix_shell$character"
+
+[character]
+success_symbol = "[@](bold green)"
+error_symbol = "[@](bold red)"
+vicmd_symbol = "[!](bold green)"
+
+[cmd_duration]
+format = "[$duration]($style) "
+min_time = 5000
+min_time_to_notify = 30000
+show_notifications = false
+
+[directory]
+truncate_to_repo = true
+truncation_length = 100
+
+[git_branch]
+format = "[$symbol$branch]($style)"
+
+[git_commit]
+format = "( @ [$hash]($style) )"
+only_detached = false
+
+[git_status]
+ahead = "⇡"
+behind = "⇣"
+conflicted = "="
+deleted = "✘"
+diverged = "⇕"
+format = "([$all_status$ahead_behind]($style) )"
+modified = "∽"
+renamed = "»"
+staged = "+"
+stashed = "⩮"
+style = "red"
+untracked = "⋄"
+
+[hostname]
+format = "on [$hostname](bold red) "
+ssh_only = true
+
+[nix_shell]
+format = "[$symbol $name]($style)"
+impure_msg = "[impure shell](bold red)"
+pure_msg = "[pure shell](bold green)"
+symbol = "❄️"
+unknown_msg = "[unknown shell](bold yellow)"
+
+[package]
+format = "via [🎁 $version](208 bold) "
+
+[python]
+format = "[${version}\\(${virtualenv}\\)]($style)"
+
+[shell]
+fish_indicator = "󰈺 "
+powershell_indicator = "_"
+style = "cyan bold"
+unknown_indicator = "mystery shell"
