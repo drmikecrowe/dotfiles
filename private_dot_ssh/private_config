@@ -1,0 +1,42 @@
+Host bastion-data
+  HostName 52.206.233.147
+  IdentityFile ~/.ssh/pinnsg-ue1-data-infrastructure-ssh-key.pub
+Host bastion-dev
+  ForwardAgent yes
+  HostName 23.23.141.176
+  IdentityFile ~/.ssh/pinnsg-ue1-dev-infrastructure-ssh-key.pub
+Host bastion-prod
+  HostName 3.221.255.179
+  IdentityFile ~/.ssh/pinnsg-ue1-prod-infrastructure-ssh-key.pub
+Host osmc
+  User root
+  HostName crowenas.local
+  IdentityFile ~/.ssh/id_rsa_drmikecrowe.pub
+Host pod*
+  User mcrowe
+  IdentityFile ~/.ssh/id_rsa_pi.pub
+Host remarkable
+  User root
+  HostName 192.168.12.131
+  IdentityFile ~/.ssh/id_rsa_drmikecrowe
+Host source.developers.google.com
+  User mike.crowe@mikkeltech.com
+  HostName source.developers.google.com
+  IdentityFile ~/.ssh/id_rsa_mikkel
+
+Host *
+  ForwardAgent no
+  AddKeysToAgent no
+  Compression no
+  ServerAliveInterval 0
+  ServerAliveCountMax 3
+  HashKnownHosts no
+  UserKnownHostsFile ~/.ssh/known_hosts
+  ControlMaster no
+  ControlPath ~/.ssh/master-%r@%n:%p
+  ControlPersist no
+
+  Host *
+      IdentitiesOnly=yes
+      IdentityAgent ~/.1password/agent.sock
+  
