@@ -1,0 +1,22 @@
+[plugin]
+prepend_previewers = [
+  { name = "*.md", run = "glow" },
+  { mime = "text/csv", run = "miller"},
+  # { name = "*", run = "hexyl" },
+	# Archive previewer
+	{ mime = "application/*zip",            run = "ouch" },
+	{ mime = "application/x-tar",           run = "ouch" },
+	{ mime = "application/x-bzip2",         run = "ouch" },
+	{ mime = "application/x-7z-compressed", run = "ouch" },
+	{ mime = "application/x-rar",           run = "ouch" },
+	{ mime = "application/x-xz",            run = "ouch" },
+  { name = "*.csv", run = "rich-preview"}, # for csv files
+  { name = "*.md", run = "rich-preview" }, # for markdown (.md) files
+  { name = "*.ipynb", run = "rich-preview"}, # for jupyter notebooks (.ipynb)
+  { name = "*.json", run = "rich-preview"}, # for json (.json) files
+]
+
+[opener]
+extract = [
+	{ run = 'ouch d -y "$@"', desc = "Extract here with ouch", for = "unix" },
+]

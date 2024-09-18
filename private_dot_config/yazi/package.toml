@@ -1,0 +1,5 @@
+[plugin]
+deps = [{ use = "Reledia/glow", rev = "536185a" }, { use = "Reledia/miller", rev = "75f0002" }, { use = "Reledia/hexyl", rev = "64daf93" }, { use = "ndtoan96/ouch", rev = "251da69" }, { use = "AnirudhG07/rich-preview", rev = "df9b34e" }, { use = "KKV9/compress", rev = "60b24af" }, { use = "yazi-rs/plugins:chmod", rev = "b659791" }, { use = "AnirudhG07/archivemount", rev = "354a4d6" }, { use = "Lil-Dank/lazygit", rev = "c82794f" }]
+
+[flavor]
+deps = []

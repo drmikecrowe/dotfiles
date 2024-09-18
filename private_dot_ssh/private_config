@@ -10,7 +10,7 @@ Host bastion-prod
   IdentityFile ~/.ssh/pinnsg-ue1-prod-infrastructure-ssh-key.pub
 Host osmc
   User root
-  HostName crowenas.local
+  HostName 192.168.1.107
   IdentityFile ~/.ssh/id_rsa_drmikecrowe.pub
 Host pod*
   User mcrowe

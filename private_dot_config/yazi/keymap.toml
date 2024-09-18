@@ -1,0 +1,24 @@
+# A TOML linter such as https://taplo.tamasfe.dev/ can use this schema to validate your config.
+# If you encounter any issues, please make an issue at https://github.com/yazi-rs/schemas.
+"$schema" = "https://yazi-rs.github.io/schemas/keymap.json"
+
+[[manager.prepend_keymap]]
+on   = [ "c", "a" ]
+run  = "plugin compress"
+desc = "Archive selected files"
+
+[[manager.prepend_keymap]]
+on   = [ "m", "a" ]
+run  = "plugin archivemount --args=mount"
+desc = "Mount selected archive"
+
+[[manager.prepend_keymap]]
+on   = [ "m", "u" ]
+run  = "plugin archivemount --args=unmount"
+desc = "Unmount and save changes to original archive"
+
+[[manager.prepend_keymap]]
+on   = [ "g", "i" ]
+run  = "plugin lazygit"
+desc = "run lazygit"
+
