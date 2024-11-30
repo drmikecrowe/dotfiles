@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ "$1" = "-h" ]; then
+    echo "Search for packages in official repos and AUR"
+    echo "Usage: yay-search <package_name>"
+    exit 0
+fi
+yay -Ss "$@"

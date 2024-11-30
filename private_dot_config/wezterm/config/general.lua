@@ -6,7 +6,7 @@ return {
 
    scrollback_lines = 5000,
 
-   enable_wayland = false,
+   enable_wayland = true,
 
    hyperlink_rules = {
       -- Matches: a URL in parens: (URL)

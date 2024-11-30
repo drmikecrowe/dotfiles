@@ -12,46 +12,13 @@ def _in_path(s):
             print(maybe)
 aliases["where-in-path"] = _in_path
 
-
-aliases["tail"] = 'tail -n 30'
-aliases["ta"] = 'tmux attach -t'
-aliases["tnew"] = 'tmux new -s'
-aliases["tls"] = 'tmux ls'
-aliases["tkill"] = 'tmux kill-session -t'
-
-aliases["c"] = "clear"
-aliases["cnc"] = "grep '^[^#;]'"
-aliases["cpuu"] = "ps -e -o pcpu,cpu,nice,state,cputime,args --sort pcpu | sed '/^ 0.0 /d'"
-aliases["eza"] = "eza --icons --all --git --binary --group-directories-first"
-aliases["hg"] = "history | grep --colour=auto"
-aliases["l"] = "eza -l --classify"
-aliases["la"] = "ls -lAF"
-aliases["ll"] = "eza --long --header"
-aliases["sl"] = "eza --classify"
-aliases["lsd"] = "ls -lF | grep --color=never '^d'"
-aliases["nixflakereset"] = "rm .envrc .direnv/ node_modules/ flake.* -rf"
-aliases["nixdevenvnode"] = "nix flake init --refresh --template github:drmikecrowe/mike-nixos#typescript"
-aliases["nixdevpoetry"] = "nix flake init --refresh --template github:drmikecrowe/mike-nixos#poetry"
-aliases["nixdevpython"] = "nix flake init --refresh --template github:drmikecrowe/mike-nixos#python"
-aliases["ping"] = "prettyping --nolegend"
-aliases["psi"] = "ps h -eo pmem,comm | sort -nr | head"
-aliases["rd"] = "rmdir"
-aliases["ssh-ports-open"] = "nmap -T4 -F 192.168.0.10-254 --min-parallelism=20 -oG - | grep 22/open"
-
-
 # Make directory and cd into it.
 # Example: md /tmp/my/awesome/dir/will/be/here
 aliases['mcd'] = lambda args: execx(f'mkdir -p {repr(args[0])} && cd {repr(args[0])}')
 
 aliases['-'] = 'cd -'
 
-# Run http server in the current directory.
-aliases['http-here'] = 'python3 -m http.server'
-
 if ON_LINUX:
-    aliases["psa"] = 'ps faux'
-    aliases["psag"] = 'ps faux | grep'
-
     if os.path.exists("/usr/bin/ksshaskpass"):
         $SSH_ASKPASS = '/usr/bin/ksshaskpass'
 

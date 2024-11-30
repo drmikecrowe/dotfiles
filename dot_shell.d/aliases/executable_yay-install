@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ "$1" = "-h" ]; then
+    echo "Install packages from official repos or AUR"
+    echo "Usage: yay-install <package_name>"
+    exit 0
+fi
+yay -S "$@"

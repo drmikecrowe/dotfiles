@@ -1,0 +1,23 @@
+export SHELL=/bin/bash
+
+source $HOME/.shell.d/build-init.sh
+
+set -o vi
+
+shopt -s checkwinsize
+shopt -s extglob
+shopt -s globstar
+shopt -s checkjobs
+
+source "$PRE_INIT"
+[[ $- == *i* ]] || return
+source $POST_INIT
+
+if [[ :$SHELLOPTS: =~ :(vi|emacs): ]]; then
+  eval "$(atuin init $(basename $SHELL) --disable-up-arrow)"
+fi
+
+export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense' # optional
+source <(carapace _carapace)
+
+[[ $- == *i* ]] && source /usr/share/blesh/ble.sh

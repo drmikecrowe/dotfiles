@@ -16,13 +16,14 @@ elseif platform.is_mac then
       { label = 'Zsh', args = { 'zsh' } },
    }
 elseif platform.is_linux then
-   options.default_prog = { 'xonsh' }
+   options.default_prog = { 'zsh' }
    options.launch_menu = {
       { label = 'Bash', args = { 'bash' } },
       { label = 'Fish', args = { 'fish' } },
       { label = 'Nushell', args = { 'nu' } },
-      { label = 'Xonsh', args = { 'xonsh' } },
+      { label = 'Xonsh', args = { '/home/mcrowe/.local/xonsh-env/xbin/xonsh' } },
       { label = 'Zsh', args = { 'zsh' } },
+      { label = 'pwsh', args = { 'pwsh' } },
    }
 end
 

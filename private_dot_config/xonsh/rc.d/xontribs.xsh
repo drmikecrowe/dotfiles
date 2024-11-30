@@ -28,6 +28,7 @@ _xontribs = [
     "prompt_starship",
     "term_integration",
     "readable-traceback",
+    "langenv"
 ]
 
 if _xontribs:

@@ -22,3 +22,42 @@ on   = [ "g", "i" ]
 run  = "plugin lazygit"
 desc = "run lazygit"
 
+[[manager.prepend_keymap]]
+on = [ "B" ]
+run = "plugin --sync dual-pane --args=toggle"
+desc = "Dual-pane: toggle"
+
+[[manager.prepend_keymap]]
+on = [ "b" ]
+run = "plugin --sync dual-pane --args=toggle_zoom"
+desc = "Dual-pane: toggle zoom"
+
+[[manager.prepend_keymap]]
+on = [ "<Tab>" ]
+run = "plugin --sync dual-pane --args=next_pane"
+desc = "Dual-pane: switch to the other pane"
+
+[[manager.prepend_keymap]]
+on = [ "[" ]
+run = "plugin --sync dual-pane --args='tab_switch -1 --relative'"
+desc = "Dual-pane: switch active to previous tab"
+
+[[manager.prepend_keymap]]
+on = [ "]" ]
+run = "plugin --sync dual-pane --args='tab_switch 1 --relative'"
+desc = "Dual-pane: switch active to next tab"
+
+[[manager.prepend_keymap]]
+on = [ "t" ]
+run = "plugin --sync dual-pane --args='tab_create --current'"
+desc = "Dual-pane: create a new tab with CWD"
+
+[[manager.prepend_keymap]]
+on = [ "<F5>" ]
+run = "plugin --sync dual-pane --args='copy_files --follow'"
+desc = "Dual-pane: copy selected files from active to inactive pane"
+
+[[manager.prepend_keymap]]
+on = [ "<F6>" ]
+run = "plugin --sync dual-pane --args='move_files --follow'"
+desc = "Dual-pane: move selected files from active to inactive pane"

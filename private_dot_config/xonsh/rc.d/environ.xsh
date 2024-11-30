@@ -1,15 +1,10 @@
-$OPENAI_API_KEY = "op://Private/OpenAI-API-Key/api-key"
 $STARSHIP_SHELL = "xonsh"
 $STARSHIP_CONFIG = '~/.config/starship_xonsh.toml'
+$SHELL = "xonsh";
 
-old_get = __xonsh__.env.get
-
-def get_val(k, d=None):
-    v = old_get(k, d)
-    if type(v) == str and v.startswith("op://"):
-        return $(op read @(v)).strip()
-    return v
+$PATH.append($HOME + "/.local/bin")
+$PATH.append($HOME + "/bin")
+$PATH.append($HOME + "/go/bin")
+$PATH.append($HOME + "/.config/aliases.d")
 
 
-from xonsh.built_ins import XSH
-XSH.env.get = get_val
