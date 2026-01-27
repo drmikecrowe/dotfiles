@@ -10,7 +10,12 @@ Host bastion-prod
   IdentityFile ~/.ssh/pinnsg-ue1-prod-infrastructure-ssh-key.pub
 Host osmc
   User root
-  HostName 192.168.1.107
+  # HostName tv.drmikecrowe.net
+  HostName 192.168.1.5
+  IdentityFile ~/.ssh/id_rsa_drmikecrowe.pub
+Host upnp
+  User root
+  HostName upnp.drmikecrowe.net
   IdentityFile ~/.ssh/id_rsa_drmikecrowe.pub
 Host pod*
   User mcrowe
@@ -23,6 +28,16 @@ Host source.developers.google.com
   User mike.crowe@mikkeltech.com
   HostName source.developers.google.com
   IdentityFile ~/.ssh/id_rsa_mikkel
+Host *.replit.dev
+  Port 22
+  IdentityFile ~/.ssh/replit
+  ControlPath ~/.ssh/replit_socket/%r:%p
+Host asntracker
+  HostName 2B82b0df42-b4d7-4555-aa07-60f613075c88-00-2l19n8nywdz6.janeway.replit.dev
+  Port 22
+  User 2B82b0df42-b4d7-4555-aa07-60f613075c88
+  IdentityFile ~/.ssh/replit
+  ControlPath ~/.ssh/replit_socket/%r:%p
 
 Host *
   ForwardAgent no

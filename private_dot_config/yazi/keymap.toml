@@ -2,62 +2,37 @@
 # If you encounter any issues, please make an issue at https://github.com/yazi-rs/schemas.
 "$schema" = "https://yazi-rs.github.io/schemas/keymap.json"
 
-[[manager.prepend_keymap]]
-on   = [ "c", "a" ]
-run  = "plugin compress"
-desc = "Archive selected files"
-
-[[manager.prepend_keymap]]
-on   = [ "m", "a" ]
-run  = "plugin archivemount --args=mount"
-desc = "Mount selected archive"
-
-[[manager.prepend_keymap]]
-on   = [ "m", "u" ]
-run  = "plugin archivemount --args=unmount"
-desc = "Unmount and save changes to original archive"
-
-[[manager.prepend_keymap]]
-on   = [ "g", "i" ]
-run  = "plugin lazygit"
-desc = "run lazygit"
-
-[[manager.prepend_keymap]]
-on = [ "B" ]
-run = "plugin --sync dual-pane --args=toggle"
-desc = "Dual-pane: toggle"
-
-[[manager.prepend_keymap]]
-on = [ "b" ]
-run = "plugin --sync dual-pane --args=toggle_zoom"
-desc = "Dual-pane: toggle zoom"
-
-[[manager.prepend_keymap]]
-on = [ "<Tab>" ]
-run = "plugin --sync dual-pane --args=next_pane"
-desc = "Dual-pane: switch to the other pane"
-
-[[manager.prepend_keymap]]
-on = [ "[" ]
-run = "plugin --sync dual-pane --args='tab_switch -1 --relative'"
-desc = "Dual-pane: switch active to previous tab"
-
-[[manager.prepend_keymap]]
-on = [ "]" ]
-run = "plugin --sync dual-pane --args='tab_switch 1 --relative'"
-desc = "Dual-pane: switch active to next tab"
-
-[[manager.prepend_keymap]]
-on = [ "t" ]
-run = "plugin --sync dual-pane --args='tab_create --current'"
-desc = "Dual-pane: create a new tab with CWD"
-
-[[manager.prepend_keymap]]
-on = [ "<F5>" ]
-run = "plugin --sync dual-pane --args='copy_files --follow'"
-desc = "Dual-pane: copy selected files from active to inactive pane"
-
-[[manager.prepend_keymap]]
-on = [ "<F6>" ]
-run = "plugin --sync dual-pane --args='move_files --follow'"
-desc = "Dual-pane: move selected files from active to inactive pane"
+[mgr]
+prepend_keymap = [
+  { on = [
+    "/",
+    "s",
+  ], run = "plugin what-size", desc = "Calc size of selection or cwd" },
+  { on = [
+    "/",
+    "c",
+  ], run = "plugin what-size -- clipboard", desc = "Calc size of selection or cwd" },
+  { on = [
+    "/",
+    "h",
+  ], run = "hidden toggle", desc = "Toggle hidden" },
+  { on = "2", run = "plugin smart-switch 1", desc = "Switch or create tab 2" },
+  { on = "t", run = "plugin smart-tab", desc = "Create a tab and enter the hovered directory" },
+  { on = "p", run = "plugin smart-paste", desc = "Paste into the hovered directory or CWD" },
+  { on = "!", run = 'shell "$SHELL" --block', desc = "Open shell here" },
+  { on = [
+    "m",
+    "a",
+  ], run = "plugin archivemount --args=mount", desc = "Mount selected archive" },
+  { on = [
+    "m",
+    "u",
+  ], run = "plugin archivemount --args=unmount", desc = "Unmount and save changes to original archive" },
+  { on = [
+    "g",
+    "i",
+  ], run = "plugin lazygit", desc = "run lazygit" },
+  { on = [
+    "C",
+  ], run = "plugin ouch 7z", desc = "Compress with ouch" },
+]

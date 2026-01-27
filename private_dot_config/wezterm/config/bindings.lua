@@ -14,75 +14,123 @@ elseif platform.is_win or platform.is_linux then
 end
 
 local keys = {
-   -- misc/useful --
-   { key = 'F1', mods = 'NONE', action = 'ActivateCopyMode' },
-   { key = 'F2', mods = 'NONE', action = act.ActivateCommandPalette },
-   { key = 'F3', mods = 'NONE', action = act.ShowLauncher },
-   { key = 'F4', mods = 'NONE', action = act.ShowLauncherArgs({ flags = 'FUZZY|TABS' }) },
+   { key = 'Enter', mods = 'SHIFT', action = wezterm.action({ SendString = '\x1b\r' }) },
+   -- =====================
+   -- 1. Leader (tmux-style) keys
+   -- =====================
+   { key = 'h', mods = 'LEADER', action = act.ActivatePaneDirection('Left') },
+   { key = 'j', mods = 'LEADER', action = act.ActivatePaneDirection('Down') },
+   { key = 'k', mods = 'LEADER', action = act.ActivatePaneDirection('Up') },
+   { key = 'l', mods = 'LEADER', action = act.ActivatePaneDirection('Right') },
+   { key = 's', mods = 'LEADER', action = act.SplitVertical({ domain = 'CurrentPaneDomain' }) },
+   { key = 'v', mods = 'LEADER', action = act.SplitHorizontal({ domain = 'CurrentPaneDomain' }) },
    {
-      key = 'F5',
-      mods = 'NONE',
-      action = act.ShowLauncherArgs({ flags = 'FUZZY|WORKSPACES' }),
+      key = 'w',
+      mods = 'LEADER',
+      action = act.Multiple({
+         act.SendKey({ mods = 'CTRL', key = 'r' }),
+         act.ClearScrollback('ScrollbackOnly'),
+      }),
    },
-   { key = 'F12', mods = 'NONE', action = act.ShowDebugOverlay },
-   { key = 'f', mods = mod.SUPER, action = act.Search({ CaseInSensitiveString = '' }) },
-   -- {
-   --    key = 'u',
-   --    mods = mod.SUPER,
-   --    action = wezterm.action.QuickSelectArgs({
-   --       label = 'open url',
-   --       patterns = {
-   --          'https?://\\S+',
-   --       },
-   --       action = wezterm.action_callback(function(window, pane)
-   --          local url = window:get_selection_text_for_pane(pane)
-   --          wezterm.log_info('opening: ' .. url)
-   --          wezterm.open_with(url)
-   --       end),
-   --    }),
-   -- },
+   {
+      key = 'F1',
+      mods = 'NONE',
+      action = act.InputSelector({
+         title = 'Keybindings (ESC to close)',
+         choices = {
+            { label = '           WEZTERM ^s        │          TMUX ^b' },
+            {
+               label = '─────────────────────────────┼─────────────────────────────',
+            },
+            { label = 's     split below            │ s     split below' },
+            { label = 'v     split right            │ v     split right' },
+            { label = 'hjkl  navigate               │ hjkl  navigate' },
+            { label = 'p     resize mode (hjkl)     │ z     zoom toggle' },
+            { label = 'w     clear scrollback       │ x     kill pane' },
+            { label = 'f     font resize (jk/r)     │ w     clear + history' },
+            {
+               label = '─────────────────────────────┼─────────────────────────────',
+            },
+            { label = '^Tab/^S-Tab  next/prev tab   │ c     new window' },
+            { label = 'S^t   new tab                │ n/p   next/prev window' },
+            { label = 'S^w   close tab              │ 0-9   go to window' },
+            { label = 'SA^z  zoom toggle            │ d     detach' },
+            { label = 'S^w   close pane             │ [     copy mode (vi)' },
+            {
+               label = '─────────────────────────────┼─────────────────────────────',
+            },
+            { label = 'S=Shift ^=Ctrl A=Alt         │  r/R reload/refresh (tmux)' },
+            {
+               label = '─────────────────────────────┼─────────────────────────────',
+            },
+            { label = 'F1 help  F2 palette  F3 launcher  F11 copy  F12 debug' },
+         },
+         action = wezterm.action_callback(function() end),
+      }),
+   },
 
-   -- copy/paste --
-   { key = 'c', mods = mod.SUPER, action = act.CopyTo('Clipboard') },
-   { key = 'v', mods = mod.SUPER, action = act.PasteFrom('Clipboard') },
+   -- =====================
+   -- 2. Pane management
+   -- =====================
+   { key = '\\', mods = mod.SUPER, action = act.SplitVertical({ domain = 'CurrentPaneDomain' }) },
+   {
+      key = '\\',
+      mods = mod.SUPER_REV,
+      action = act.SplitHorizontal({ domain = 'CurrentPaneDomain' }),
+   },
+   { key = 'z', mods = mod.SUPER_REV, action = act.TogglePaneZoomState },
+   { key = 'w', mods = mod.SUPER, action = act.CloseCurrentPane({ confirm = false }) },
+   {
+      key = 'p',
+      mods = mod.SUPER_REV,
+      action = act.PaneSelect({ alphabet = '1234567890', mode = 'SwapWithActiveKeepFocus' }),
+   },
 
-   -- tabs --
-   -- tabs: spawn+close
+   -- =====================
+   -- 3. Tab management
+   -- =====================
    { key = 't', mods = mod.SUPER, action = act.SpawnTab('DefaultDomain') },
    { key = 'w', mods = mod.SUPER_REV, action = act.CloseCurrentTab({ confirm = false }) },
-
-   -- tabs: navigation
    { key = 'Tab', mods = 'SHIFT|CTRL', action = act.ActivateTabRelative(-1) },
    { key = 'Tab', mods = 'CTRL', action = act.ActivateTabRelative(1) },
 
-   -- window --
-   -- spawn windows
+   -- =====================
+   -- 4. Window management
+   -- =====================
    { key = 'n', mods = mod.SUPER, action = act.SpawnWindow },
 
-   -- background controls --
+   -- =====================
+   -- 5. Copy/paste
+   -- =====================
+   { key = 'c', mods = mod.SUPER, action = act.CopyTo('Clipboard') },
+   { key = 'v', mods = mod.SUPER, action = act.PasteFrom('Clipboard') },
+
+   -- =====================
+   -- 6. Background controls
+   -- =====================
    {
-      key = [[/]],
+      key = '/',
       mods = mod.SUPER,
       action = wezterm.action_callback(function(window, _pane)
          backdrops:random(window)
       end),
    },
    {
-      key = [[,]],
+      key = ',',
       mods = mod.SUPER,
       action = wezterm.action_callback(function(window, _pane)
          backdrops:cycle_back(window)
       end),
    },
    {
-      key = [[.]],
+      key = '.',
       mods = mod.SUPER,
       action = wezterm.action_callback(function(window, _pane)
          backdrops:cycle_forward(window)
       end),
    },
    {
-      key = [[/]],
+      key = '/',
       mods = mod.SUPER_REV,
       action = act.InputSelector({
          title = 'Select Background',
@@ -90,42 +138,25 @@ local keys = {
          fuzzy = true,
          fuzzy_description = 'Select Background: ',
          action = wezterm.action_callback(function(window, _pane, idx)
-            ---@diagnostic disable-next-line: param-type-mismatch
             backdrops:set_img(window, tonumber(idx))
          end),
       }),
    },
 
-   -- panes --
-   -- panes: split panes
-   {
-      key = [[\]],
-      mods = mod.SUPER,
-      action = act.SplitVertical({ domain = 'CurrentPaneDomain' }),
-   },
-   {
-      key = [[\]],
-      mods = mod.SUPER_REV,
-      action = act.SplitHorizontal({ domain = 'CurrentPaneDomain' }),
-   },
+   -- =====================
+   -- 7. Miscellaneous (F-keys, search, overlays, etc)
+   -- =====================
+   { key = 'F11', mods = 'NONE', action = 'ActivateCopyMode' },
+   { key = 'F2', mods = 'NONE', action = act.ActivateCommandPalette },
+   { key = 'F3', mods = 'NONE', action = act.ShowLauncher },
+   { key = 'F4', mods = 'NONE', action = act.ShowLauncherArgs({ flags = 'FUZZY|TABS' }) },
+   { key = 'F5', mods = 'NONE', action = act.ShowLauncherArgs({ flags = 'FUZZY|WORKSPACES' }) },
+   { key = 'F12', mods = 'NONE', action = act.ShowDebugOverlay },
+   { key = 'f', mods = mod.SUPER, action = act.Search({ CaseInSensitiveString = '' }) },
 
-   -- panes: zoom+close pane
-   { key = 'z', mods = mod.SUPER_REV, action = act.TogglePaneZoomState },
-   { key = 'w', mods = mod.SUPER, action = act.CloseCurrentPane({ confirm = false }) },
-
-   -- panes: navigation
-   { key = 'k', mods = mod.SUPER_REV, action = act.ActivatePaneDirection('Up') },
-   { key = 'j', mods = mod.SUPER_REV, action = act.ActivatePaneDirection('Down') },
-   { key = 'h', mods = mod.SUPER_REV, action = act.ActivatePaneDirection('Left') },
-   { key = 'l', mods = mod.SUPER_REV, action = act.ActivatePaneDirection('Right') },
-   {
-      key = 'p',
-      mods = mod.SUPER_REV,
-      action = act.PaneSelect({ alphabet = '1234567890', mode = 'SwapWithActiveKeepFocus' }),
-   },
-
-   -- key-tables --
-   -- resizes fonts
+   -- =====================
+   -- 8. Key tables (resize font/pane)
+   -- =====================
    {
       key = 'f',
       mods = 'LEADER',
@@ -135,7 +166,6 @@ local keys = {
          timemout_miliseconds = 1000,
       }),
    },
-   -- resize panes
    {
       key = 'p',
       mods = 'LEADER',
@@ -159,7 +189,7 @@ local key_tables = {
       { key = 'k', action = act.AdjustPaneSize({ 'Up', 1 }) },
       { key = 'j', action = act.AdjustPaneSize({ 'Down', 1 }) },
       { key = 'h', action = act.AdjustPaneSize({ 'Left', 1 }) },
-      -- { key = 'l', action = act.AdjustPaneSize({ 'Right', 1 }) },
+      { key = 'l', action = act.AdjustPaneSize({ 'Right', 1 }) },
       { key = 'Escape', action = 'PopKeyTable' },
       { key = 'q', action = 'PopKeyTable' },
    },
@@ -176,9 +206,8 @@ local mouse_bindings = {
 
 return {
    disable_default_key_bindings = true,
-   leader = { key = 'l', mods = mod.SUPER },
+   leader = { key = 's', mods = 'CTRL', timeout_milliseconds = 2000 },
    keys = keys,
    key_tables = key_tables,
    mouse_bindings = mouse_bindings,
 }
-

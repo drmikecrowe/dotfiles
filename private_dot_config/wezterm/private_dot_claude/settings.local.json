@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pacman:*)",
+      "Bash(flatpak list:*)",
+      "Bash(snap list:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

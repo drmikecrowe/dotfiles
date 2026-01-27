@@ -1,83 +1,159 @@
+-- Configuration enabled by setup script
+
 -- AstroLSP allows you to customize the features in AstroNvim's LSP configuration engine
 -- Configuration documentation can be found with `:h astrolsp`
--- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
---       as this provides autocomplete and documentation while editing
 
 ---@type LazySpec
 return {
   "AstroNvim/astrolsp",
   ---@type AstroLSPOpts
   opts = {
-    -- enable servers that you already have installed without mason
-    servers = vim.my_already_installed,
     -- Configuration table of features provided by AstroLSP
     features = {
-      autoformat = true, -- enable or disable auto formatting on start
       codelens = true, -- enable/disable codelens refresh on start
-      inlay_hints = false, -- enable/disable inlay hints on start
+      inlay_hints = true, -- enable inlay hints on start
       semantic_tokens = true, -- enable/disable semantic token highlighting
     },
     -- customize lsp formatting options
     formatting = {
       -- control auto formatting on save
       format_on_save = {
-        enabled = true, -- enable or disable format on save globally
-        allow_filetypes = { -- enable format on save for specified filetypes only
-          -- "go",
+        enabled = true, -- enable format on save globally
+        allow_filetypes = { -- enable format on save for specified filetypes
+          "lua",
+          "python", 
+          "go",
+          "javascript",
+          "typescript",
+          "json",
+          "yaml",
+          "html",
+          "css",
+          "markdown",
+          "sh",
+          "bash",
         },
         ignore_filetypes = { -- disable format on save for specified filetypes
-          -- "python",
+          -- Add any filetypes you want to skip formatting
         },
       },
       disabled = { -- disable formatting capabilities for the listed language servers
-        -- disable lua_ls formatting capability if you want to use StyLua to format your lua code
+        -- Disable built-in formatters in favor of external ones
+        "lua_ls", -- Use stylua instead
+        "basedpyright", -- Use ruff instead
+        "tsserver", -- Use prettier instead
       },
-      timeout_ms = 1000, -- default format timeout
-      -- filter = function(client) -- fully override the default formatting function
-      --   return true
-      -- end
+      timeout_ms = 3000, -- increased timeout for slower formatters
     },
+    -- enable servers that you already have installed without mason
+    servers = {},
     -- customize language server configuration options passed to `lspconfig`
-    ---@diagnostic disable: missing-fields
     config = {
-      -- clangd = { capabilities = { offsetEncoding = "utf-8" } },
-      denols = {
-        autostart = false,
+      -- Lua LSP configuration
+      lua_ls = {
+        settings = {
+          Lua = {
+            runtime = {
+              version = "LuaJIT",
+              path = vim.split(package.path, ";"),
+            },
+            diagnostics = {
+              globals = { "vim" }, -- recognize 'vim' global
+            },
+            workspace = {
+              library = vim.api.nvim_get_runtime_file("", true),
+              checkThirdParty = false,
+            },
+            telemetry = {
+              enable = false,
+            },
+            format = {
+              enable = false, -- Use stylua instead
+            },
+          },
+        },
       },
-      -- nil_ls = {
-      --     formatter = { command = "alejandra"},
-      -- },
-      -- },
+      -- Python LSP configuration
+      basedpyright = {
+        settings = {
+          basedpyright = {
+            analysis = {
+              typeCheckingMode = "basic",
+              autoImportCompletions = true,
+            },
+          },
+        },
+      },
+      -- Ruff LSP configuration (Python linting/formatting)
+      ruff_lsp = {
+        init_options = {
+          settings = {
+            args = {
+              "--line-length=88",
+              "--select=E,W,F,I,N,UP,YTT,S,BLE,FBT,B,A,COM,C4,DTZ,T10,EM,EXE,ISC,ICN,G,INP,PIE,T20,PYI,PT,Q,RSE,RET,SLF,SIM,TID,TCH,INT,ARG,PTH,ERA,PD,PGH,PL,TRY,NPY,RUF",
+            },
+          },
+        },
+      },
+      -- Go LSP configuration
+      gopls = {
+        settings = {
+          gopls = {
+            analyses = {
+              unusedparams = true,
+            },
+            staticcheck = true,
+            gofumpt = true,
+          },
+        },
+      },
+      -- TypeScript/JavaScript configuration
+      vtsls = {
+        settings = {
+          typescript = {
+            preferences = {
+              inlayHints = {
+                includeInlayParameterNameHints = "all",
+                includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayEnumMemberValueHints = true,
+              },
+            },
+          },
+        },
+      },
+      -- Deno configuration (disabled by default to avoid conflicts)
+      denols = {
+        autostart = false, -- Only start when deno.json/deno.jsonc is present
+        root_dir = require("lspconfig.util").root_pattern("deno.json", "deno.jsonc"),
+      },
     },
     -- customize how language servers are attached
     handlers = {
-      -- a function without a key is simply the default handler, functions take two parameters, the server name and the configured options table for that server
-      -- function(server, opts) require("lspconfig")[server].setup(opts) end
-
-      -- the key is the server that is being setup with `lspconfig`
-      -- rust_analyzer = false, -- setting a handler to false will disable the set up of that language server
-      -- pyright = function(_, opts) require("lspconfig").pyright.setup(opts) end -- or a custom handler function can be passed
-      tsserver = function(_, opts) require("typescript").setup { server = opts } end,
+      -- Ensure Deno and Node.js LSPs don't conflict
+      denols = function(_, opts)
+        opts.root_dir = require("lspconfig.util").root_pattern("deno.json", "deno.jsonc")
+        require("lspconfig").denols.setup(opts)
+      end,
+      vtsls = function(_, opts)
+        opts.root_dir = require("lspconfig.util").root_pattern("package.json", "tsconfig.json", "jsconfig.json")
+        require("lspconfig").vtsls.setup(opts)
+      end,
     },
     -- Configure buffer local auto commands to add when attaching a language server
     autocmds = {
-      -- first key is the `augroup` to add the auto commands to (:h augroup)
-      -- vim.api.nvim_create_augroup("neotree_autoopen", { clear = true })
       lsp_codelens_refresh = {
-        -- Optional condition to create/delete auto command group
-        -- can either be a string of a client capability or a function of `fun(client, bufnr): boolean`
-        -- condition will be resolved for each client on each execution and if it ever fails for all clients,
-        -- the auto commands will be deleted for that buffer
         cond = "textDocument/codeLens",
-        -- cond = function(client, bufnr) return client.name == "lua_ls" end,
-        -- list of auto commands to set
         {
-          -- events to trigger
           event = { "InsertLeave", "BufEnter" },
-          -- the rest of the autocmd options (:h nvim_create_autocmd)
           desc = "Refresh codelens (buffer)",
           callback = function(args)
-            if require("astrolsp").config.features.codelens then vim.lsp.codelens.refresh { bufnr = args.buf } end
+            if require("astrolsp").config.features.codelens then 
+              vim.lsp.codelens.refresh { bufnr = args.buf } 
+            end
           end,
         },
       },
@@ -85,7 +161,6 @@ return {
     -- mappings to be set up on attaching of a language server
     mappings = {
       n = {
-        -- a `cond` key can provided as the string of a server capability to be required to attach, or a function with `client` and `bufnr` parameters from the `on_attach` that returns a boolean
         gD = {
           function() vim.lsp.buf.declaration() end,
           desc = "Declaration of current symbol",
@@ -101,10 +176,12 @@ return {
       },
     },
     -- A custom `on_attach` function to be run after the default `on_attach` function
-    -- takes two parameters `client` and `bufnr`  (`:h lspconfig-setup`)
     on_attach = function(client, bufnr)
-      -- this would disable semanticTokensProvider for all clients
-      -- client.server_capabilities.semanticTokensProvider = nil
+      -- Configure specific client capabilities
+      if client.name == "ruff_lsp" then
+        -- Disable hover in favor of basedpyright
+        client.server_capabilities.hoverProvider = false
+      end
     end,
   },
 }

@@ -1,5 +1,10 @@
 # archivemount.yazi
 
+> [!Important]
+> 
+> For nightly build users for yazi v0.4.3(not yet released). The `init.lua` file should be renamed to `main.lua` (check [#2176](https://github.com/sxyazi/yazi/pull/2168)).
+> Please rename `init.lua` to `main.lua` in case you are facing any issues! Thanks!
+
 Mounting and unmounting archives in yazi in Linux using `archivemount` command. You can now temporarily view and edit files inside your archive creating a new archive along with original, all using the
 features of `archivemount`. You can also view mounpoints in your system based on the list provided by command `mount` on Linux.
 
@@ -11,20 +16,20 @@ features of `archivemount`. You can also view mounpoints in your system based on
 
 > [!Note]
 >
-> Currently Linux only. MacOS usage will be added.
+> Currently, it works on Linux. Help wanted for MacOS!
 
 1. [archivemount](https://github.com/cybernoid/archivemount)
 
 You can download the command using `sudo apt install archivemount` or build from source from their github repository.
 
-2. [Yazi](https://github.com/sxyazi/yazi) version >= 0.3.x
+2. [Yazi](https://github.com/sxyazi/yazi) version >= 0.4.x
 
 ## Installation
 
 To install `archivemount.yazi` in Linux, you can run the below command -
 
 ```bash
-ya pack -a AnirudhG07/archivemount.yazi
+ya pack -a AnirudhG07/archivemount
 # OR
 git clone https://github.com/AnirudhG07/archivemount.yazi ~/.config/yazi/plugins/archivemount.yazi
 ```
@@ -60,6 +65,16 @@ can be added, feel free to add it in your `init.lua` and make an issue/PR regard
 
 Yazi is an amazing, blazing fast terminal file manager, with a variety of plugins, flavors and themes. Check them out at [awesome-yazi](https://github.com/AnirudhG07/awesome-yazi) and the official [yazi webpage](https://yazi-rs.github.io/).
 
-## TODO
+## MacOS
+> [!Important]
+>
+> This is not tested by me. Only an inspiration by people.
+> For any users, please test and provide feedback for the same.
 
-1. Application on MacOS which uses MacFuse for archivemounting.
+You can install `archivemount` on MacOS through `macports`, it is available on Homebrew only on Linux(linuxbrew) -
+```
+sudo port install archivemount
+```
+
+Application on MacOS which uses MacFuse for archivemounting. You would need to enable MacFuse for this. The syntax provided by archivemount is same as that of linux, so the plugin should work.
+

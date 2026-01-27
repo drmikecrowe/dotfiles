@@ -1,7 +1,7 @@
 local wezterm = require('wezterm')
 -- local gpu_adapters = require('utils.gpu_adapter')
 
-local color_scheme = 'Raycast_Light'
+local color_scheme = 'Railscasts (dark) (terminal.sexy)'
 local colors = wezterm.color.get_builtin_schemes()[color_scheme]
 
 return {

@@ -1,7 +1,10 @@
+-- Get mcrowe's custom plugins
+local mcrowe_plugins = require("mcrowe").get_plugins()
+
 require("lazy").setup({
   {
     "AstroNvim/AstroNvim",
-    version = "^4", -- Remove version tracking to elect for nighly AstroNvim
+    version = "^5", -- Remove version tracking to elect for nightly AstroNvim
     import = "astronvim.plugins",
     opts = { -- AstroNvim options must be set here with the `import` key
       mapleader = " ", -- This ensures the leader key must be configured before Lazy is set up
@@ -11,8 +14,9 @@ require("lazy").setup({
       update_notifications = true, -- Enable/disable notification about running `:Lazy update` twice to update pinned plugins
     },
   },
-  { import = "community" },
+  -- { import = "astrocommunity" }, -- Removing this line as it's redundant
   { import = "plugins" },
+  mcrowe_plugins, -- Add mcrowe's custom plugins
 } --[[@as LazySpec]], {
   -- Configure any other `lazy.nvim` configuration options here
   install = { colorscheme = { "astrotheme", "habamax" } },

@@ -15,6 +15,9 @@ if not pcall(require, "lazy") then
   vim.cmd.quit()
 end
 
-require "my_lsp"
+-- Load mcrowe's custom configurations before lazy_setup
+require "mcrowe"
 require "lazy_setup"
 require "polish"
+-- Apply mcrowe's polish after the main polish
+require("mcrowe.config.polish").setup()
