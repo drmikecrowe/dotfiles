@@ -1,0 +1,116 @@
+[?1049h[22;0;0t[?1h=[H[2J[?2004h[?2026$p[?2027$p[?2031$p[?2048$p[0m[4:3mP$qm\[?u[c[?25h[?25l(B[m[H                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                [24;1H(B[msourcing "nvim_exec2()"[K[H[23M
+finished sourcing nvim_exec2()                                                  
+sourcing "/usr/share/nvim/runtime/ftplugin.vim"                                 
+finished sourcing /usr/share/nvim/runtime/ftplugin.vim                          
+sourcing "/usr/share/nvim/runtime/indent.vim"                                   
+finished sourcing /usr/share/nvim/runtime/indent.vim                            
+could not source "/home/mcrowe/.config/kdedefaults/nvim/sysinit.vim"            
+sourcing "/etc/xdg/nvim/sysinit.vim"                                            
+line 1: sourcing "/usr/share/nvim/archlinux.lua"                                
+finished sourcing /usr/share/nvim/archlinux.lua                                 
+continuing in /etc/xdg/nvim/sysinit.vim                                         
+finished sourcing /etc/xdg/nvim/sysinit.vim                                     
+sourcing "/home/mcrowe/.config/nvim/init.lua"                                   
+line 0: sourcing "nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0"  
+finished sourcing nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0   
+continuing in /home/mcrowe/.config/nvim/init.lua                                
+line 0: sourcing "nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0"  
+finished sourcing nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0   
+continuing in /home/mcrowe/.config/nvim/init.lua                                
+line 0: sourcing "nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0"  
+finished sourcing nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0   
+continuing in /home/mcrowe/.config/nvim/init.lua                                
+line 0: sourcing "nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0"  
+-- More --                                                                      [1 q[Hsourcing "nvim_exec2()"[K
+finished sourcing nvim_exec2()[K
+sourcing "/usr/share/nvim/runtime/ftplugin.vim"[K
+finished sourcing /usr/share/nvim/runtime/ftplugin.vim[K
+sourcing "/usr/share/nvim/runtime/indent.vim"[K
+finished sourcing /usr/share/nvim/runtime/indent.vim[K
+could not source "/home/mcrowe/.config/kdedefaults/nvim/sysinit.vim"[K
+sourcing "/etc/xdg/nvim/sysinit.vim"[K
+line 1: sourcing "/usr/share/nvim/archlinux.lua"[K
+finished sourcing /usr/share/nvim/archlinux.lua[K
+continuing in /etc/xdg/nvim/sysinit.vim[K
+finished sourcing /etc/xdg/nvim/sysinit.vim[K
+sourcing "/home/mcrowe/.config/nvim/init.lua"[K
+line 0: sourcing "nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0"[K
+finished sourcing nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0[K
+continuing in /home/mcrowe/.config/nvim/init.lua[K
+line 0: sourcing "nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0"[K
+finished sourcing nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0[K
+continuing in /home/mcrowe/.config/nvim/init.lua[K
+line 0: sourcing "nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0"[K
+finished sourcing nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0[K
+continuing in /home/mcrowe/.config/nvim/init.lua[K
+line 0: sourcing "nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0"[K
+-- More --[K[?25h[?25l[24;12HSPACE/d/j: screen/page/line down, b/u/k: up, q: quit[H  [H[24;12HSPACE/d/j: screen/page/line down, b/u/k: up, q: qui  t[24;65H[?25h[?25l[H[23X
+[30X
+[47X
+[54X
+[45X
+[52X
+[68X
+[36X
+[48X
+[47X
+[39X
+[43X
+[45X
+[78X
+[77X
+[48X
+[78X
+[77X
+[48X
+[78X
+[77X
+[48X
+[78X
+[63X[Hsourcing "nvim_exec2()"
+finished sourcing nvim_exec2()
+sourcing "/usr/share/nvim/runtime/ftplugin.vim"
+finished sourcing /usr/share/nvim/runtime/ftplugin.vim
+sourcing "/usr/share/nvim/runtime/indent.vim"
+finished sourcing /usr/share/nvim/runtime/indent.vim
+could not source "/home/mcrowe/.config/kdedefaults/nvim/sysinit.vim"
+sourcing "/etc/xdg/nvim/sysinit.vim"
+line 1: sourcing "/usr/share/nvim/archlinux.lua"
+finished sourcing /usr/share/nvim/archlinux.lua
+continuing in /etc/xdg/nvim/sysinit.vim
+finished sourcing /etc/xdg/nvim/sysinit.vim
+sourcing "/home/mcrowe/.config/nvim/init.lua"
+line 0: sourcing "nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0"
+finished sourcing nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0
+continuing in /home/mcrowe/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0"
+finished sourcing nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0
+continuing in /home/mcrowe/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0"
+finished sourcing nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0
+continuing in /home/mcrowe/.config/nvim/init.lua
+line 0: sourcing "nvim_exec2() called at /home/mcrowe/.config/nvim/init.lua:0"
+-- More --[1 q[?25h[?25l[?1004h[?25h[?2026h[>4;2m[CSPACE/d/j: screen/page/line down, b/u/k: up, q: quit[C[?2026l

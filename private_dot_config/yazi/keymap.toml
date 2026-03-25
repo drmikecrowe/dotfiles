@@ -1,38 +1,60 @@
-# A TOML linter such as https://taplo.tamasfe.dev/ can use this schema to validate your config.
-# If you encounter any issues, please make an issue at https://github.com/yazi-rs/schemas.
+# Yazi Keymap Configuration
+# https://yazi-rs.github.io/docs/configuration/keymap
+
 "$schema" = "https://yazi-rs.github.io/schemas/keymap.json"
 
 [mgr]
 prepend_keymap = [
-  { on = [
-    "/",
-    "s",
-  ], run = "plugin what-size", desc = "Calc size of selection or cwd" },
-  { on = [
-    "/",
-    "c",
-  ], run = "plugin what-size -- clipboard", desc = "Calc size of selection or cwd" },
-  { on = [
-    "/",
-    "h",
-  ], run = "hidden toggle", desc = "Toggle hidden" },
+  # ========== Navigation ==========
+  { on = "l", run = "plugin smart-enter", desc = "Enter directory or open file" },
+  { on = [ "/", "h" ], run = "hidden toggle", desc = "Toggle hidden files" },
+
+  # ========== Tabs ==========
+  { on = "t", run = "plugin smart-tab", desc = "Create tab and enter hovered directory" },
   { on = "2", run = "plugin smart-switch 1", desc = "Switch or create tab 2" },
-  { on = "t", run = "plugin smart-tab", desc = "Create a tab and enter the hovered directory" },
-  { on = "p", run = "plugin smart-paste", desc = "Paste into the hovered directory or CWD" },
-  { on = "!", run = 'shell "$SHELL" --block', desc = "Open shell here" },
-  { on = [
-    "m",
-    "a",
-  ], run = "plugin archivemount --args=mount", desc = "Mount selected archive" },
-  { on = [
-    "m",
-    "u",
-  ], run = "plugin archivemount --args=unmount", desc = "Unmount and save changes to original archive" },
-  { on = [
-    "g",
-    "i",
-  ], run = "plugin lazygit", desc = "run lazygit" },
-  { on = [
-    "C",
-  ], run = "plugin ouch 7z", desc = "Compress with ouch" },
+
+  # ========== Paste ==========
+  { on = "p", run = "plugin smart-paste", desc = "Paste into hovered directory or CWD" },
+
+  # ========== Pane Management (vp = view pane) ==========
+  { on = "T", run = "plugin toggle-pane min-preview", desc = "Toggle preview pane" },
+  { on = [ "v", "p", "m" ], run = "plugin toggle-pane max-preview", desc = "Maximize preview pane" },
+  { on = [ "v", "p", "p" ], run = "plugin toggle-pane min-parent", desc = "Toggle parent pane" },
+  { on = [ "v", "p", "c" ], run = "plugin toggle-pane min-current", desc = "Toggle current pane" },
+  { on = [ "v", "p", "r" ], run = "plugin toggle-pane reset", desc = "Reset all panes" },
+
+  # ========== Archive Operations ==========
+  { on = [ "m", "a" ], run = "plugin archivemount --args=mount", desc = "Mount selected archive" },
+  { on = [ "m", "u" ], run = "plugin archivemount --args=unmount", desc = "Unmount and save changes to archive" },
+  { on = "C", run = "plugin ouch 7z", desc = "Compress selection with ouch (7z)" },
+
+  # ========== Eza Preview Controls ==========
+  { on = [ "e", "t" ], run = "plugin eza-preview", desc = "Toggle tree/list view for directories" },
+  { on = [ "e", "+" ], run = "plugin eza-preview inc-level", desc = "Increase tree depth level" },
+  { on = [ "e", "-" ], run = "plugin eza-preview dec-level", desc = "Decrease tree depth level" },
+  { on = [ "e", "s" ], run = "plugin eza-preview toggle-follow-symlinks", desc = "Toggle follow symlinks" },
+  { on = [ "e", "h" ], run = "plugin eza-preview toggle-hidden", desc = "Toggle hidden files in preview" },
+  { on = [ "e", "i" ], run = "plugin eza-preview toggle-git-ignore", desc = "Toggle gitignore" },
+  { on = [ "e", "g" ], run = "plugin eza-preview toggle-git-status", desc = "Toggle git status" },
+
+  # ========== Recycle Bin ==========
+  { on = "R", run = "plugin recycle-bin menu", desc = "Open recycle bin menu" },
+
+  # ========== File Size ==========
+  { on = [ "/", "s" ], run = "plugin what-size", desc = "Calculate size of selection or CWD" },
+  { on = [ "/", "c" ], run = "plugin what-size --clipboard", desc = "Copy size to clipboard" },
+
+  # ========== Shell ==========
+  { on = "!", run = 'shell "$SHELL" --block', desc = "Open shell in current directory" },
+
+  # ========== Git ==========
+  { on = [ "g", "i" ], run = "plugin lazygit", desc = "Open lazygit" },
+
+  # ========== Preview Scrolling (Alt keys) ==========
+  { on = "<A-Up>", run = "seek -1", desc = "Scroll preview up one line" },
+  { on = "<A-Down>", run = "seek +1", desc = "Scroll preview down one line" },
+  { on = "<A-PageUp>", run = "seek -15", desc = "Scroll preview up one page" },
+  { on = "<A-PageDown>", run = "seek +15", desc = "Scroll preview down one page" },
+  { on = "<A-Home>", run = "seek -10000", desc = "Scroll preview to top" },
+  { on = "<A-End>", run = "seek +10000", desc = "Scroll preview to bottom" },
 ]

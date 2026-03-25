@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(superpowers:systematic-debugging)",
+      "Bash(ls:*)",
+      "WebSearch",
+      "mcp__plugin_serena_serena__list_dir",
+      "Bash(kscreen-doctor:*)",
+      "Bash(chmod:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

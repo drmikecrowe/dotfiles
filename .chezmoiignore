@@ -1,0 +1,7 @@
+.ssh
+.tmux/plugins/*/.git
+.zsh-custom/plugins/*/.git
+.tmux/plugins
+.zsh-custom/plugins
+.tmux/tmux.conf.old
+.zsh-custom/.local

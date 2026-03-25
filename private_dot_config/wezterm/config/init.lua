@@ -1,33 +1,40 @@
 local wezterm = require('wezterm')
+local mux = wezterm.mux
 
----@class Config
+---@class config
 ---@field options table
-local Config = {}
+local config = {}
 
----Initialize Config
----@return Config
-function Config:init()
+config.debug_key_events = true
+
+---Initialize config
+---@return config
+function config:init()
    self.__index = self
-   local config = setmetatable({ options = {} }, self)
-   return config
+   local c = setmetatable({ options = {} }, self)
+   return c
 end
 
----Append to `Config.options`
+wezterm.on('gui-startup', function(cmd)
+   local tab, pane, window = mux.spawn_window(cmd or {})
+   window:gui_window():maximize()
+end)
+
+---Append to `config.options`
 ---@param new_options table new options to append
----@return Config
-function Config:append(new_options)
+---@return config
+function config:append(new_options)
    for k, v in pairs(new_options) do
       if self.options[k] ~= nil then
          wezterm.log_warn(
-            'Duplicate config option detected: ',
+            'duplicate config option detected: ',
             { old = self.options[k], new = new_options[k] }
          )
-         goto continue
+      else
+         self.options[k] = v
       end
-      self.options[k] = v
-      ::continue::
    end
    return self
 end
 
-return Config
+return config

@@ -17,15 +17,16 @@ return {
 
    -- background
    background = {
-      -- {
-      --    source = { File = wezterm.GLOBAL.background },
-      --    attachment = { Parallax = 0.1 }
-      -- },
+      {
+         source = { File = wezterm.GLOBAL.background },
+         attachment = { Parallax = 0.1 },
+         opacity = 0.9,
+      },
       {
          source = { Color = colors.background },
          height = '100%',
          width = '100%',
-         -- opacity = 0.85,
+         opacity = 0.95,
       },
    },
 

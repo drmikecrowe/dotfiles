@@ -1,7 +1,0 @@
-#!/bin/bash
-if [ "$1" = "-h" ]; then
-    echo "Remove orphaned packages no longer required as dependencies"
-    echo "Usage: yay-cleanup"
-    exit 0
-fi
-yay -Rns $(yay -Qdtq)

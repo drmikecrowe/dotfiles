@@ -1,4 +1,6 @@
 return {
+   enable_kitty_keyboard = true,
+
    -- behaviours
    automatically_reload_config = true,
    status_update_interval = 1000,

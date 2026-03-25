@@ -1,17 +1,33 @@
+# Yazi Configuration
+# https://yazi-rs.github.io/docs/configuration/yazi
+
 [plugin]
 prepend_previewers = [
+  # Directory preview with eza (must be first for directories)
+  { mime = "inode/directory", run = "eza-preview" },
+
+  # Markdown preview with glow
+  # $w = width, $h = height, $1 = file path (provided by piper)
+  { name = "*.md", run = 'piper -- glow -s dark -w $w "$1"' },
+
+  # Archive preview with ouch
   { mime = "application/*zip", run = "ouch" },
   { mime = "application/x-tar", run = "ouch" },
   { mime = "application/x-bzip2", run = "ouch" },
   { mime = "application/x-7z-compressed", run = "ouch" },
   { mime = "application/x-rar", run = "ouch" },
   { mime = "application/x-xz", run = "ouch" },
-  { name = "*.csv", run = "rich-preview" },               # for csv files
-  { name = "*.md", run = "rich-preview" },                # for markdown (.md) files
-  { name = "*.rst", run = "rich-preview" },               # for restructured text (.rst) files
-  { name = "*.ipynb", run = "rich-preview" },             # for jupyter notebooks (.ipynb)
-  { name = "*.json", run = "rich-preview" },              # for json (.json) files
-  { mime = "application/json", run = "rich-preview" },    # for json (.json) files
-  #    { name = "*.lang_type", run = "rich-preview"} # for particular language files eg. .py, .go., .lua, etc.
+
+  # Rich text preview (json, csv, etc. - NOT markdown since glow handles that)
+  { name = "*.csv", run = "rich-preview" },
+  { name = "*.rst", run = "rich-preview" },
+  { name = "*.ipynb", run = "rich-preview" },
+  { name = "*.json", run = "rich-preview" },
+  { mime = "application/json", run = "rich-preview" },
 ]
-# append_previewers = [{ name = "*", run = "hexyl" }]
+
+# Fallback previewers - these run if nothing above matched
+append_previewers = [
+  # Hex previewer for binary/unknown files
+  { name = "*", run = "hexyl" },
+]

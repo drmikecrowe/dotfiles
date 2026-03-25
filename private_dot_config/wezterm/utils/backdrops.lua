@@ -15,6 +15,7 @@ local PATH_SEP = platform.is_win and '\\' or '/'
 ---@class BackDrops
 ---@field current_idx number index of current image
 ---@field files string[] background images
+---@field enabled boolean whether background image is visible
 local BackDrops = {}
 BackDrops.__index = BackDrops
 
@@ -24,6 +25,7 @@ function BackDrops:init()
    local inital = {
       current_idx = 1,
       files = {},
+      enabled = true,
    }
    local backdrops = setmetatable(inital, self)
    wezterm.GLOBAL.background = nil
@@ -45,19 +47,23 @@ end
 ---@private
 ---@param window any WezTerm Window see: https://wezfurlong.org/wezterm/config/lua/window/index.html
 function BackDrops:_set_opt(window)
-   local opts = {
-      background = {
-         {
-            source = { File = wezterm.GLOBAL.background },
-         },
-         {
-            source = { Color = colors.background },
-            height = '100%',
-            width = '100%',
-            opacity = 0.96,
-         },
-      },
-   }
+   local background_layers = {}
+
+   if self.enabled and wezterm.GLOBAL.background then
+      table.insert(background_layers, {
+         source = { File = wezterm.GLOBAL.background },
+         opacity = 0.9,
+      })
+   end
+
+   table.insert(background_layers, {
+      source = { Color = colors.background },
+      height = '100%',
+      width = '100%',
+      opacity = self.enabled and 0.95 or 1.0,
+   })
+
+   local opts = { background = background_layers }
    window:set_config_overrides(opts)
 end
 
@@ -123,6 +129,13 @@ function BackDrops:set_img(window, idx)
 
    self.current_idx = idx
    wezterm.GLOBAL.background = self.files[self.current_idx]
+   self:_set_opt(window)
+end
+
+---Toggle background image on/off
+---@param window any WezTerm `Window` see: https://wezfurlong.org/wezterm/config/lua/window/index.html
+function BackDrops:toggle(window)
+   self.enabled = not self.enabled
    self:_set_opt(window)
 end
 

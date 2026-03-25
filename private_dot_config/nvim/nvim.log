@@ -1,0 +1,65 @@
+
+sourcing "nvim_exec2()"
+finished sourcing nvim_exec2()
+sourcing "/usr/share/nvim/runtime/ftplugin.vim"
+finished sourcing /usr/share/nvim/runtime/ftplugin.vim
+sourcing "/usr/share/nvim/runtime/indent.vim"
+finished sourcing /usr/share/nvim/runtime/indent.vim
+sourcing "/usr/share/nvim/runtime/filetype.lua"
+line 0: sourcing "nvim_exec2() called at /usr/share/nvim/runtime/filetype.lua:0"
+not found in runtime path: "ftdetect/*.{vim,lua}"
+finished sourcing nvim_exec2() called at /usr/share/nvim/runtime/filetype.lua:0
+continuing in /usr/share/nvim/runtime/filetype.lua
+finished sourcing /usr/share/nvim/runtime/filetype.lua
+sourcing "/usr/share/nvim/runtime/syntax/syntax.vim"
+line 20: sourcing "/usr/share/nvim/runtime/syntax/synload.vim"
+finished sourcing /usr/share/nvim/runtime/syntax/synload.vim
+continuing in /usr/share/nvim/runtime/syntax/syntax.vim
+Executing FileType Autocommands for "*"
+autocommand if !exists('b:ts_highlight') | 0verbose exe "set syntax=" . expand("<amatch>") | endif
+
+finished sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+sourcing "/usr/share/nvim/runtime/plugin/gzip.vim"
+finished sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+sourcing "/usr/share/nvim/runtime/plugin/matchit.vim"
+not found in 'packpath': "pack/*/start/matchit"
+line 3: sourcing "/usr/share/nvim/runtime/pack/dist/opt/matchit/plugin/matchit.vim"
+finished sourcing /usr/share/nvim/runtime/pack/dist/opt/matchit/plugin/matchit.vim
+continuing in /usr/share/nvim/runtime/plugin/matchit.vim
+finished sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+sourcing "/usr/share/nvim/runtime/plugin/matchparen.vim"
+finished sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+sourcing "/usr/share/nvim/runtime/plugin/netrwPlugin.vim"
+not found in 'packpath': "pack/*/start/netrw"
+line 7: sourcing "/usr/share/nvim/runtime/pack/dist/opt/netrw/plugin/netrwPlugin.vim"
+finished sourcing /usr/share/nvim/runtime/pack/dist/opt/netrw/plugin/netrwPlugin.vim
+continuing in /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+finished sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+sourcing "/usr/share/nvim/runtime/plugin/rplugin.vim"
+finished sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+sourcing "/usr/share/nvim/runtime/plugin/shada.vim"
+finished sourcing /usr/share/nvim/runtime/plugin/shada.vim
+sourcing "/usr/share/nvim/runtime/plugin/spellfile.vim"
+finished sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+sourcing "/usr/share/nvim/runtime/plugin/tarPlugin.vim"
+finished sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+sourcing "/usr/share/nvim/runtime/plugin/tutor.vim"
+finished sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+sourcing "/usr/share/nvim/runtime/plugin/zipPlugin.vim"
+finished sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+sourcing "/usr/share/nvim/runtime/plugin/editorconfig.lua"
+finished sourcing /usr/share/nvim/runtime/plugin/editorconfig.lua
+sourcing "/usr/share/nvim/runtime/plugin/man.lua"
+finished sourcing /usr/share/nvim/runtime/plugin/man.lua
+sourcing "/usr/share/nvim/runtime/plugin/osc52.lua"
+finished sourcing /usr/share/nvim/runtime/plugin/osc52.lua
+sourcing "/usr/share/nvim/runtime/plugin/tohtml.lua"
+finished sourcing /usr/share/nvim/runtime/plugin/tohtml.lua
+not found in 'packpath': "pack/*/start/*"
+not found in 'packpath': "start/*"
+not found in runtime path: "plugin/**/*"
+Executing BufWinEnter Autocommands for "*"
+autocommand autocmd SafeState * ++once call s:Highlight_Matching_Pair()
+
+Executing BufEnter Autocommands for "*"
+autocommand sil call s:LocalBrowse(expand("<amatch>"))

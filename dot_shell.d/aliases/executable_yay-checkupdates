@@ -1,7 +1,0 @@
-#!/bin/bash
-if [ "$1" = "-h" ]; then
-    echo "List packages with available updates in AUR"
-    echo "Usage: yay-checkupdates"
-    exit 0
-fi
-yay -Qu

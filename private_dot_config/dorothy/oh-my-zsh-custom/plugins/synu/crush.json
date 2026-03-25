@@ -1,0 +1,14 @@
+{
+	"$schema": "https://charm.land/crush.json",
+	"lsp": {
+		"fish": {
+			"command": "fish-lsp",
+			"args": ["start"],
+			"filetypes": ["fish"]
+		},
+		"termux": {
+			"command": "termux-language-server",
+			"filetypes": ["zsh", "bash"]
+		}
+	}
+}

@@ -1,7 +1,0 @@
-#!/bin/bash
-if [ "$1" = "-h" ]; then
-    echo "Update all packages from official repos and AUR"
-    echo "Usage: yay-update"
-    exit 0
-fi
-yay -Syu

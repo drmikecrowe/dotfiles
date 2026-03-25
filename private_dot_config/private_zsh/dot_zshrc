@@ -1,0 +1,20 @@
+# Set shell-specific prompt character BEFORE Dorothy loads
+export SHELL_PROMPT_CHAR='z>'
+export DOROTHY_THEME='system'
+
+# Force Dorothy to load even in non-login shells (guard against double-init)
+if [[ -z "${DOROTHY_LOADED_SHARED_SCOPE-}" ]]; then
+    export DOROTHY_FORCE_LOAD='yes'
+fi
+
+# Dorothy handles all shell configuration
+# Guard against double-loading Dorothy
+# export __DOROTHY_LOADED=1
+# source '/home/mcrowe/.local/share/dorothy/init.sh'
+
+# FORCE remove powerlevel10k hooks - must be LAST
+precmd_functions=(${precmd_functions:#_p9k_*})
+preexec_functions=(${preexec_functions:#_p9k_*})
+# Undefine p10k functions completely
+unfunction _p9k_precmd _p9k_do_nothing 2>/dev/null
+source '/home/mcrowe/.local/share/dorothy/init.sh' # Dorothy

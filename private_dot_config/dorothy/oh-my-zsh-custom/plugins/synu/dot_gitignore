@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: Amolith <amolith@secluded.site>
+#
+# SPDX-License-Identifier: Unlicense
+
+# agent dirs
+.agents/
+.claude/
+.clavix/
+.opencode/
+.qwen/

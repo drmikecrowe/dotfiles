@@ -1,0 +1,3 @@
+# Guard against double-loading Dorothy
+export __DOROTHY_LOADED=1
+source '/home/mcrowe/.local/share/dorothy/init.sh' # Dorothy
