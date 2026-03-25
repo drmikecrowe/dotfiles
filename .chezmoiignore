@@ -5,3 +5,4 @@
 .zsh-custom/plugins
 .tmux/tmux.conf.old
 .zsh-custom/.local
+.config/dorothy/commands.local
