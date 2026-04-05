@@ -1,3 +1,0 @@
-# Carapace completions for Xonsh
-$COMPLETIONS_CONFIRM=True
-exec($(carapace _carapace xonsh))

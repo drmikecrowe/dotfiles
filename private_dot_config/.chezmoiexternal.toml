@@ -1,0 +1,4 @@
+["dorothy"]
+    type = "git-repo"
+    url = "https://github.com/drmikecrowe/dorothy-config.git"
+    refreshPeriod = "168h"
