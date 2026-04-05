@@ -31,8 +31,8 @@ if [ -z "$api_url" ] || [ -z "$api_key" ]; then
 fi
 
 [ -z "$haiku_model" ] && haiku_model="glm-4.5-air"
-[ -z "$sonnet_model" ] && sonnet_model="glm-5.0"
-[ -z "$opus_model" ] && opus_model="glm-5.0"
+[ -z "$sonnet_model" ] && sonnet_model="glm-5.1"
+[ -z "$opus_model" ] && opus_model="glm-5.1"
 
 key_hint="${api_key:0:4}...${api_key: -4}"
 echo "zc: endpoint=$api_url | haiku=$haiku_model | sonnet=$sonnet_model | opus=$opus_model | key=$key_hint"

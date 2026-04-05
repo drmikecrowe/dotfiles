@@ -34,9 +34,9 @@ function setup_util_yt_dlp() (
 		options+=(DOWNLOAD="$url")
 	}
 	arch="$(get-arch)"
-	if is-mac; then
+	if is-system --macos; then
 		__add_download_option 'yt-dlp_macos' || :
-	elif is-linux; then
+	elif is-system --linux; then
 		if [[ $arch == 'a64' ]]; then
 			__add_download_option 'yt-dlp_linux_aarch64' || :
 		elif [[ $arch == 'a32' ]]; then

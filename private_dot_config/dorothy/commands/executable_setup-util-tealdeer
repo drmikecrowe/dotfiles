@@ -59,9 +59,9 @@ function setup_util_tealdeer() (
 		options+=(DOWNLOAD="$url")
 	}
 	arch="$(get-arch)"
-	if is-mac; then
+	if is-system --macos; then
 		__add_download_option '-macos-x86_64' || :
-	elif is-linux; then
+	elif is-system --linux; then
 		if [[ $arch == 'x64' ]]; then
 			__add_download_option '-linux-x86_64-musl' || :
 		elif [[ $arch == 'x32' ]]; then

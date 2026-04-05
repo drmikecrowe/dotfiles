@@ -72,18 +72,18 @@ function setup_linux_cache() (
 	'uninstall')
 		echo-style --h1="Uninstalling zram-generator"
 		if command-exists pacman; then
-			sudo-helper -- pacman -Rs --noconfirm zram-generator 2>/dev/null || true
+			eval-helper --elevate --pacman -Rs --noconfirm zram-generator 2>/dev/null || true
 		fi
-		sudo-helper -- rm -f /etc/systemd/zram-generator.conf
-		sudo-helper -- rm -f /etc/sysctl.d/99-zram-swappiness.conf
+		eval-helper --elevate --rm -f /etc/systemd/zram-generator.conf
+		eval-helper --elevate --rm -f /etc/sysctl.d/99-zram-swappiness.conf
 		echo-style --h2="Resetting swappiness to default (60)"
-		sudo-helper -- sysctl vm.swappiness=60
+		eval-helper --elevate --sysctl vm.swappiness=60
 		echo-style --success="Uninstall complete. Reboot to fully disable zram."
 		return 0
 		;;
 	'setup')
 		# Linux only
-		if ! is-linux; then
+		if ! is-system --linux; then
 			echo-style --error="setup-linux-cache is only supported on Linux"
 			return 1
 		fi
@@ -102,7 +102,7 @@ function setup_linux_cache() (
 		# Configure zram-generator
 		echo-style --h2="Configuring zram-generator"
 		local zram_conf="/etc/systemd/zram-generator.conf"
-		sudo-helper -- tee "$zram_conf" >/dev/null <<-EOF
+		eval-helper --elevate --tee "$zram_conf" >/dev/null <<-EOF
 			[zram0]
 			zram-size = $ZRAM_SIZE_MB
 			compression-algorithm = $COMPRESSION_ALGO
@@ -114,7 +114,7 @@ function setup_linux_cache() (
 		# Configure swappiness
 		echo-style --h2="Configuring swappiness"
 		local sysctl_conf="/etc/sysctl.d/99-zram-swappiness.conf"
-		sudo-helper -- tee "$sysctl_conf" >/dev/null <<-EOF
+		eval-helper --elevate --tee "$sysctl_conf" >/dev/null <<-EOF
 			# Swappiness for zram - high value is optimal since zram is RAM-backed
 			# zram compresses memory in RAM, so aggressive swapping is efficient
 			vm.swappiness = $SWAPPINESS
@@ -126,13 +126,13 @@ function setup_linux_cache() (
 		for old_conf in /etc/sysctl.d/99-swappiness.conf /etc/sysctl.d/99swappiness.conf; do
 			if [[ -f "$old_conf" && "$old_conf" != "$sysctl_conf" ]]; then
 				echo-style --dim="Removing old config: $old_conf"
-				sudo-helper -- rm -f "$old_conf"
+				eval-helper --elevate --rm -f "$old_conf"
 			fi
 		done
 
 		# Apply sysctl changes
 		echo-style --h2="Applying sysctl settings"
-		sudo-helper -- sysctl --system >/dev/null
+		eval-helper --elevate --sysctl --system >/dev/null
 		echo-style --dim="vm.swappiness = $(cat /proc/sys/vm/swappiness)"
 
 		# Summary

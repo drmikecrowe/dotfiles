@@ -26,7 +26,7 @@ load_env_file() {
 load_env_file ~/.config/dorothy/config/environment.env
 
 # 1password variables
-load_env_file ~/.config/dorothy/config.local/1password.env
+# load_env_file ~/.config/dorothy/config.local/1password.env
 
 alias ..='cd ..'
 alias ...='cd ../..'

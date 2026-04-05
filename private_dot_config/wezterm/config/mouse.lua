@@ -11,6 +11,18 @@ config.mouse_bindings = {
       action = act.Nop,
    },
 
+   -- Double-click and triple-click: complete selection to primary only (not clipboard)
+   {
+      event = { Up = { streak = 2, button = 'Left' } },
+      mods = 'NONE',
+      action = act.CompleteSelection('PrimarySelection'),
+   },
+   {
+      event = { Up = { streak = 3, button = 'Left' } },
+      mods = 'NONE',
+      action = act.CompleteSelection('PrimarySelection'),
+   },
+
    -- and make CTRL-Click open hyperlinks
    {
       event = { Up = { streak = 1, button = 'Left' } },

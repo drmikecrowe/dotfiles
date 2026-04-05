@@ -69,13 +69,6 @@ wrangler = "latest"
 "npm:openskills" = "latest"
 "npm:@mariozechner/pi-coding-agent" = "latest"
 
-# === Python CLI tools (via pipx:) ===
-# Libraries (PyYAML, requests, etc.) belong in per-project envs, not here
-"pipx:textual" = "latest"
-"pipx:mdformat" = "latest"
-"pipx:copier" = "latest"
-"pipx:marimo" = "latest"
-
 # === Other tools ===
 "github:abhinav/git-spice" = { version = "latest", exe = "gs" }
 "github:steveyegge/beads" = "latest"

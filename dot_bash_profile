@@ -3,4 +3,3 @@
 #
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
-# Dorothy is now sourced in .bashrc

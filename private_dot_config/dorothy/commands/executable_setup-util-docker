@@ -126,7 +126,7 @@ function setup_util_docker() (
 			--failure="$(__print_style --error="Failed to correct permissions.")" -- \
 			add_permissions_to_config
 
-		if is-linux; then
+		if is-system --linux; then
 			eval_helper --quiet --no-wrap --shapeshifter \
 				--pending="$(__print_style --bold="Restarting $service_title...")" \
 				--success="$(__print_style --success="Restarted $service_title.")" \
@@ -151,7 +151,7 @@ function setup_util_docker() (
 	# =====================================
 	# Installation
 
-	if is-mac; then
+	if is-system --macos; then
 		setup-util "${util[@]}" --app="$service_app" CASK='docker'
 		while __command_missing -- docker; do
 			__print_style --newline \
@@ -162,10 +162,10 @@ function setup_util_docker() (
 		done
 		do_checks
 
-	elif is-linux; then
+	elif is-system --linux; then
 		if [[ $action == 'uninstall' ]]; then
 			# Uninstall docker packages
-			if is-arch; then
+			if is-system --arch; then
 				eval-helper --elevate -- pacman -Rs --noconfirm docker docker-compose docker-buildx || :
 			fi
 			service-helper --remove -- "${service_ids[@]}" || :
@@ -177,7 +177,7 @@ function setup_util_docker() (
 			__print_style --success="$service_title already installed."
 		else
 			# For Arch/Manjaro, use pacman directly
-			if is-arch; then
+			if is-system --arch; then
 				__print_style --bold="Installing Docker via pacman..."
 				eval-helper --elevate -- pacman -Sy --noconfirm --needed docker docker-compose docker-buildx
 
