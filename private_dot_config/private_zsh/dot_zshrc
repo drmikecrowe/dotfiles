@@ -17,4 +17,4 @@ precmd_functions=(${precmd_functions:#_p9k_*})
 preexec_functions=(${preexec_functions:#_p9k_*})
 # Undefine p10k functions completely
 unfunction _p9k_precmd _p9k_do_nothing 2>/dev/null
-source '/home/mcrowe/.local/share/dorothy/init.sh' # Dorothy
+source "$HOME/.local/share/dorothy/init.sh" # Dorothy
