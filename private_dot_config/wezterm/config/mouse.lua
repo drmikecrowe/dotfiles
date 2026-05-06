@@ -4,11 +4,11 @@ local config = {}
 
 config.mouse_bindings = {
    -- Change the default click behavior so that it only selects
-   -- text and doesn't open hyperlinks
+   -- text and doesn't open hyperlinks (Nop blocked mouse reporting to tmux)
    {
       event = { Up = { streak = 1, button = 'Left' } },
       mods = 'NONE',
-      action = act.Nop,
+      action = act.CompleteSelection('PrimarySelection'),
    },
 
    -- Double-click and triple-click: complete selection to primary only (not clipboard)
