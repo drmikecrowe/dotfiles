@@ -1,9 +1,9 @@
 -- Enabled LSP servers for mcrowe's configuration
 local my_servers = {
   "bashls",
-  "lua_ls", 
+  "lua_ls",
   "basedpyright",
-  "ruff_lsp",
+  "ruff",
   "gopls",
   "vtsls",
   "denols",

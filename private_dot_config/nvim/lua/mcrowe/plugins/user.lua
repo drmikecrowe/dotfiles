@@ -3,16 +3,18 @@
 
 ---@type LazySpec
 return {
-  -- Custom plugins
-  "augmentcode/augment.vim",
-  "andweeb/presence.nvim",
   {
-    "ray-x/lsp_signature.nvim",
-    event = "BufRead",
-    config = function() require("lsp_signature").setup() end,
+    "AstroNvim/astrocore",
+    opts = {
+      rooter = {
+        autochdir = true,
+      },
+    },
   },
-
+  -- Custom plugins
+  "andweeb/presence.nvim",
   -- Plugin overrides
+  { "stevearc/aerial.nvim", version = false }, -- AstroNvim pins ^2.2 but v3+ fixes nvim 0.12 treesitter compat
   { "folke/snacks.nvim", enabled = false },
   { "max397574/better-escape.nvim", enabled = false },
 
@@ -77,6 +79,11 @@ return {
         -- TODO
         hijack_netrw_behavior = "open_current",
         use_libuv_file_watcher = true,
+        window = {
+          mappings = {
+            ["."] = "toggle_hidden",
+          },
+        },
       },
       event_handlers = {
         {

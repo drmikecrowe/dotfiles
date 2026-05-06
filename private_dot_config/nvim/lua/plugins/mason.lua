@@ -15,8 +15,8 @@ return {
         -- Language Servers
         "lua-language-server", -- Lua LSP
         "bash-language-server", -- Bash LSP
-        "basedpyright", -- Python LSP
-        "ruff-lsp", -- Python linter/formatter LSP
+        -- basedpyright: managed by mise (npm:basedpyright)
+        -- ruff-lsp: deprecated; use ruff server (managed by mise)
         "gopls", -- Go LSP
         "vtsls", -- TypeScript/JavaScript LSP (faster than tsserver)
         "svelte-language-server", -- Svelte LSP
@@ -29,7 +29,7 @@ return {
         "dockerfile-language-server", -- Docker LSP
         -- "docker-compose-language-service", -- Docker Compose LSP
         -- "terraformls",               -- Terraform LSP
-        -- "tflint",                    -- Terraform linter
+        -- tflint: removed (rarely use terraform)
         "marksman", -- Markdown LSP
         "emmet-ls", -- Emmet LSP
 
@@ -37,13 +37,13 @@ return {
         "stylua", -- Lua formatter
         "prettierd", -- JavaScript/TypeScript/JSON/CSS/HTML formatter
         "shfmt", -- Shell script formatter
-        "ruff", -- Python formatter
+        -- ruff: managed by mise
         "gofumpt", -- Go formatter (alternative to gofmt)
         -- "terraform-fmt",             -- Terraform formatter
 
         -- Linters
         "selene", -- Lua linter
-        "shellcheck", -- Shell script linter
+        -- shellcheck: managed by pacman
         "hadolint", -- Dockerfile linter
         "eslint_d", -- JavaScript/TypeScript linter (fast)
         "markdownlint", -- Markdown linter
@@ -56,7 +56,7 @@ return {
 
         -- Additional Tools
         "tree-sitter-cli", -- Tree-sitter CLI
-        "taplo", -- TOML toolkit
+        -- taplo: managed by pacman
       },
     },
   },

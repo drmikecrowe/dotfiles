@@ -17,9 +17,7 @@ return {
       null_ls.builtins.formatting.stylua,
       null_ls.builtins.diagnostics.selene,
 
-      -- Python
-      null_ls.builtins.formatting.ruff_format,
-      null_ls.builtins.diagnostics.ruff,
+      -- Python (ruff formatting/diagnostics handled by ruff LSP via Mason)
 
       -- JavaScript/TypeScript/JSON/CSS/HTML/Markdown
       null_ls.builtins.formatting.prettierd.with {
@@ -43,9 +41,8 @@ return {
         },
       },
 
-      -- Shell scripts
+      -- Shell scripts (shellcheck diagnostics handled by bash-language-server via Mason)
       null_ls.builtins.formatting.shfmt,
-      null_ls.builtins.diagnostics.shellcheck,
 
       -- Go
       null_ls.builtins.formatting.gofumpt,
@@ -61,8 +58,7 @@ return {
       -- Markdown
       null_ls.builtins.diagnostics.markdownlint,
 
-      -- TOML
-      null_ls.builtins.formatting.taplo,
+      -- TOML (taplo formatting handled by taplo LSP via Mason)
 
       -- Code actions
       null_ls.builtins.code_actions.gitsigns,

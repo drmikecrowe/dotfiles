@@ -46,7 +46,7 @@ return {
       timeout_ms = 3000, -- increased timeout for slower formatters
     },
     -- enable servers that you already have installed without mason
-    servers = {},
+    servers = { "basedpyright", "ruff" },
     -- customize language server configuration options passed to `lspconfig`
     config = {
       -- Lua LSP configuration
@@ -84,8 +84,8 @@ return {
           },
         },
       },
-      -- Ruff LSP configuration (Python linting/formatting)
-      ruff_lsp = {
+      -- Ruff LSP configuration (Python linting/formatting via `ruff server`)
+      ruff = {
         init_options = {
           settings = {
             args = {
@@ -178,7 +178,7 @@ return {
     -- A custom `on_attach` function to be run after the default `on_attach` function
     on_attach = function(client, bufnr)
       -- Configure specific client capabilities
-      if client.name == "ruff_lsp" then
+      if client.name == "ruff" then
         -- Disable hover in favor of basedpyright
         client.server_capabilities.hoverProvider = false
       end

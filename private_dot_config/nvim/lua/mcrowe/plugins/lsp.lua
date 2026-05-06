@@ -20,11 +20,10 @@ return {
         lua_ls = {},
         basedpyright = {},
         ruff = {},
-        ruff_lsp = {},
         svelte = {},
         tailwindcss = {},
         tflint = {},
-        tsserver = {},
+        vtsls = {},
         volar = {}, -- Vue language server
         yamlls = {},
       })
@@ -38,11 +37,10 @@ return {
         "lua_ls",
         "basedpyright",
         "ruff",
-        "ruff_lsp",
         "svelte",
         "tailwindcss",
         "tflint",
-        "tsserver",
+        "vtsls",
         "volar",
         "yamlls",
       })
