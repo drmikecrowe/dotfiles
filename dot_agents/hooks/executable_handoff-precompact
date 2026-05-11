@@ -1,27 +1,87 @@
 #!/usr/bin/env bash
 # PreCompact hook — auto-synthesize handoff JSON before compaction.
-# Runs synchronously, blocks compact until done. Timeout 60s.
+# Runs synchronously, blocks compact until done. Timeout configurable (default 120s).
 # Input: JSON on stdin with transcript_path + cwd.
 # Output: writes <cwd>/docs/handoff-context.md, exits 0 to continue compact.
-# Fallback: if claude -p fails/times out, writes raw transcript tail so
-# next session still has something to resume from.
+# Fallback: if all providers fail, writes raw transcript tail.
+#
+# Provider selection (first wins):
+#   1. HANDOFF_PROVIDER / HANDOFF_MODEL / HANDOFF_BASE_URL env vars
+#   2. ~/.agents/config.yaml [handoff] section
+#   3. Auto-detect: claude CLI → ollama → raw fallback
 
 set -uo pipefail
 # shellcheck source=/dev/null
 source "$(dirname "$0")/lib-log.sh"
 
-INPUT=$(cat)
-TRANSCRIPT=$(printf '%s' "$INPUT" | jq -r '.transcript_path // empty' 2>/dev/null)
-CWD=$(printf '%s' "$INPUT" | jq -r '.cwd // "."' 2>/dev/null)
+# ── Config resolution ─────────────────────────────────────────────────────────
 
-if [[ -z "${TRANSCRIPT:-}" || ! -f "$TRANSCRIPT" ]]; then exit 0; fi
-[[ -z "${CWD:-}" ]] && CWD="."
+CONFIG_FILE="$HOME/.agents/config.json"
+
+# Read a key from config.json handoff section. Returns empty if missing/unparseable.
+config_get() {
+  local key="$1"
+  if [[ -f "$CONFIG_FILE" ]]; then
+    jq -r ".handoff.${key} // empty" "$CONFIG_FILE" 2>/dev/null
+  fi
+}
+
+# Resolve setting: env var → config file → default
+resolve() {
+  local env_name="$1" config_key="$2" default="$3"
+  local val="${!env_name:-}"
+  if [[ -z "$val" ]]; then
+    val="$(config_get "$config_key")"
+  fi
+  printf '%s' "${val:-$default}"
+}
+
+INPUT=$(cat)
+
 log_setup "handoff-precompact"
+log_op "stdin keys: $(printf '%s' "$INPUT" | jq -r 'keys | join(", ")' 2>/dev/null || echo 'non-JSON or empty')"
+
+# Support Claude Code (transcript_path/cwd) and GSD alternate field names
+TRANSCRIPT=$(printf '%s' "$INPUT" | jq -r '.transcript_path // .session_path // .transcript // empty' 2>/dev/null)
+CWD=$(printf '%s' "$INPUT" | jq -r '.cwd // .working_dir // .project_path // "."' 2>/dev/null)
+
+log_op "resolved: TRANSCRIPT=${TRANSCRIPT:-empty} CWD=${CWD:-empty}"
+
+if [[ -z "${TRANSCRIPT:-}" || ! -f "$TRANSCRIPT" ]]; then
+  log_op "SKIP: no valid transcript found"
+  exit 0
+fi
+[[ -z "${CWD:-}" ]] && CWD="."
 
 mkdir -p "$CWD/docs"
 OUT="$CWD/docs/handoff-context.md"
 
-PROMPT='You are generating a session handoff for the NEXT Claude Code session. Read the transcript provided below. Output STRICT JSON ONLY — no preamble, no prose, no markdown fences, no commentary. Schema:
+# Resolve provider config
+PROVIDER="$(resolve HANDOFF_PROVIDER provider '')"
+MODEL="$(resolve HANDOFF_MODEL model '')"
+BASE_URL="$(resolve HANDOFF_BASE_URL base_url '')"
+API_KEY_ENV="$(resolve HANDOFF_API_KEY_ENV api_key_env 'OPENAI_API_KEY')"
+TIMEOUT_SECS="$(resolve HANDOFF_TIMEOUT timeout '120')"
+
+# Auto-detect provider if not configured
+if [[ -z "$PROVIDER" ]]; then
+  if command -v claude >/dev/null 2>&1; then
+    PROVIDER="claude"
+    MODEL="${MODEL:-claude-sonnet-4-6}"
+  elif curl -sf http://localhost:11434/api/tags >/dev/null 2>&1; then
+    PROVIDER="ollama"
+    MODEL="${MODEL:-qwen2.5-coder:7b}"
+    BASE_URL="${BASE_URL:-http://localhost:11434}"
+  else
+    PROVIDER="none"
+  fi
+fi
+
+log_op "provider=$PROVIDER model=$MODEL base_url=${BASE_URL:-none} timeout=${TIMEOUT_SECS}s"
+
+# ── Prompt ────────────────────────────────────────────────────────────────────
+
+PROMPT='You are generating a session handoff for the NEXT agent session. Read the transcript provided below. Output STRICT JSON ONLY — no preamble, no prose, no markdown fences, no commentary. Schema:
 
 {
   "session_started": "ISO8601 best estimate",
@@ -38,45 +98,229 @@ PROMPT='You are generating a session handoff for the NEXT Claude Code session. R
 
 Rules: quote user rules verbatim, never paraphrase. Concrete not vague. Array order = execution order. Empty arrays ok. Must parse as valid JSON.'
 
-TIMEOUT_BIN=""
-if command -v gtimeout >/dev/null 2>&1; then TIMEOUT_BIN="gtimeout 60"
-elif command -v timeout >/dev/null 2>&1; then TIMEOUT_BIN="timeout 60"
-else TIMEOUT_BIN="perl -e \"alarm 60; exec @ARGV or die\" --"
-fi
+# ── Timeout helper ────────────────────────────────────────────────────────────
 
-run_with_claude() {
-  if ! command -v claude >/dev/null 2>&1; then
-    return 1
+wrap_timeout() {
+  local secs="$1"; shift
+  if command -v gtimeout >/dev/null 2>&1; then
+    gtimeout "$secs" "$@"
+  elif command -v timeout >/dev/null 2>&1; then
+    timeout "$secs" "$@"
+  else
+    perl -e "alarm $secs; exec @ARGV or die" -- "$@"
   fi
-  # Feed prompt + transcript tail (last ~200KB) via stdin.
+}
+
+# ── Prepare transcript payload ───────────────────────────────────────────────
+
+# Write transcript tail to a temp file once — never store in a shell variable.
+# Large shell variables hit ARG_MAX when passed to jq/printf/curl as arguments.
+TRANSCRIPT_TAIL_FILE="$(mktemp /tmp/handoff-tail-XXXXXX.jsonl)"
+# Strip non-UTF-8 bytes AND C0 control chars (0x00-0x08, 0x0B, 0x0C, 0x0E-0x1F).
+# Those are valid in jq's \u00xx escapes but rejected by strict API parsers (e.g. Synthetic).
+# Keep 0x09 (tab), 0x0A (LF), 0x0D (CR) — those are JSON-safe.
+if command -v iconv >/dev/null 2>&1; then
+  tail -c 200000 "$TRANSCRIPT" \
+    | iconv -f utf-8 -t utf-8 -c \
+    | tr -d '\000-\010\013\014\016-\037' \
+    > "$TRANSCRIPT_TAIL_FILE"
+else
+  tail -c 200000 "$TRANSCRIPT" \
+    | LC_ALL=C tr -cd '\011\012\015\040-\176' \
+    > "$TRANSCRIPT_TAIL_FILE"
+fi
+trap 'rm -f "$TRANSCRIPT_TAIL_FILE"' EXIT
+
+# ── Provider: Claude Code CLI ────────────────────────────────────────────────
+
+run_claude() {
+  if ! command -v claude >/dev/null 2>&1; then return 1; fi
+  local model="${MODEL:-claude-sonnet-4-6}"
+  log_op "trying claude -p (model=$model)"
   {
     printf '%s\n\nTRANSCRIPT (JSONL, newest last):\n' "$PROMPT"
-    tail -c 200000 "$TRANSCRIPT"
-  } | eval "$TIMEOUT_BIN claude -p --bare --model claude-sonnet-4-6 --output-format text" > "$OUT.tmp" 2>/dev/null
+    cat "$TRANSCRIPT_TAIL_FILE"
+  } | wrap_timeout "$TIMEOUT_SECS" claude -p --model "$model" --output-format text \
+    > "$OUT.tmp" 2>>"$LOG_FULL"
+  validate_and_commit
+}
 
-  # Validate output parses as JSON.
+# ── Provider: OpenAI-compatible ──────────────────────────────────────────────
+
+run_openai() {
+  local base_url="${BASE_URL:-https://api.openai.com/v1}"
+  local model="${MODEL:-gpt-4o-mini}"
+  local api_key="${!API_KEY_ENV:-}"
+
+  if [[ -z "$api_key" ]]; then
+    log_op "SKIP openai: \$$API_KEY_ENV not set"
+    return 1
+  fi
+
+  log_op "trying openai-compatible (model=$model base=$base_url)"
+
+  # Write content to a temp file — avoids large shell variables and ARG_MAX limits.
+  # jq --rawfile reads it directly, sidestepping any encoding issues.
+  local content_file payload_file status_file
+  content_file="$(mktemp /tmp/handoff-content-XXXXXX.txt)"
+  payload_file="$(mktemp /tmp/handoff-payload-XXXXXX.json)"
+  status_file="$(mktemp /tmp/handoff-status-XXXXXX)"
+
+  printf '%s\n\nTRANSCRIPT (JSONL, newest last):\n' "$PROMPT" > "$content_file"
+  cat "$TRANSCRIPT_TAIL_FILE" >> "$content_file"
+
+  # Use jq -Rs . to encode the entire content as a properly escaped JSON string,
+  # write it to a file, then use --slurpfile to load it into the payload build.
+  # This avoids passing large strings as shell arguments (ARG_MAX issue).
+  local content_json_file
+  content_json_file="$(mktemp /tmp/handoff-contentjson-XXXXXX.json)"
+
+  if ! jq -Rs . < "$content_file" > "$content_json_file" 2>>"$LOG_FULL"; then
+    log_op "openai: content JSON encoding failed"
+    rm -f "$content_file" "$content_json_file" "$payload_file" "$status_file"
+    return 1
+  fi
+  rm -f "$content_file"
+
+  # --slurpfile wraps the file content in an array; use .[0] to unwrap.
+  if ! jq -n --arg model "$model" --slurpfile content "$content_json_file" '{
+    model: $model,
+    messages: [{role: "user", content: $content[0]}],
+    temperature: 0.3,
+    max_tokens: 4096
+  }' > "$payload_file" 2>>"$LOG_FULL"; then
+    log_op "openai: jq payload build failed"
+    rm -f "$content_json_file" "$payload_file" "$status_file"
+    return 1
+  fi
+  rm -f "$content_json_file"
+
+  # Verify the payload is valid JSON before sending — catches encoding issues
+  # (non-UTF-8 bytes can slip through jq --rawfile and produce invalid output).
+  if ! jq empty < "$payload_file" >/dev/null 2>&1; then
+    log_op "openai: payload failed JSON validation (size=$(wc -c < "$payload_file"))"
+    rm -f "$payload_file" "$status_file"
+    return 1
+  fi
+
+  # curl: body → OUT.tmp, HTTP status code → status_file
+  wrap_timeout "$TIMEOUT_SECS" curl -s \
+    -o "$OUT.tmp" \
+    -w '%{http_code}' \
+    "${base_url}/chat/completions" \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer $api_key" \
+    --data-binary "@${payload_file}" \
+    2>>"$LOG_FULL" > "$status_file"
+
+  local http_status payload_size
+  http_status="$(cat "$status_file")"
+  payload_size="$(wc -c < "$payload_file" 2>/dev/null || echo '?')"
+  rm -f "$payload_file" "$status_file"
+
+  if [[ "$http_status" != "200" ]]; then
+    log_op "openai HTTP $http_status (payload=${payload_size}B): $(head -c 300 "$OUT.tmp" 2>/dev/null || echo 'no body')"
+    rm -f "$OUT.tmp"
+    return 1
+  fi
+
+  jq -r '.choices[0].message.content // empty' < "$OUT.tmp" > "$OUT.tmp2" 2>>"$LOG_FULL" \
+    && mv "$OUT.tmp2" "$OUT.tmp"
+
+  validate_and_commit
+}
+
+# ── Provider: Ollama ─────────────────────────────────────────────────────────
+
+run_ollama() {
+  local base_url="${BASE_URL:-http://localhost:11434}"
+  local model="${MODEL:-qwen2.5-coder:7b}"
+
+  # Quick liveness check
+  if ! curl -sf "${base_url}/api/tags" >/dev/null 2>&1; then
+    log_op "SKIP ollama: not reachable at $base_url"
+    return 1
+  fi
+
+  log_op "trying ollama (model=$model base=$base_url)"
+
+  local content_file payload_file
+  content_file="$(mktemp /tmp/handoff-content-XXXXXX.txt)"
+  payload_file="$(mktemp /tmp/handoff-payload-XXXXXX.json)"
+
+  printf '%s\n\nTRANSCRIPT (JSONL, newest last):\n' "$PROMPT" > "$content_file"
+  cat "$TRANSCRIPT_TAIL_FILE" >> "$content_file"
+
+  local content_json_file
+  content_json_file="$(mktemp /tmp/handoff-contentjson-XXXXXX.json)"
+
+  if ! jq -Rs . < "$content_file" > "$content_json_file" 2>>"$LOG_FULL"; then
+    log_op "ollama: content JSON encoding failed"
+    rm -f "$content_file" "$content_json_file" "$payload_file"
+    return 1
+  fi
+  rm -f "$content_file"
+
+  if ! jq -n --arg model "$model" --slurpfile content "$content_json_file" '{
+    model: $model,
+    messages: [{role: "user", content: $content[0]}],
+    stream: false,
+    options: {temperature: 0.3}
+  }' > "$payload_file" 2>>"$LOG_FULL"; then
+    log_op "ollama: jq payload build failed"
+    rm -f "$content_json_file" "$payload_file"
+    return 1
+  fi
+  rm -f "$content_json_file"
+
+  wrap_timeout "$TIMEOUT_SECS" curl -sf "${base_url}/api/chat" \
+    -H "Content-Type: application/json" \
+    --data-binary "@${payload_file}" \
+    | jq -r '.message.content // empty' > "$OUT.tmp" 2>>"$LOG_FULL"
+  rm -f "$payload_file"
+
+  validate_and_commit
+}
+
+# ── Validation ────────────────────────────────────────────────────────────────
+
+validate_and_commit() {
   if [[ -s "$OUT.tmp" ]] && jq empty < "$OUT.tmp" >/dev/null 2>&1; then
     mv "$OUT.tmp" "$OUT"
-    log_op "claude synthesis OK: $OUT"
+    log_op "synthesis OK ($PROVIDER): $OUT"
     return 0
   fi
   rm -f "$OUT.tmp"
+  log_op "synthesis failed ($PROVIDER): output missing or invalid JSON"
   return 1
 }
 
+# ── Fallback: raw transcript dump ────────────────────────────────────────────
+
 fallback_raw_dump() {
+  log_op "all providers failed, writing raw transcript tail"
   {
-    printf '{"status":"HANDOFF_AUTO_PARTIAL","note":"claude -p unavailable or failed; raw transcript tail below. Manual /handoff recommended.","transcript_path":"%s","generated_at":"%s"}\n' \
-      "$TRANSCRIPT" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    printf '{"status":"HANDOFF_AUTO_PARTIAL","note":"all synthesis providers failed; raw transcript tail below. Manual /handoff recommended.","transcript_path":"%s","generated_at":"%s","providers_tried":"%s"}\n' \
+      "$TRANSCRIPT" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$PROVIDER"
     printf '\n---RAW_TRANSCRIPT_TAIL---\n'
     tail -c 50000 "$TRANSCRIPT"
   } > "$OUT"
 }
 
+# ── Main: try providers ──────────────────────────────────────────────────────
+
 log_op "synthesizing handoff: $TRANSCRIPT → $OUT"
-if ! run_with_claude; then
-  log_op "claude failed, using raw fallback"
-  fallback_raw_dump
-fi
+
+case "$PROVIDER" in
+  claude)   run_claude || fallback_raw_dump ;;
+  openai)   run_openai || fallback_raw_dump ;;
+  ollama)   run_ollama || fallback_raw_dump ;;
+  none)     log_op "no provider available"; fallback_raw_dump ;;
+  *)
+    log_op "unknown provider: $PROVIDER"
+    # Try them all in order
+    run_claude || run_openai || run_ollama || fallback_raw_dump
+    ;;
+esac
 
 exit 0
