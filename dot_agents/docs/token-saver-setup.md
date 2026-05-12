@@ -1,6 +1,6 @@
 # Project MCP + Hook Setup for Claude Code / GSD
 
-Reference project: `/home/mcrowe/Programming/MikKelTech/mw-poc/main`
+> **Note on JSON paths:** JSON does not expand `~` or `$HOME`. For `.mcp.json` entries, replace `~` with your actual home directory, or use `$HOME` if your shell preprocesses the file. Get your mise node binary path with: `mise exec -- which node`
 
 ---
 
@@ -33,31 +33,31 @@ Add to every new project. Swap `--project` / `cwd` / `GSD_WORKFLOW_PROJECT_ROOT`
       "env": {}
     },
     "gsd-workflow": {
-      "command": "/home/mcrowe/.local/share/mise/installs/node/22.22.2/bin/node",
+      "command": "~/.local/share/mise/installs/node/22.x.x/bin/node",
       "args": [
-        "/home/mcrowe/.local/share/mise/installs/node/22.22.2/lib/node_modules/gsd-pi/packages/mcp-server/dist/cli.js"
+        "~/.local/share/mise/installs/node/22.x.x/lib/node_modules/gsd-pi/packages/mcp-server/dist/cli.js"
       ],
       "cwd": "/PATH/TO/PROJECT",
       "env": {
-        "GSD_CLI_PATH": "/home/mcrowe/.local/share/mise/installs/node/22/bin/gsd",
-        "GSD_WORKFLOW_EXECUTORS_MODULE": "/home/mcrowe/.gsd/agent/extensions/gsd/tools/workflow-tool-executors.js",
-        "GSD_WORKFLOW_WRITE_GATE_MODULE": "/home/mcrowe/.gsd/agent/extensions/gsd/bootstrap/write-gate.js",
+        "GSD_CLI_PATH": "~/.local/share/mise/installs/node/22/bin/gsd",
+        "GSD_WORKFLOW_EXECUTORS_MODULE": "~/.gsd/agent/extensions/gsd/tools/workflow-tool-executors.js",
+        "GSD_WORKFLOW_WRITE_GATE_MODULE": "~/.gsd/agent/extensions/gsd/bootstrap/write-gate.js",
         "GSD_PERSIST_WRITE_GATE_STATE": "1",
         "GSD_WORKFLOW_PROJECT_ROOT": "/PATH/TO/PROJECT"
       }
     },
     "codebase-memory-mcp": {
       "type": "stdio",
-      "command": "/home/mcrowe/.local/bin/codebase-memory-mcp",
+      "command": "~/.local/bin/codebase-memory-mcp",
       "args": ["--project-root", "/PATH/TO/PROJECT"]
     },
     "headroom": {
       "type": "stdio",
-      "command": "/home/mcrowe/.local/share/uv/tools/headroom-ai/bin/headroom",
+      "command": "~/.local/share/uv/tools/headroom-ai/bin/headroom",
       "args": ["mcp", "serve"]
     },
     "context-mode": {
-      "command": "/home/mcrowe/.local/share/mise/installs/node/22/bin/context-mode"
+      "command": "~/.local/share/mise/installs/node/22/bin/context-mode"
     }
   }
 }
@@ -87,23 +87,23 @@ Includes all four context-mode hooks (pretooluse, posttooluse, precompact, sessi
       },
       {
         "matcher": "Read|Bash|Grep|Glob|WebFetch|Agent",
-        "hooks": [{ "type": "command", "command": "/home/mcrowe/.local/share/mise/installs/node/22.22.2/lib/node_modules/context-mode/hooks/pretooluse.mjs" }]
+        "hooks": [{ "type": "command", "command": "~/.local/share/mise/installs/node/22.x.x/lib/node_modules/context-mode/hooks/pretooluse.mjs" }]
       }
     ],
     "PostToolUse": [
       {
         "matcher": "Bash|Read|Write|Edit|NotebookEdit|Glob|Grep|TodoWrite|Agent",
-        "hooks": [{ "type": "command", "command": "/home/mcrowe/.local/share/mise/installs/node/22.22.2/lib/node_modules/context-mode/hooks/posttooluse.mjs" }]
+        "hooks": [{ "type": "command", "command": "~/.local/share/mise/installs/node/22.x.x/lib/node_modules/context-mode/hooks/posttooluse.mjs" }]
       }
     ],
     "PreCompact": [
       {
-        "hooks": [{ "type": "command", "command": "/home/mcrowe/.local/share/mise/installs/node/22.22.2/lib/node_modules/context-mode/hooks/precompact.mjs" }]
+        "hooks": [{ "type": "command", "command": "~/.local/share/mise/installs/node/22.x.x/lib/node_modules/context-mode/hooks/precompact.mjs" }]
       }
     ],
     "SessionStart": [
       {
-        "hooks": [{ "type": "command", "command": "/home/mcrowe/.local/share/mise/installs/node/22.22.2/lib/node_modules/context-mode/hooks/sessionstart.mjs" }]
+        "hooks": [{ "type": "command", "command": "~/.local/share/mise/installs/node/22.x.x/lib/node_modules/context-mode/hooks/sessionstart.mjs" }]
       },
       {
         "matcher": "",
@@ -148,9 +148,9 @@ Includes all four context-mode hooks (pretooluse, posttooluse, precompact, sessi
 
 ## 3. `.claude/hooks/block-deploy.py`
 
-Copy from reference:
+Copy from a reference project:
 ```bash
-cp /home/mcrowe/Programming/MikKelTech/mw-poc/main/.claude/hooks/block-deploy.py .claude/hooks/block-deploy.py
+cp /PATH/TO/REFERENCE/PROJECT/.claude/hooks/block-deploy.py .claude/hooks/block-deploy.py
 ```
 
 Blocks: bare `pulumi` calls, `mise run deploy/*` tasks, direct AWS CLI mutations. Exit 2 = blocked.
@@ -184,7 +184,7 @@ GSD uses a **different hook schema** than Claude Code (flat `command`, `match.to
         "timeout": 30000
       },
       {
-        "command": "bash /home/mcrowe/Programming/AI/precompact-hook/pre-compact.sh",
+        "command": "bash /PATH/TO/precompact-hook/pre-compact.sh",
         "timeout": 90000
       }
     ],
