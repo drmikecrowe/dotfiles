@@ -18,3 +18,11 @@ preexec_functions=(${preexec_functions:#_p9k_*})
 # Undefine p10k functions completely
 unfunction _p9k_precmd _p9k_do_nothing 2>/dev/null
 source "$HOME/.local/share/dorothy/init.sh" # Dorothy
+
+# pnpm
+export PNPM_HOME="/home/mcrowe/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end

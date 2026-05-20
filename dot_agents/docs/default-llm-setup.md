@@ -46,24 +46,18 @@ opencode.json       ← OpenCode (project-level only; uses Serena --context open
 User prompt
     │
     ▼
-[Layer 1: Headroom]       API-layer compression before request leaves machine
-    │                     Binary: ~/.local/bin/headroom ✅ installed
-    │                     Missing: shell wrapper in ~/.zshrc ❌
-    │                     Repo: https://github.com/chopratejas/headroom
-    │                     NOTE: Headroom bundles RTK — no separate RTK install needed
-    ▼
-[Layer 2: context-mode]   Output virtualization — sandboxes large outputs ❌ not installed
-    │                     MCP server + CLI hook
+[Layer 1: context-mode]   Output virtualization — sandboxes large outputs
+    │                     MCP server + shim hook (~/.agents/shims/context-mode-*)
     │                     Repo: https://github.com/mksglu/context-mode
     ▼
-[Layer 3: RTK]            CLI output filtering — bundled in Headroom ✅ (via headroom)
+[Layer 2: RTK]            CLI output filtering — via rtk hook claude (PreToolUse Bash)
     ▼
-[Layer 4: Caveman]        Prose compression in agent responses ✅
+[Layer 3: Caveman]        Prose compression in agent responses ✅
     │                     Plugin: https://github.com/JuliusBrussee/caveman
     ▼
 Anthropic API
     ▼
-[Code Nav: CBM]           Knowledge graph for exploration ❌ not installed
+[Code Nav: CBM]           Knowledge graph for exploration ✅
     │                     Repo: https://github.com/DeusData/codebase-memory-mcp
 [Code Nav: Serena]        LSP precision for editing ✅
 ```
@@ -72,16 +66,7 @@ Anthropic API
 
 ## Tools to Install
 
-### T1: Headroom shell wrapper
-Repo: https://github.com/chopratejas/headroom  
-Binary already at `~/.local/bin/headroom`. **Bundles RTK** — no separate RTK install needed.
-
-```bash
-echo 'claude() { command headroom wrap claude "$@"; }' >> ~/.zshrc
-source ~/.zshrc
-```
-
-### T2: CBM (codebase-memory-mcp)
+### T1: CBM (codebase-memory-mcp)
 Repo: https://github.com/DeusData/codebase-memory-mcp
 ```bash
 npm install -g codebase-memory-mcp
@@ -100,15 +85,15 @@ Per-project setup (add to `.mcp.json` after installing):
 ```
 Then run once per project: `mcp__codebase-memory-mcp__index_repository`
 
-### T3: context-mode
+### T2: context-mode
 Repo: https://github.com/mksglu/context-mode  
-MCP server + CLI for output virtualization. Wired as both MCP server in `.mcp.json` and hook CLI:
+MCP server + CLI for output virtualization. Hooks wired via shims (see shims section):
+```bash
+npm install -g context-mode
+~/.agents/shims/generate.sh  # creates/updates shims
 ```
-context-mode hook claude-code pretooluse|posttooluse|precompact|sessionstart
-```
-Defer until T1+T2 confirmed working.
 
-### T4: Per-stack rule files
+### T3: Per-stack rule files
 From `claude-code-tips/rules/`. Copy to `~/.claude/rules/` — CC auto-loads `rules/*.md` as context for matching file types.
 ```bash
 mkdir -p ~/.claude/rules
@@ -424,16 +409,14 @@ Execute in this order — each phase is independently usable:
 | **P3** | Wire hooks into `~/.claude/settings.json` + add env vars | 1 edit |
 | **P4** | Wire hooks into `~/.pi/agent/settings.json` | 1 edit |
 | **P5** | Fix global configs: gsd PREFERENCES.md, skill symlinks, /handoff command, copy rules/ to ~/.claude/rules/ | 4–6 ops |
-| **P6** | Install headroom wrapper in `~/.zshrc` (RTK bundled, no extra install) | 1 line |
-| **P7** | Install CBM (`npm install -g codebase-memory-mcp`), test on one project | npm + .mcp.json |
-| **P8** | Update serena-init skill with CBM step + code-nav info | 1 skill edit |
+| **P6** | Install CBM (`npm install -g codebase-memory-mcp`), test on one project | npm + .mcp.json |
+| **P7** | Install context-mode (`npm install -g context-mode`), run `~/.agents/shims/generate.sh` | npm + shims |
+| **P8** | Update serena-init with CBM step + code-nav info + final claude setup step | 1 script edit |
 | **P9** | Update AGENTS.md + CLAUDE.md with code navigation routing table | 2 edits |
-| **P10** | Investigate + install context-mode (or defer) | TBD |
 
 **P1–P4** deliver handoff hooks + navigation gate immediately.  
-**P5–P6** are housekeeping.  
-**P7–P9** complete the CBM integration.  
-**P10** is optional / deferred.
+**P5** is housekeeping.  
+**P6–P9** complete the CBM + context-mode integration.
 
 ---
 

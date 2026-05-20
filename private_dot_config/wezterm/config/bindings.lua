@@ -49,8 +49,7 @@ local keys = {
     { key = 'LeftArrow',  mods = 'CTRL|SUPER|ALT|SHIFT', action = 'DisableDefaultAssignment' },
     { key = 'RightArrow', mods = 'CTRL|SUPER|ALT|SHIFT', action = 'DisableDefaultAssignment' },
 
-    -- Trying kitty keyboard
-    -- { key = 'Enter', mods = 'SHIFT', action = wezterm.action({ SendString = '\x1b\r' }) },
+    { key = 'Enter', mods = 'SHIFT', action = wezterm.action({ SendString = '\x1b\r' }) },
     -- =====================
     -- 1. Leader (tmux-style) keys
     -- =====================

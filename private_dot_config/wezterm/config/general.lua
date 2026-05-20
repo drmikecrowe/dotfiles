@@ -1,5 +1,6 @@
 return {
-   enable_kitty_keyboard = true,
+   -- Disabled: kitty keyboard protocol breaks mouse drag selection (same CSI-u conflict as tmux)
+   enable_kitty_keyboard = false,
 
    -- behaviours
    automatically_reload_config = true,

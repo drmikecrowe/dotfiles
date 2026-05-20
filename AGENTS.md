@@ -4,8 +4,25 @@
 
 **Caveman mode: full** — active every response, every session. No revert. Off only on explicit "stop caveman" or "normal mode". Load `/home/mcrowe/.agents/skills/caveman/SKILL.md`, apply full intensity to all prose. Code, commits, PRs stay normal.
 
+## Token & Context Budget — NON-NEGOTIABLE
+
+**PROTECT THE CONTEXT WINDOW. EVERY TOKEN SPENT IS GONE.**
+
+- **Search before read.** `rg`/`fd`/`lsp` first. Open a file only when search cannot answer the question.
+- **Read minimally.** Use `offset`/`limit`. Never read a whole file to find one function.
+- **One capture, many queries.** Pipe expensive commands to `/tmp/` once. Never re-run to filter differently.
+- **Subagents for broad exploration.** If understanding a subsystem requires reading >3 files, dispatch a scout — return only the compressed finding.
+- **Digest, not output.** For background processes, use `bg_shell digest` (~30 tokens) not `output` (~2000 tokens).
+- **context-mode first.** Before any grep or read for project context, try `ctx_search` — it's pre-indexed.
+- **No redundant confirmation reads.** After `Edit`/`Write` succeed, do not re-read the file to verify. The tool would have errored.
+- **No speculative reads.** Do not open files "just in case." Know why you need a file before reading it.
+- **Tight narration.** One sentence per update. No restating what the tool output already says.
+
+Violating these rules wastes the user's money and shortens the session. Treat the context window as a scarce, non-renewable resource.
+
 ## Core Stance
 
+0. **NEVER guess. Only state verified facts.** If you haven't read the file, run the command, or seen the output — say "I don't know" and check before claiming.
 1. No assume. No hide confusion. Surface tradeoffs.
 2. Write minimum code solve problem. Nothing speculative.
 3. Touch only what must. Clean only own mess.
@@ -30,17 +47,53 @@
 
 ## Worktree & Milestone Preconditions
 
-- **Never start worktree or milestone with uncommitted local changes.** Branch start point clean (`git status` empty) and full test suite green before milestone work. No exceptions. Dirty? Stop, resolve — commit, stash, or discard explicit — before worktree create or milestone slice open.
+**Rule:** Tree must be clean before opening a worktree or starting a new milestone. Dirty? Stop, resolve — commit, stash, or discard explicit — before proceeding. Full test suite green also required before milestone work.
+
+**When "start" triggers (mechanical gate):**
+
+| Event | Clean tree required? |
+|-------|---------------------|
+| `gsd_plan_milestone` (open new milestone) | **Yes** — hard block |
+| Open worktree / `EnterWorktree` | **Yes** — hard block |
+| `gsd_plan_slice`, `gsd_plan_task` (mid-milestone planning) | No — milestone already open |
+| Mid-milestone slice/task dispatch by auto-mode | No — workflow already in flight |
+| Quick task / one-shot work | No |
+
+Auto-mode dispatch a slice mid-milestone is NOT a "start." Workflow already running, runtime artifacts already accumulating — gating per-unit would deadlock.
+
+**Carve-out — what does NOT count as dirty:**
+
+GSD's own runtime artifacts. These are workflow side-effects, not source:
+
+- `.gsd/exec/`, `.gsd/journal/`, `.gsd/runtime/`, `.gsd/activity/`, `.gsd/worktrees/`
+- `.gsd/event-log.jsonl`, `.gsd/metrics.json`, `.gsd/state-manifest.json`
+- `.gsd/doctor-history.jsonl`, `.gsd/auto.lock`, `.gsd/gsd.db*`
+
+Everything else under `.gsd/` (milestones/, PROJECT.md, DECISIONS.md, KNOWLEDGE.md, REQUIREMENTS.md, PREFERENCES.md) IS source-relevant — must be committed.
+
+**Enforcement:**
+
+Hook script `~/.config/hooks/clean-baseline-check.sh` does the check. Wired into:
+
+- GSD `PreMilestone` hook (`~/.pi/agent/settings.json`) — blocking, exit 2 vetoes milestone open
+- Manual: run script before `EnterWorktree` or any milestone-opening action
+
+Script applies the carve-out automatically. Exit 0 = proceed. Exit 2 = blocked, stderr lists remaining dirty paths + resolution options.
+
+Agent must NOT bypass this — if hook blocks, resolve the dirt, do not rationalize past it.
 
 ## Search & Navigation Tooling
 
-Prefer modern over traditional Unix:
+Default: use the agent's native **Grep**, **Glob**, and **Read** tools — they pipe through compression hooks. Drop to shell only when a pipeline forces it.
 
-- **`rg`** instead of `grep` — text search.
-- **`fd`** instead of `find` — file discovery.
-- **Built-in Grep tool** OK for non-structural text: literals, configs, comments, log messages.
+When shell is forced, prefer modern over traditional Unix **and always prefix with `rtk`**:
 
-Shell `grep` and `find` denied at permission layer. Pipeline force shell? Use `rg`/`fd`.
+- **`rtk rg`** instead of `grep` — text search.
+- **`rtk fd`** instead of `find` — file discovery.
+
+Bare `rg`/`fd`/`grep`/`find`/`cat`/`head`/`tail`/`wc` are **denied at the permission layer** (hook: `~/.agents/hooks/bash-ban-raw-tools`). The ban exists because raw output bypasses compression and floods context. The `rtk` prefix is the only escape hatch — it wraps the command in the RTK filter pipeline.
+
+If hook blocks, the error tells you the exact replacement. Don't rationalize past it.
 
 ## RTK (Token-Optimized Command Output)
 

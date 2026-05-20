@@ -25,6 +25,9 @@ end)
 ---@return config
 function config:append(new_options)
    for k, v in pairs(new_options) do
+      if k == 'mouse_bindings' or k == 'disable_default_mouse_bindings' then
+         wezterm.log_error('MOUSE DEBUG: setting key=' .. k .. ' value_type=' .. type(v))
+      end
       if self.options[k] ~= nil then
          wezterm.log_warn(
             'duplicate config option detected: ',

@@ -57,9 +57,10 @@ fi
 
 log_op "BLOCKED $FIRST"
 case "$FIRST" in
-  cat|head|tail) echo "BLOCKED '$FIRST'. Use the Read tool." >&2 ;;
-  find) echo "BLOCKED 'find'. Use the Glob tool." >&2 ;;
-  grep|rg) echo "BLOCKED '$FIRST'. Use the Grep tool." >&2 ;;
-  wc) echo "BLOCKED 'wc'. Use Read (line count visible) or rtk wc." >&2 ;;
+  cat|head|tail) echo "BLOCKED '$FIRST'. Use the Read tool, or 'rtk $FIRST ...' if a shell pipeline forces it." >&2 ;;
+  find) echo "BLOCKED 'find'. Use the Glob tool, or 'rtk fd ...' if a shell pipeline forces it." >&2 ;;
+  grep) echo "BLOCKED 'grep'. Use the Grep tool, or 'rtk rg ...' if a shell pipeline forces it." >&2 ;;
+  rg) echo "BLOCKED bare 'rg'. Must be 'rtk rg ...' — rtk wraps output through compression hooks. Bare rg floods context. (Or use the Grep tool from the agent.)" >&2 ;;
+  wc) echo "BLOCKED 'wc'. Use Read (line count visible) or 'rtk wc ...'." >&2 ;;
 esac
 exit 2

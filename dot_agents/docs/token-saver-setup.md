@@ -51,13 +51,8 @@ Add to every new project. Swap `--project` / `cwd` / `GSD_WORKFLOW_PROJECT_ROOT`
       "command": "~/.local/bin/codebase-memory-mcp",
       "args": ["--project-root", "/PATH/TO/PROJECT"]
     },
-    "headroom": {
-      "type": "stdio",
-      "command": "~/.local/share/uv/tools/headroom-ai/bin/headroom",
-      "args": ["mcp", "serve"]
-    },
     "context-mode": {
-      "command": "~/.local/share/mise/installs/node/22/bin/context-mode"
+      "command": "~/.agents/shims/context-mode-sessionstart"
     }
   }
 }

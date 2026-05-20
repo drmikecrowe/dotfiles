@@ -8,7 +8,7 @@ prepend_previewers = [
 
   # Markdown preview with glow
   # $w = width, $h = height, $1 = file path (provided by piper)
-  { name = "*.md", run = 'piper -- glow -s dark -w $w "$1"' },
+  { url = "*.md", run = 'piper -- glow -s dark -w $w "$1"' },
 
   # Archive preview with ouch
   { mime = "application/*zip", run = "ouch" },
@@ -19,15 +19,10 @@ prepend_previewers = [
   { mime = "application/x-xz", run = "ouch" },
 
   # Rich text preview (json, csv, etc. - NOT markdown since glow handles that)
-  { name = "*.csv", run = "rich-preview" },
-  { name = "*.rst", run = "rich-preview" },
-  { name = "*.ipynb", run = "rich-preview" },
-  { name = "*.json", run = "rich-preview" },
+  { url = "*.csv", run = "rich-preview" },
+  { url = "*.rst", run = "rich-preview" },
+  { url = "*.ipynb", run = "rich-preview" },
+  { url = "*.json", run = "rich-preview" },
   { mime = "application/json", run = "rich-preview" },
 ]
 
-# Fallback previewers - these run if nothing above matched
-append_previewers = [
-  # Hex previewer for binary/unknown files
-  { name = "*", run = "hexyl" },
-]
