@@ -1,0 +1,13 @@
+[Unit]
+Description=agentmemory server
+After=network.target
+
+[Service]
+ExecStart=/home/mcrowe/.local/share/mise/installs/node/22/bin/agentmemory
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
