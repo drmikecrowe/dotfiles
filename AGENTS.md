@@ -82,6 +82,18 @@ Script applies the carve-out automatically. Exit 0 = proceed. Exit 2 = blocked, 
 
 Agent must NOT bypass this — if hook blocks, resolve the dirt, do not rationalize past it.
 
+## Code Navigation Routing
+
+Gate enforced by hook — raw Read/Grep on source files blocked until MCP call made.
+
+| Task | Tool | Commands |
+|------|------|----------|
+| Exploration + precision | **Serena** | `search_graph`, `find_symbol`, `get_symbols_overview`, `replace_symbol_body` |
+| Session memory / decisions | **agentmemory** | `memory_smart_search` |
+| Non-code files (md, yaml, json, config) | **Read directly** | no gate |
+
+Escape gate (one session): `touch /tmp/nav-unlock-$PPID`
+
 ## Search & Navigation Tooling
 
 Default: use the agent's native **Grep**, **Glob**, and **Read** tools — they pipe through compression hooks. Drop to shell only when a pipeline forces it.

@@ -1,6 +1,6 @@
 #!/bin/bash
-# PreToolUse: block Grep/Glob/Read/Search on source until CBM or Serena MCP called.
-# Dual-unlock: mcp__codebase-memory-mcp__* OR mcp__serena__* sets the marker.
+# PreToolUse: block Grep/Glob/Read/Search on source until Serena or agentmemory MCP called.
+# Unlock: mcp__serena__* OR mcp__agentmemory__* sets the marker.
 set -euo pipefail
 # shellcheck source=/dev/null
 source "$(dirname "$0")/lib-log.sh"
@@ -49,8 +49,8 @@ log_op "BLOCKED $TOOL: $FP"
 cat >&2 << EOF
 BLOCKED: $TOOL on source file requires MCP call first.
 
-  Exploration (what/where/how):  CBM  → search_graph / trace_path / get_code_snippet
-  Precision   (known symbol):    Serena → find_symbol / get_symbols_overview
+  Exploration (what/where/how):  Serena → search_graph / find_symbol / get_symbols_overview
+  Session memory / decisions:    agentmemory → memory_smart_search
 
 Either MCP call unlocks Read/Grep for 120s.
 Override (this session): touch $UNLOCK

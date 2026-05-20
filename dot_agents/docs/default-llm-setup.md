@@ -57,33 +57,25 @@ User prompt
     ▼
 Anthropic API
     ▼
-[Code Nav: CBM]           Knowledge graph for exploration ✅
-    │                     Repo: https://github.com/DeusData/codebase-memory-mcp
-[Code Nav: Serena]        LSP precision for editing ✅
+[Code Nav: Serena]        LSP precision + exploration ✅
+[Memory: agentmemory]     Cross-session memory + decisions ✅
+    │                     Server: http://localhost:3111 (systemd: agentmemory.service)
+    │                     Repo: https://github.com/rohitg00/agentmemory
 ```
 
 ---
 
 ## Tools to Install
 
-### T1: CBM (codebase-memory-mcp)
-Repo: https://github.com/DeusData/codebase-memory-mcp
+### T1: agentmemory (cross-session memory)
+Repo: https://github.com/rohitg00/agentmemory
 ```bash
-npm install -g codebase-memory-mcp
+npm install -g @agentmemory/agentmemory
 ```
-Per-project setup (add to `.mcp.json` after installing):
-```json
-{
-  "mcpServers": {
-    "codebase-memory-mcp": {
-      "type": "stdio",
-      "command": "codebase-memory-mcp",
-      "args": ["--project-root", "/absolute/path/to/project"]
-    }
-  }
-}
-```
-Then run once per project: `mcp__codebase-memory-mcp__index_repository`
+Runs as systemd user service: `~/.config/systemd/user/agentmemory.service`
+MCP endpoint: `http://localhost:3111/mcp` (wired in `~/.claude/settings.json`)
+Import past transcripts: `agentmemory import-jsonl`
+Viewer: http://localhost:3113
 
 ### T2: context-mode
 Repo: https://github.com/mksglu/context-mode  
@@ -348,15 +340,11 @@ Serena and CBM must be in every project's `.mcp.json` for GSD sessions and code-
       "type": "stdio",
       "command": "/absolute/path/to/serena",
       "args": ["start-mcp-server", "--context", "claude-code", "--project", "/absolute/path/to/project"]
-    },
-    "codebase-memory-mcp": {
-      "type": "stdio",
-      "command": "codebase-memory-mcp",
-      "args": ["--project-root", "/absolute/path/to/project"]
     }
   }
 }
 ```
+Note: agentmemory MCP is global (wired in `~/.claude/settings.json`) — no per-project entry needed.
 
 **GSD local-only overrides** (paths/secrets, not committed): `.gsd/mcp.json` — same format, merged with `.mcp.json`, first definition wins.
 
@@ -364,16 +352,9 @@ Serena and CBM must be in every project's `.mcp.json` for GSD sessions and code-
 ```
 [ ] .mcp.json includes serena (required — GSD has no global MCP fallback)
 [ ] .mcp.json includes gsd-workflow
-[ ] .mcp.json includes codebase-memory-mcp (once T2 installed)
-[ ] After gsd init: run mcp__codebase-memory-mcp__index_repository
+[ ] agentmemory MCP is global — no per-project entry needed
 [ ] code-nav-gate + code-nav-marker already wired globally — no per-project hook changes needed
 ```
-
-### Update serena-init skill
-After existing 6 steps, add optional Step 7:
-- Check if `codebase-memory-mcp` in `.mcp.json`
-- If present: run `index_repository` and report
-- If absent: offer to add it
 
 ---
 
@@ -388,10 +369,9 @@ Gate enforced by hook — raw Read/Grep on source files blocked until MCP call m
 
 | Task | Tool | Commands |
 |------|------|----------|
-| Exploration — what/where/how, unfamiliar code | **CBM first** | `search_graph`, `trace_path`, `get_code_snippet` |
-| Precision — known symbol, editing, type info | **Serena first** | `find_symbol`, `get_symbols_overview`, `replace_symbol_body` |
+| Exploration + precision | **Serena** | `search_graph`, `find_symbol`, `get_symbols_overview`, `replace_symbol_body` |
+| Session memory / decisions | **agentmemory** | `memory_smart_search` |
 | Non-code files (md, yaml, json, config) | **Read directly** | no gate |
-| Ambiguous | CBM → escalate to Serena if insufficient | |
 
 Escape gate (one session): `touch /tmp/nav-unlock-$PPID`
 ```
@@ -409,9 +389,9 @@ Execute in this order — each phase is independently usable:
 | **P3** | Wire hooks into `~/.claude/settings.json` + add env vars | 1 edit |
 | **P4** | Wire hooks into `~/.pi/agent/settings.json` | 1 edit |
 | **P5** | Fix global configs: gsd PREFERENCES.md, skill symlinks, /handoff command, copy rules/ to ~/.claude/rules/ | 4–6 ops |
-| **P6** | Install CBM (`npm install -g codebase-memory-mcp`), test on one project | npm + .mcp.json |
+| **P6** | Install agentmemory (`npm install -g @agentmemory/agentmemory`), enable systemd unit | npm + systemd |
 | **P7** | Install context-mode (`npm install -g context-mode`), run `~/.agents/shims/generate.sh` | npm + shims |
-| **P8** | Update serena-init with CBM step + code-nav info + final claude setup step | 1 script edit |
+| **P8** | Wire agentmemory MCP in `~/.claude/settings.json`, update code-nav hooks | settings + 3 hooks |
 | **P9** | Update AGENTS.md + CLAUDE.md with code navigation routing table | 2 edits |
 
 **P1–P4** deliver handoff hooks + navigation gate immediately.  
@@ -539,7 +519,7 @@ EOF
 ├── .claude/settings.json              # Project CC hooks
 ├── .pi/settings.json                  # Project GSD hooks
 ├── .pi/hooks.trusted                  # Must exist
-├── .mcp.json                          # serena + gsd-workflow + codebase-memory-mcp
+├── .mcp.json                          # serena + gsd-workflow (agentmemory is global)
 ├── .gsd/                              # Workflow state
 ├── .agents/hooks/                     # Project-specific hook additions
 ├── .agents/skills/                    # Project-specific skills

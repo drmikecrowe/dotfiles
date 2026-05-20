@@ -1,7 +1,7 @@
 {
   "allowedTools": [
     "mcp__serena__*",
-    "mcp__codebase-memory-mcp__*"
+    "mcp__agentmemory__*"
   ],
   "editorMode": "vim",
   "enabledPlugins": {
@@ -131,15 +131,6 @@
       }
     ],
     "PreCompact": [
-      {
-        "hooks": [
-          {
-            "command": "bash /home/mcrowe/Programming/AI/precompact-hook/pre-compact.sh",
-            "timeout": 90,
-            "type": "command"
-          }
-        ]
-      },
       {
         "hooks": [
           {
@@ -277,6 +268,10 @@
   "mcpServers": {
     "serena": {
       "url": "http://127.0.0.1:8765/mcp"
+    },
+    "agentmemory": {
+      "type": "http",
+      "url": "http://localhost:3111/mcp"
     }
   },
   "model": "claude-sonnet-4-6",
