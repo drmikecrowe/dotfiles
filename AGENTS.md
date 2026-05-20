@@ -88,7 +88,8 @@ Gate enforced by hook — raw Read/Grep on source files blocked until MCP call m
 
 | Task | Tool | Commands |
 |------|------|----------|
-| Exploration + precision | **Serena** | `search_graph`, `find_symbol`, `get_symbols_overview`, `replace_symbol_body` |
+| Exploration — what/where/how, unfamiliar code | **CBM** | `search_graph`, `trace_path`, `get_code_snippet` |
+| Precision — known symbol, editing, type info | **Serena** | `find_symbol`, `get_symbols_overview`, `replace_symbol_body` |
 | Session memory / decisions | **agentmemory** | `memory_smart_search` |
 | Non-code files (md, yaml, json, config) | **Read directly** | no gate |
 

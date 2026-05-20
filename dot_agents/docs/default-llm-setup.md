@@ -57,7 +57,9 @@ User prompt
     ▼
 Anthropic API
     ▼
-[Code Nav: Serena]        LSP precision + exploration ✅
+[Code Nav: CBM]           Knowledge graph for exploration ✅
+    │                     Repo: https://github.com/DeusData/codebase-memory-mcp
+[Code Nav: Serena]        LSP precision for editing ✅
 [Memory: agentmemory]     Cross-session memory + decisions ✅
     │                     Server: http://localhost:3111 (systemd: agentmemory.service)
     │                     Repo: https://github.com/rohitg00/agentmemory
@@ -67,7 +69,26 @@ Anthropic API
 
 ## Tools to Install
 
-### T1: agentmemory (cross-session memory)
+### T1: CBM (codebase-memory-mcp)
+Repo: https://github.com/DeusData/codebase-memory-mcp
+```bash
+npm install -g codebase-memory-mcp
+```
+Per-project setup (add to `.mcp.json` after installing):
+```json
+{
+  "mcpServers": {
+    "codebase-memory-mcp": {
+      "type": "stdio",
+      "command": "codebase-memory-mcp",
+      "args": ["--project-root", "/absolute/path/to/project"]
+    }
+  }
+}
+```
+Then run once per project: `mcp__codebase-memory-mcp__index_repository`
+
+### T1b: agentmemory (cross-session memory)
 Repo: https://github.com/rohitg00/agentmemory
 ```bash
 npm install -g @agentmemory/agentmemory
@@ -340,6 +361,11 @@ Serena and CBM must be in every project's `.mcp.json` for GSD sessions and code-
       "type": "stdio",
       "command": "/absolute/path/to/serena",
       "args": ["start-mcp-server", "--context", "claude-code", "--project", "/absolute/path/to/project"]
+    },
+    "codebase-memory-mcp": {
+      "type": "stdio",
+      "command": "codebase-memory-mcp",
+      "args": ["--project-root", "/absolute/path/to/project"]
     }
   }
 }
@@ -352,6 +378,8 @@ Note: agentmemory MCP is global (wired in `~/.claude/settings.json`) — no per-
 ```
 [ ] .mcp.json includes serena (required — GSD has no global MCP fallback)
 [ ] .mcp.json includes gsd-workflow
+[ ] .mcp.json includes codebase-memory-mcp
+[ ] After gsd init: run mcp__codebase-memory-mcp__index_repository
 [ ] agentmemory MCP is global — no per-project entry needed
 [ ] code-nav-gate + code-nav-marker already wired globally — no per-project hook changes needed
 ```

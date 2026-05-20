@@ -1,6 +1,7 @@
 {
   "allowedTools": [
     "mcp__serena__*",
+    "mcp__codebase-memory-mcp__*",
     "mcp__agentmemory__*"
   ],
   "editorMode": "vim",
