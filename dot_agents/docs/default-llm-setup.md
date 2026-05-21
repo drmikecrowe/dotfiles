@@ -1,42 +1,41 @@
 # Default LLM / Claude Code Setup
-*Target: drive toward claude-code-tips stack across all runtimes*
+*As-built reference for cross-runtime agent configuration*
 
 ---
 
 ## Runtime Architecture
 
-Four runtimes share one skill library. Hook scripts live once in `~/.agents/hooks/` and are wired into each runtime's separate config format.
+Four runtimes share one skill library. Hook scripts live in `~/.agents/hooks/` and are wired into each runtime's config.
 
 ```
 ~/.agents/
-├── hooks/          ← canonical shared hook SCRIPTS (← NEW, doesn't exist yet)
-│   ├── bash-ban-raw-tools         (from claude-code-tips)
-│   ├── code-nav-gate              (NEW: dual CBM+Serena unlock gate)
-│   ├── code-nav-marker            (NEW: marks when either CBM or Serena fires)
-│   ├── code-nav-reminder          (NEW: SessionStart routing guidance)
-│   ├── precompact-hook             (from ~/Programming/AI/precompact-hook)
-│   ├── handoff-session-resume     (from claude-code-tips)
-│   └── serena-activate.sh         (move from ~/.claude/hooks/)
+├── hooks/          ← canonical shared hook SCRIPTS
+│   ├── bash-ban-raw-tools
+│   ├── code-nav-gate
+│   ├── code-nav-marker
+│   ├── code-nav-reminder
+│   ├── precompact-hook
+│   ├── handoff-session-resume
+│   └── serena-activate.sh
 └── skills/         ← shared skills, auto-discovered by ALL runtimes
 
 ~/.claude/          ← Claude Code runtime
 ├── CLAUDE.md       ← universal directives (= ~/AGENTS.md)
-├── settings.json   ← wires ~/.agents/hooks/ scripts (CC JSON schema)
+├── settings.json   ← hooks, MCP servers, permissions, env vars
 ├── commands/       ← /commit, /handoff
 └── hooks/          ← CC-SPECIFIC hooks only
-    └── gsd-check-update-worker.js
 
-~/.pi/agent/        ← GSD runtime hooks
-└── settings.json   ← wires same ~/.agents/hooks/ scripts (GSD JSON schema)
+~/.pi/agent/        ← pi/GSD runtime hooks + extensions
+├── settings.json   ← hooks (GSD schema) + extensions list
+└── extensions/
+    └── agentmemory/
+        └── index.ts   ← lifecycle hooks (recall/save)
 
-~/.gsd/agent/       ← GSD session/UI settings
+~/.gsd/agent/       ← GSD session/UI settings (NOT hook config)
 └── settings.json
-
-opencode.json       ← OpenCode (project-level only; uses Serena --context opencode)
-                       already has read-deny gate on source files
 ```
 
-**Key principle:** Hook SCRIPTS in `~/.agents/hooks/`. Hook WIRING (JSON) in each runtime's config file. Same script, two config references.
+**Key principle:** Hook SCRIPTS in `~/.agents/hooks/`. Hook WIRING (JSON) in each runtime's config. Same script, two config references.
 
 ---
 
@@ -88,104 +87,266 @@ Per-project setup (add to `.mcp.json` after installing):
 ```
 Then run once per project: `mcp__codebase-memory-mcp__index_repository`
 
-### T1b: agentmemory (cross-session memory)
-Repo: https://github.com/rohitg00/agentmemory
-```bash
-npm install -g @agentmemory/agentmemory
-```
-Runs as systemd user service: `~/.config/systemd/user/agentmemory.service`
-MCP endpoint: `http://localhost:3111/mcp` (wired in `~/.claude/settings.json`)
-Import past transcripts: `agentmemory import-jsonl`
-Viewer: http://localhost:3113
+### T1b: agentmemory (cross-session memory) — FULL SETUP BELOW
 
 ### T2: context-mode
-Repo: https://github.com/mksglu/context-mode  
-MCP server + CLI for output virtualization. Hooks wired via shims (see shims section):
+Repo: https://github.com/mksglu/context-mode
+MCP server + CLI for output virtualization. Hooks wired via shims:
 ```bash
 npm install -g context-mode
-~/.agents/shims/generate.sh  # creates/updates shims
+~/.agents/shims/generate.sh
 ```
 
 ### T3: Per-stack rule files
-From `claude-code-tips/rules/`. Copy to `~/.claude/rules/` — CC auto-loads `rules/*.md` as context for matching file types.
+From `claude-code-tips/rules/`. Copy to `~/.claude/rules/` — CC auto-loads `rules/*.md` for matching file types.
 ```bash
 mkdir -p ~/.claude/rules
 cp ~/Programming/AI/claude-code-tips/rules/*.md ~/.claude/rules/
 ```
-Current rules: `flutter.md`, `react.md`, `appwrite.md`. Add project-specific rules here (e.g. `python.md`, `pulumi.md`).  
-Pattern: each file enforces a skill gate + numbered self-check before Claude touches that stack.
+Current rules: `flutter.md`, `react.md`, `appwrite.md`.
 
 ---
 
-## Hook Implementation Plan
+## agentmemory — Complete As-Built Setup
 
-### H1: Create shared hooks directory
+Provides cross-session memory via MCP (`mcp__agentmemory__*` tools) and pi/GSD lifecycle hooks (auto-recall on session start, auto-save on session end).
+
+### Step 1: Install
+
 ```bash
-mkdir -p ~/.agents/hooks
+npm install -g @agentmemory/agentmemory
 ```
 
-### H2: bash-ban-raw-tools
-**Source:** copy from `~/Programming/AI/claude-code-tips/hooks/bash-ban-raw-tools`
+Binary resolves to:
+`/home/mcrowe/.local/share/mise/installs/node/22/bin/agentmemory`
+
+### Step 2: Init config dir
+
+```bash
+agentmemory init
+```
+
+Creates `~/.agentmemory/.env` with defaults. Then uncomment `III_REST_PORT`:
+
+**`~/.agentmemory/.env`** — ensure this line is active (not commented):
+```
+III_REST_PORT=3111
+```
+
+### Step 3: varlock .env.schema for GEMINI_API_KEY
+
+Create `~/.agentmemory/.env.schema` (varlock reads this alongside `.env`):
+
+```
+# @plugin(@varlock/1password-plugin@0.3.2)
+# @initOp(allowAppAuth=true)
+# @defaultSensitive=false
+# ---
+
+# @required @sensitive
+GEMINI_API_KEY=op(op://Private/GEMINI_API_KEY/credential)
+
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+LLM provider detection order: `OPENAI_API_KEY → MINIMAX → ANTHROPIC → GEMINI → OPENROUTER → noop`.
+GEMINI_API_KEY is last-resort but sufficient for embeddings + memory.
+
+### Step 4: systemd user service
+
+**`~/.config/systemd/user/agentmemory.service`**:
+
+```ini
+[Unit]
+Description=agentmemory server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/mcrowe/.local/share/mise/installs/npm-varlock/latest/bin/varlock run -p %h/.agentmemory -- /home/mcrowe/.local/share/mise/installs/node/22/bin/agentmemory
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
+```
+
+`varlock run -p %h/.agentmemory` injects `.env` + `.env.schema` (with 1Password resolution) into the child process. `%h` = `$HOME` in unit files.
+
+Enable and start:
+```bash
+systemctl --user daemon-reload
+systemctl --user enable --now agentmemory.service
+```
+
+### Step 5: Claude Code MCP wiring
+
+`~/.claude/settings.json` — already present after plugin install:
+```json
+"mcpServers": {
+  "agentmemory": {
+    "type": "http",
+    "url": "http://localhost:3111/mcp"
+  }
+},
+"allowedTools": ["mcp__agentmemory__*"]
+```
+
+Plugin also adds `enabledPlugins["agentmemory@agentmemory"]: true` and `extraKnownMarketplaces.agentmemory`.
+
+MCP tools available in CC: `mcp__agentmemory__memory_smart_search`, `mcp__agentmemory__memory_save`, etc.
+
+### Step 6: pi/GSD extension (lifecycle hooks)
+
+Source: https://github.com/rohitg00/agentmemory/tree/main/integrations/pi
+
+Install the extension file:
+```bash
+mkdir -p ~/.pi/agent/extensions/agentmemory
+curl -fsSL https://raw.githubusercontent.com/rohitg00/agentmemory/main/integrations/pi/index.ts \
+  -o ~/.pi/agent/extensions/agentmemory/index.ts
+```
+
+Wire it in `~/.pi/agent/settings.json`:
+```json
+{
+  "hooks": {},
+  "extensions": ["~/.pi/agent/extensions/agentmemory"]
+}
+```
+
+Extension provides:
+- `before_agent_start` hook — recalls relevant memories into session context
+- `agent_end` hook — saves session decisions/outcomes to memory
+- Tools: `memory_health`, `memory_search`, `memory_save`
+- Command: `/agentmemory-status`
+
+**Note:** GSD uses `~/.pi/agent/settings.json` as its global hooks config — same file, one extension install covers both runtimes. `~/.gsd/agent/settings.json` is UI/model settings only.
+
+### Step 7: Verify
+
+```bash
+systemctl --user status agentmemory.service
+agentmemory status
+```
+
+Expected in `agentmemory status`: `Provider: ✓ llm`, `Embeddings: ✓ embeddings`
+
+Viewer UI: http://localhost:3113
+Import past transcripts: `agentmemory import-jsonl`
+
+---
+
+## Hook Implementation
+
+### H1: bash-ban-raw-tools
+**Source:** `~/Programming/AI/claude-code-tips/hooks/bash-ban-raw-tools`
 **Dest:** `~/.agents/hooks/bash-ban-raw-tools`
-**Behavior:** Blocks `cat/head/tail/find/grep/rg/wc` in Bash tool. Forces Read/Grep/Glob tools. Escape: `touch /tmp/bash-raw-unlock` (10min TTL).
-**Note:** `rtk` commands pass through (already handled in script).
+**Behavior:** Blocks `cat/head/tail/find/grep/rg/wc` in Bash tool. Forces Read/Grep/Glob. Escape: `touch /tmp/bash-raw-unlock` (10min TTL). `rtk` commands pass through.
 ```bash
 cp ~/Programming/AI/claude-code-tips/hooks/bash-ban-raw-tools ~/.agents/hooks/
 chmod +x ~/.agents/hooks/bash-ban-raw-tools
 ```
 
-### H3: precompact-hook (witness-at-the-threshold)
+### H2: precompact-hook (witness-at-the-threshold)
 **Source:** `~/Programming/AI/precompact-hook`
-**Behavior:** PreCompact — pipes last ~40KB of session transcript to `claude -p` subagent that generates a recovery brief (who, what happened, what to do next). Subagent has empty context = full attention. Falls back gracefully. Always exits 0.
+**Behavior:** PreCompact — pipes last ~40KB of transcript to `claude -p` subagent that generates a recovery brief. Falls back gracefully. Always exits 0.
 ```bash
-# Already cloned at ~/Programming/AI/precompact-hook
 # Wire directly — no copy needed:
 #   bash /home/mcrowe/Programming/AI/precompact-hook/pre-compact.sh
 ```
 
-### H4: handoff-session-resume
+### H3: handoff-session-resume
 **Source:** `~/Programming/AI/claude-code-tips/hooks/handoff-session-resume`
 **Dest:** `~/.agents/hooks/handoff-session-resume`
-**Behavior:** SessionStart (compact|resume matcher) — inlines `docs/handoff-context.md` as additionalContext. Points at file if >9KB.
+**Behavior:** SessionStart (compact|resume) — inlines `docs/handoff-context.md` as additionalContext.
 ```bash
 cp ~/Programming/AI/claude-code-tips/hooks/handoff-session-resume ~/.agents/hooks/
 chmod +x ~/.agents/hooks/handoff-session-resume
 ```
 
-### H5: code-nav-gate (NEW — write from scratch)
+### H4: code-nav-gate
 **Dest:** `~/.agents/hooks/code-nav-gate`
-**Replaces:** `cbm-code-discovery-gate` but dual-unlock (CBM OR Serena)
-**Behavior:**
-- PreToolUse on `Grep|Glob|Read|Search`
-- Pass through: non-code files (md, yaml, yml, json, toml, lock, txt, env, sh, config files, .claude/, hooks/, /tmp/)
-- Pass through: if `/tmp/nav-mcp-used-$PPID` exists and age < 120s
-- Pass through: if `/tmp/nav-unlock-$PPID` exists (manual escape)
-- Block with message: "Use CBM (search_graph) for exploration OR Serena (find_symbol/get_symbols_overview) for precision. Override: touch /tmp/nav-unlock-$PPID"
-- Cleans stale /tmp/nav-* files daily
+**Behavior:** PreToolUse on `Grep|Glob|Read|Search` — blocks source file reads until CBM or Serena MCP called. Passes non-code files and system paths through.
 
-**Write this file** (see implementation section below)
+```bash
+#!/bin/bash
+set -euo pipefail
 
-### H6: code-nav-marker (NEW — write from scratch)
+INPUT=$(cat)
+TOOL=$(jq -r '.tool_name // empty' <<< "$INPUT")
+MARKER=/tmp/nav-mcp-used-$PPID
+UNLOCK=/tmp/nav-unlock-$PPID
+
+[ -f "$UNLOCK" ] && exit 0
+find /tmp -maxdepth 1 -name 'nav-*' -mtime +1 -delete 2>/dev/null || true
+
+case "$TOOL" in
+  Grep|Glob|Read|Search) ;;
+  *) exit 0 ;;
+esac
+
+FP=$(jq -r '.tool_input.file_path // .tool_input.path // .tool_input.pattern // .tool_input.glob // ""' <<< "$INPUT")
+
+if [[ "$FP" =~ \.(md|json|yaml|yml|toml|lock|txt|env|sh|cfg|conf|ini)$ ]] \
+  || [[ "$FP" =~ (\.claude|\.gsd|\.pi|\.serena|CLAUDE\.md|AGENTS\.md|hooks/|/tmp/|/var/|settings) ]]; then
+  exit 0
+fi
+
+if [ -f "$MARKER" ]; then
+  AGE=$(( $(date +%s) - $(stat -c %Y "$MARKER" 2>/dev/null || echo 0) ))
+  [ "$AGE" -lt 120 ] && exit 0
+fi
+
+cat >&2 << EOF
+BLOCKED: Raw $TOOL on source file without recent MCP call.
+
+Use CBM for exploration:   search_graph / trace_path / get_code_snippet
+Use Serena for precision:  find_symbol / get_symbols_overview / find_referencing_symbols
+
+Override (this session): touch $UNLOCK
+EOF
+exit 2
+```
+
+### H5: code-nav-marker
 **Dest:** `~/.agents/hooks/code-nav-marker`
-**Replaces:** `cbm-mcp-marker` but watches both MCPs
-**Behavior:**
-- PostToolUse on ALL tools
-- If tool_name matches `mcp__codebase-memory-mcp__*` OR `mcp__serena__*` → touch `/tmp/nav-mcp-used-$PPID`
+**Behavior:** PostToolUse — touches `/tmp/nav-mcp-used-$PPID` when CBM or Serena fires (unlocks gate for 120s).
 
-**Write this file** (see implementation section below)
+```bash
+#!/bin/bash
+set -euo pipefail
+INPUT=$(cat)
+TOOL=$(jq -r '.tool_name // empty' <<< "$INPUT")
+if [[ "$TOOL" == mcp__codebase-memory-mcp__* ]] || [[ "$TOOL" == mcp__serena__* ]]; then
+  touch /tmp/nav-mcp-used-$PPID
+fi
+exit 0
+```
 
-### H7: code-nav-reminder (NEW — write from scratch)
+### H6: code-nav-reminder
 **Dest:** `~/.agents/hooks/code-nav-reminder`
-**Replaces:** `cbm-session-reminder` but routes between both tools
-**Behavior:** Prints routing guidance on SessionStart (clear|compact|resume matcher)
+**Behavior:** SessionStart — prints routing guidance.
 
-**Write this file** (see implementation section below)
+```bash
+#!/bin/bash
+cat << 'EOF'
+Code Navigation:
+  Exploration (what/where/how):   CBM    → search_graph / trace_path / get_code_snippet
+  Precision   (known symbol/edit): Serena → find_symbol / get_symbols_overview
+  Session memory / decisions:     agentmemory → memory_smart_search
+  Non-code files (md/yaml/json):  Read directly — no gate
+  Override gate (one session):    touch /tmp/nav-unlock-$PPID
+EOF
+```
 
 ---
 
-## Claude Code Settings Changes (`~/.claude/settings.json`)
+## Claude Code Settings (`~/.claude/settings.json`)
 
-### Add env vars block:
+### Env vars block:
 ```json
 "env": {
   "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
@@ -196,7 +357,7 @@ chmod +x ~/.agents/hooks/handoff-session-resume
 }
 ```
 
-### Add/update hooks:
+### Hooks:
 ```json
 "hooks": {
   "PreToolUse": [
@@ -250,13 +411,21 @@ chmod +x ~/.agents/hooks/handoff-session-resume
 }
 ```
 
-**Keep existing:** RTK PreToolUse hook, AOE status hooks, PostCompact serena-activate.
+### MCP servers (global — all CC sessions):
+```json
+"mcpServers": {
+  "agentmemory": {
+    "type": "http",
+    "url": "http://localhost:3111/mcp"
+  }
+}
+```
 
 ---
 
-## GSD Settings Changes (`~/.pi/agent/settings.json`)
+## GSD/pi Settings (`~/.pi/agent/settings.json`)
 
-Same hook scripts, GSD JSON schema (flat `command` + `match.tool` filter + `blocking` field):
+Same hook scripts, GSD JSON schema:
 
 ```json
 {
@@ -296,18 +465,18 @@ Same hook scripts, GSD JSON schema (flat `command` + `match.tool` filter + `bloc
         "blocking": true
       }
     ]
-  }
+  },
+  "extensions": ["~/.pi/agent/extensions/agentmemory"]
 }
 ```
 
-**Note on tool name casing:** GSD example uses lowercase `"bash"` but Read/Grep/Glob may be title-case. Test with one hook first — if Read tool calls don't trigger the gate, try `["read", "grep", "glob", "search"]` instead.
+**Note:** Global hooks in `~/.pi/agent/settings.json` are always trusted — no `.pi/hooks.trusted` marker needed.
 
 ---
 
 ## Global Config Fixes
 
 ### Fix `~/.gsd/PREFERENCES.md` models
-Current models are GLM (test config). Replace:
 ```yaml
 models:
   research: claude-sonnet-4-6
@@ -322,10 +491,8 @@ models:
 ```bash
 cp ~/Programming/AI/claude-code-tips/commands/handoff.md ~/.claude/commands/
 ```
-Or verify `~/.agents/skills/handoff/SKILL.md` covers this — check if it has the same JSON output schema as the command.
 
-### Add skill symlinks to `~/.claude/skills/`
-Missing symlinks (check first, create if absent):
+### Skill symlinks in `~/.claude/skills/`
 ```bash
 cd ~/.claude/skills
 ln -sf ../../.agents/skills/handoff handoff
@@ -338,12 +505,9 @@ ln -sf ../../.agents/skills/serena-init serena-init
 
 ---
 
-## Project Bootstrap Changes
+## Project Bootstrap
 
-### `.mcp.json` template (required for both CC and GSD):
-
-**Note:** `~/.claude/settings.json` mcpServers is Claude Code only — GSD has no global MCP config.
-Serena and CBM must be in every project's `.mcp.json` for GSD sessions and code-nav-gate to work.
+### `.mcp.json` template:
 
 ```json
 {
@@ -370,11 +534,12 @@ Serena and CBM must be in every project's `.mcp.json` for GSD sessions and code-
   }
 }
 ```
-Note: agentmemory MCP is global (wired in `~/.claude/settings.json`) — no per-project entry needed.
 
-**GSD local-only overrides** (paths/secrets, not committed): `.gsd/mcp.json` — same format, merged with `.mcp.json`, first definition wins.
+agentmemory MCP is global (CC `settings.json`) — no per-project entry needed.
 
-### Updated project checklist (add to bootstrap):
+**GSD local-only overrides**: `.gsd/mcp.json` — same format, merged with `.mcp.json`, first definition wins.
+
+### Project checklist:
 ```
 [ ] .mcp.json includes serena (required — GSD has no global MCP fallback)
 [ ] .mcp.json includes gsd-workflow
@@ -386,170 +551,52 @@ Note: agentmemory MCP is global (wired in `~/.claude/settings.json`) — no per-
 
 ---
 
-## AGENTS.md / CLAUDE.md Addition
-
-Add to both `~/AGENTS.md` and `~/.claude/CLAUDE.md` (and project CLAUDE.md template):
-
-```markdown
-## Code Navigation Routing
-
-Gate enforced by hook — raw Read/Grep on source files blocked until MCP call made.
-
-| Task | Tool | Commands |
-|------|------|----------|
-| Exploration + precision | **Serena** | `search_graph`, `find_symbol`, `get_symbols_overview`, `replace_symbol_body` |
-| Session memory / decisions | **agentmemory** | `memory_smart_search` |
-| Non-code files (md, yaml, json, config) | **Read directly** | no gate |
-
-Escape gate (one session): `touch /tmp/nav-unlock-$PPID`
-```
-
----
-
-## Implementation Sequence
-
-Execute in this order — each phase is independently usable:
-
-| Phase | What | Files changed |
-|-------|------|--------------|
-| **P1** | Create `~/.agents/hooks/`, copy bash-ban-raw-tools + handoff hooks from claude-code-tips, move serena-activate.sh from `~/.claude/hooks/` | mkdir, 3 copies, 1 move |
-| **P2** | Write 3 new hooks: code-nav-gate, code-nav-marker, code-nav-reminder | 3 new files |
-| **P3** | Wire hooks into `~/.claude/settings.json` + add env vars | 1 edit |
-| **P4** | Wire hooks into `~/.pi/agent/settings.json` | 1 edit |
-| **P5** | Fix global configs: gsd PREFERENCES.md, skill symlinks, /handoff command, copy rules/ to ~/.claude/rules/ | 4–6 ops |
-| **P6** | Install agentmemory (`npm install -g @agentmemory/agentmemory`), enable systemd unit | npm + systemd |
-| **P7** | Install context-mode (`npm install -g context-mode`), run `~/.agents/shims/generate.sh` | npm + shims |
-| **P8** | Wire agentmemory MCP in `~/.claude/settings.json`, update code-nav hooks | settings + 3 hooks |
-| **P9** | Update AGENTS.md + CLAUDE.md with code navigation routing table | 2 edits |
-
-**P1–P4** deliver handoff hooks + navigation gate immediately.  
-**P5** is housekeeping.  
-**P6–P9** complete the CBM + context-mode integration.
-
----
-
-## Hook Script Templates
-
-### code-nav-gate
-```bash
-#!/bin/bash
-# PreToolUse: block Grep/Glob/Read/Search on source code
-# until CBM (codebase-memory-mcp) or Serena MCP has been called.
-# Dual-unlock: either MCP sets /tmp/nav-mcp-used-$PPID.
-set -euo pipefail
-
-INPUT=$(cat)
-TOOL=$(jq -r '.tool_name // empty' <<< "$INPUT")
-MARKER=/tmp/nav-mcp-used-$PPID
-UNLOCK=/tmp/nav-unlock-$PPID
-
-[ -f "$UNLOCK" ] && exit 0
-find /tmp -maxdepth 1 -name 'nav-*' -mtime +1 -delete 2>/dev/null || true
-
-case "$TOOL" in
-  Grep|Glob|Read|Search) ;;
-  *) exit 0 ;;
-esac
-
-# Extract path/pattern depending on tool
-FP=$(jq -r '.tool_input.file_path // .tool_input.path // .tool_input.pattern // .tool_input.glob // ""' <<< "$INPUT")
-
-# Pass through non-code files and system paths
-if [[ "$FP" =~ \.(md|json|yaml|yml|toml|lock|txt|env|sh|cfg|conf|ini)$ ]] \
-  || [[ "$FP" =~ (\.claude|\.gsd|\.pi|\.serena|CLAUDE\.md|AGENTS\.md|hooks/|/tmp/|/var/|settings) ]]; then
-  exit 0
-fi
-
-# Check 120s unlock window from last MCP call
-if [ -f "$MARKER" ]; then
-  AGE=$(( $(date +%s) - $(stat -c %Y "$MARKER" 2>/dev/null || echo 0) ))
-  [ "$AGE" -lt 120 ] && exit 0
-fi
-
-cat >&2 << EOF
-BLOCKED: Raw $TOOL on source file without recent MCP call.
-
-Use CBM for exploration:   search_graph / trace_path / get_code_snippet
-Use Serena for precision:  find_symbol / get_symbols_overview / find_referencing_symbols
-
-Then Read/Grep the specific file you need to edit.
-Override (this session): touch $UNLOCK
-EOF
-exit 2
-```
-
-### code-nav-marker
-```bash
-#!/bin/bash
-# PostToolUse: mark when CBM or Serena MCP fires (unlocks code-nav-gate for 120s).
-set -euo pipefail
-INPUT=$(cat)
-TOOL=$(jq -r '.tool_name // empty' <<< "$INPUT")
-if [[ "$TOOL" == mcp__codebase-memory-mcp__* ]] || [[ "$TOOL" == mcp__serena__* ]]; then
-  touch /tmp/nav-mcp-used-$PPID
-fi
-exit 0
-```
-
-### code-nav-reminder
-```bash
-#!/bin/bash
-# SessionStart: print code navigation routing guidance.
-cat << 'EOF'
-Code Navigation Protocol:
-  Exploration (what/where/how):  CBM → search_graph / trace_path / get_code_snippet
-  Precision (known symbol, edit): Serena → find_symbol / get_symbols_overview
-  Non-code files (md/yaml/json):  Read directly — no gate
-  Override gate (one session):    touch /tmp/nav-unlock-$PPID
-EOF
-```
-
----
-
-## File Reference Map (Final State)
+## File Reference Map
 
 ```
 ~/
 ├── AGENTS.md                          # Universal directives — master copy
 ├── .claude/
 │   ├── CLAUDE.md                      # = ~/AGENTS.md (auto-loaded by CC)
-│   ├── settings.json                  # CC config: env vars, hooks, permissions
+│   ├── settings.json                  # CC config: env vars, hooks, MCP, permissions
 │   ├── commands/
 │   │   ├── commit.md
-│   │   └── handoff.md                 # ← add
+│   │   └── handoff.md
 │   ├── hooks/                         # CC-SPECIFIC only
 │   │   └── gsd-check-update-worker.js
-│   ├── rules/                         # per-stack self-check gates (← add)
-│   │   ├── flutter.md                 # from claude-code-tips/rules/
+│   ├── rules/                         # per-stack self-check gates
+│   │   ├── flutter.md
 │   │   ├── react.md
-│   │   ├── appwrite.md
-│   │   └── <stack>.md                 # add project-specific (python, pulumi, etc.)
+│   │   └── appwrite.md
 │   └── skills/                        # symlinks to ~/.agents/skills/ + local skills
 ├── .agents/
-│   ├── hooks/                         # ← CREATE: shared hook scripts
+│   ├── hooks/                         # shared hook scripts
 │   │   ├── bash-ban-raw-tools
 │   │   ├── code-nav-gate
 │   │   ├── code-nav-marker
 │   │   ├── code-nav-reminder
-│   │   ├── precompact-hook
 │   │   ├── handoff-session-resume
-│   │   └── serena-activate.sh         # ← move from ~/.claude/hooks/
+│   │   └── serena-activate.sh
 │   └── skills/                        # 53+ skills, shared by all runtimes
 ├── .pi/agent/
-│   └── settings.json                  # GSD hooks → references ~/.agents/hooks/
+│   ├── settings.json                  # GSD/pi hooks + extensions
+│   └── extensions/
+│       └── agentmemory/
+│           └── index.ts               # lifecycle recall/save hooks
 ├── .gsd/agent/
-│   └── settings.json                  # GSD UI settings
-└── .config/hooks/
-    └── clean-baseline-check.sh        # Milestone gate
+│   └── settings.json                  # GSD UI/model settings only
+├── .agentmemory/
+│   ├── .env                           # III_REST_PORT=3111 (uncommented)
+│   └── .env.schema                    # varlock: GEMINI_API_KEY from 1Password
+└── .config/
+    ├── hooks/
+    │   └── clean-baseline-check.sh    # milestone gate
+    └── systemd/user/
+        └── agentmemory.service        # varlock run ... agentmemory
 
 <project>/
-├── CLAUDE.md + AGENTS.md              # Project rules + code nav routing table
-├── .claude/settings.json              # Project CC hooks
-├── .pi/settings.json                  # Project GSD hooks
-├── .pi/hooks.trusted                  # Must exist
-├── .mcp.json                          # serena + gsd-workflow (agentmemory is global)
-├── .gsd/                              # Workflow state
-├── .agents/hooks/                     # Project-specific hook additions
-├── .agents/skills/                    # Project-specific skills
+├── CLAUDE.md + AGENTS.md
+├── .mcp.json                          # serena + gsd-workflow + codebase-memory-mcp
+├── .gsd/                              # workflow state
 └── .serena/                           # Serena LSP config
 ```
