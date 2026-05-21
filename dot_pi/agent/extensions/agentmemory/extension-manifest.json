@@ -1,0 +1,9 @@
+{
+  "name": "agentmemory",
+  "version": "1.0.0",
+  "provides": {
+    "tools": ["memory_health", "memory_search", "memory_save"],
+    "commands": ["agentmemory-status"],
+    "hooks": ["session_start", "before_agent_start", "agent_end"]
+  }
+}
