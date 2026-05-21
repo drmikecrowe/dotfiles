@@ -3,7 +3,7 @@
   "compaction": {
     "enabled": true
   },
-  "defaultModel": "claude-opus-4-7",
+  "defaultModel": "claude-sonnet-4-7",
   "defaultProvider": "claude-code",
   "defaultThinkingLevel": "low",
   "editMode": "hashline",
