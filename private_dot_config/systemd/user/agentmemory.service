@@ -3,8 +3,9 @@ Description=agentmemory server
 After=network.target
 
 [Service]
-ExecStart=/home/mcrowe/.local/share/mise/installs/node/22/bin/agentmemory
-Restart=always
+Type=simple
+ExecStart=/home/mcrowe/.local/share/mise/installs/npm-varlock/latest/bin/varlock run -p %h/.agentmemory -- /home/mcrowe/.local/share/mise/installs/node/22/bin/agentmemory
+Restart=on-failure
 RestartSec=5
 StandardOutput=journal
 StandardError=journal
