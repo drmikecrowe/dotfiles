@@ -2,15 +2,18 @@ local M = {}
 
 function M:peek(job)
 	local child = Command("rich")
-		:arg("-j")
-		:arg("--left")
-		:arg("--line-numbers")
-		:arg("--force-terminal")
-		:arg("--panel=rounded")
-		:arg("--guides")
-		:arg("--max-width")
-		:arg(tostring(job.area.w))
-		:arg(tostring(job.file.url))
+		:env("COLUMNS", tostring(job.area.w))
+		:arg({
+			"-j",
+			"--left",
+			"--line-numbers",
+			"--force-terminal",
+			"--panel=rounded",
+			"--guides",
+			"--max-width",
+			tostring(job.area.w),
+			tostring(job.file.url),
+		})
 		:stdout(Command.PIPED)
 		:stderr(Command.PIPED)
 		:spawn()
@@ -40,9 +43,10 @@ function M:peek(job)
 		ya.emit("peek", { math.max(0, i - limit), only_if = job.file.url, upper_bound = true })
 	else
 		lines = lines:gsub("\t", string.rep(" ", rt.preview.tab_size))
-		ya.preview_widgets(job, {
-			ui.Text.parse(lines):area(job.area):wrap(rt.preview.wrap == "yes" and ui.Text.WRAP or ui.Text.WRAP_NO),
-		})
+		ya.preview_widget(
+			job,
+			ui.Text.parse(lines):area(job.area):wrap(rt.preview.wrap == "yes" and ui.Wrap.YES or ui.Wrap.NO)
+		)
 	end
 end
 

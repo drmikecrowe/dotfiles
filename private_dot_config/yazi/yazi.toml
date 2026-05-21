@@ -8,7 +8,7 @@ prepend_previewers = [
 
   # Markdown preview with glow
   # $w = width, $h = height, $1 = file path (provided by piper)
-  { url = "*.md", run = 'piper -- glow -s dark -w $w "$1"' },
+  # { url = "*.md", run = 'piper -- glow -s dark -w $w "$1"' },
 
   # Archive preview with ouch
   { mime = "application/*zip", run = "ouch" },
@@ -22,7 +22,8 @@ prepend_previewers = [
   { url = "*.csv", run = "rich-preview" },
   { url = "*.rst", run = "rich-preview" },
   { url = "*.ipynb", run = "rich-preview" },
+  { url = "*.md", run = "rich-preview" },
   { url = "*.json", run = "rich-preview" },
-  { mime = "application/json", run = "rich-preview" },
+  # { mime = "application/json", run = "rich-preview" },
 ]
 
