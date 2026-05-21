@@ -6,6 +6,7 @@
   ],
   "editorMode": "vim",
   "enabledPlugins": {
+    "agentmemory@agentmemory": true,
     "caveman@caveman": true,
     "claude-hud@claude-hud": true,
     "commit-commands@claude-plugins-official": true,
@@ -26,6 +27,12 @@
     "MAX_MCP_OUTPUT_TOKENS": "10000"
   },
   "extraKnownMarketplaces": {
+    "agentmemory": {
+      "source": {
+        "repo": "rohitg00/agentmemory",
+        "source": "github"
+      }
+    },
     "caveman": {
       "source": {
         "repo": "JuliusBrussee/caveman",
@@ -267,12 +274,12 @@
     ]
   },
   "mcpServers": {
-    "serena": {
-      "url": "http://127.0.0.1:8765/mcp"
-    },
     "agentmemory": {
       "type": "http",
       "url": "http://localhost:3111/mcp"
+    },
+    "serena": {
+      "url": "http://127.0.0.1:8765/mcp"
     }
   },
   "model": "claude-sonnet-4-6",
