@@ -1,0 +1,44 @@
+{
+  "runtime": "claude-code",
+  "event": "Stop",
+  "timestamp": "20260516-163725-181526886",
+  "stdin_raw": "{\"session_id\":\"bb620a6f-2876-44bd-b41c-0693dccaf2fe\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe-Programming-MikKelTech-mw-poc-main/bb620a6f-2876-44bd-b41c-0693dccaf2fe.jsonl\",\"cwd\":\"/home/mcrowe/Programming/MikKelTech/mw-poc/main\",\"permission_mode\":\"bypassPermissions\",\"effort\":{\"level\":\"high\"},\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"Clean: `Write \u27e8  \u27e9 about \u27e8  \u27e9 for \u27e8  \u27e9 in \u27e8  \u27e9.` \u2014 no stray label text. Three bugs fixed:\\n\\n1. **Replace all on click** \u2713\\n2. **Tab navigates between slots** \u2713  \\n3. **Duplicate label text** \u2713 \u2014 was caused by `split(/<([^>]+)>/g)` (capturing group) including the captured placeholder names as extra array elements; switched to `split(/<[^>]+>/g)` (non-capturing)\"}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "effort",
+    "hook_event_name",
+    "stop_hook_active",
+    "last_assistant_message"
+  ],
+  "stdin_parsed": {
+    "session_id": "bb620a6f-2876-44bd-b41c-0693dccaf2fe",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe-Programming-MikKelTech-mw-poc-main/bb620a6f-2876-44bd-b41c-0693dccaf2fe.jsonl",
+    "cwd": "/home/mcrowe/Programming/MikKelTech/mw-poc/main",
+    "permission_mode": "bypassPermissions",
+    "effort": {
+      "level": "high"
+    },
+    "hook_event_name": "Stop",
+    "stop_hook_active": false,
+    "last_assistant_message": "Clean: `Write \u27e8  \u27e9 about \u27e8  \u27e9 for \u27e8  \u27e9 in \u27e8  \u27e9.` \u2014 no stray label text. Three bugs fixed:\n\n1. **Replace all on click** \u2713\n2. **Tab navigates between slots** \u2713  \n3. **Duplicate label text** \u2713 \u2014 was caused by `split(/<([^>]+)>/g)` (capturing group) including the captured placeholder names as extra array elements; switched to `split(/<[^>]+>/g)` (non-capturing)"
+  },
+  "env_vars": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENTRYPOINT": "cli",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_EFFORT": "high",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe/Programming/MikKelTech/mw-poc/main",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/.local/share/pnpm/bin:/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/pnpm/latest:/home/mcrowe/.local/share/mise/installs/bun/latest/bin:/home/...[truncated]",
+    "SHELL": "/usr/bin/zsh",
+    "SHELL_PROMPT_CHAR": "z>"
+  },
+  "cwd": "/home/mcrowe/Programming/MikKelTech/mw-poc/main",
+  "pid": 3742843,
+  "ppid": 3742842
+}

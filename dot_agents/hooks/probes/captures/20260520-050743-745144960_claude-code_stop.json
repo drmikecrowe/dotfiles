@@ -1,0 +1,58 @@
+{
+  "runtime": "claude-code",
+  "event": "Stop",
+  "timestamp": "20260520-050743-745144960",
+  "stdin_raw": "{\"session_id\":\"cff45876-3946-490f-bd4f-1cfed2b82448\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe/cff45876-3946-490f-bd4f-1cfed2b82448.jsonl\",\"cwd\":\"/home/mcrowe\",\"permission_mode\":\"bypassPermissions\",\"effort\":{\"level\":\"high\"},\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"You're right, I made a bad call. CBM and agentmemory don't compete at all:\\n\\n- **CBM**: codebase structure \u2014 \\\"what files/symbols are related, what calls what, architecture graph\\\" \u2014 pre-indexed, fast graph queries\\n- **agentmemory**: session history \u2014 \\\"what decisions did I make, what preferences did I express last week\\\"\\n- **Serena**: LSP precision \u2014 \\\"find this exact symbol, get type info, edit\\\"\\n\\nThree different memory planes. The only true competitors to agentmemory were `precompact-hook` (same PreCompact lifecycle) and the auto-memory files (same cross-session knowledge). CBM was never one of them.\\n\\nI should restore CBM. Undo the removal:\\n\\n1. `settings.json` \u2014 restore `mcp__codebase-memory-mcp__*` to `allowedTools`\\n2. `code-nav-gate` \u2014 restore dual-unlock (CBM OR Serena)\\n3. `code-nav-marker` \u2014 restore CBM tool watch\\n4. `code-nav-reminder` \u2014 restore CBM routing row\\n5. `AGENTS.md` / `CLAUDE.md` \u2014 restore CBM row in nav table\\n6. `default-llm-setup.md` \u2014 restore CBM as T1, shift agentmemory to separate entry\\n\\nWant me to roll those back now?\",\"background_tasks\":[{\"id\":\"b8e7ql6nq\",\"type\":\"shell\",\"status\":\"running\",\"description\":\"Verify agentmemory install and get binary path\",\"command\":\"which agentmemory && agentmemory --version 2>&1 || agentmemory --help 2>&1 | head -5\"}],\"session_crons\":[]}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "effort",
+    "hook_event_name",
+    "stop_hook_active",
+    "last_assistant_message",
+    "background_tasks",
+    "session_crons"
+  ],
+  "stdin_parsed": {
+    "session_id": "cff45876-3946-490f-bd4f-1cfed2b82448",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe/cff45876-3946-490f-bd4f-1cfed2b82448.jsonl",
+    "cwd": "/home/mcrowe",
+    "permission_mode": "bypassPermissions",
+    "effort": {
+      "level": "high"
+    },
+    "hook_event_name": "Stop",
+    "stop_hook_active": false,
+    "last_assistant_message": "You're right, I made a bad call. CBM and agentmemory don't compete at all:\n\n- **CBM**: codebase structure \u2014 \"what files/symbols are related, what calls what, architecture graph\" \u2014 pre-indexed, fast graph queries\n- **agentmemory**: session history \u2014 \"what decisions did I make, what preferences did I express last week\"\n- **Serena**: LSP precision \u2014 \"find this exact symbol, get type info, edit\"\n\nThree different memory planes. The only true competitors to agentmemory were `precompact-hook` (same PreCompact lifecycle) and the auto-memory files (same cross-session knowledge). CBM was never one of them.\n\nI should restore CBM. Undo the removal:\n\n1. `settings.json` \u2014 restore `mcp__codebase-memory-mcp__*` to `allowedTools`\n2. `code-nav-gate` \u2014 restore dual-unlock (CBM OR Serena)\n3. `code-nav-marker` \u2014 restore CBM tool watch\n4. `code-nav-reminder` \u2014 restore CBM routing row\n5. `AGENTS.md` / `CLAUDE.md` \u2014 restore CBM row in nav table\n6. `default-llm-setup.md` \u2014 restore CBM as T1, shift agentmemory to separate entry\n\nWant me to roll those back now?",
+    "background_tasks": [
+      {
+        "id": "b8e7ql6nq",
+        "type": "shell",
+        "status": "running",
+        "description": "Verify agentmemory install and get binary path",
+        "command": "which agentmemory && agentmemory --version 2>&1 || agentmemory --help 2>&1 | head -5"
+      }
+    ],
+    "session_crons": []
+  },
+  "env_vars": {
+    "CLAUDECODE": "1",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENTRYPOINT": "cli",
+    "CLAUDE_CODE_SESSION_ID": "cff45876-3946-490f-bd4f-1cfed2b82448",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_EFFORT": "high",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/pnpm/latest:/home/mcrowe/.local/share/mise/installs/bun/latest/bin:/home/mcrowe/.local/share/mise/installs/d...[truncated]",
+    "SHELL": "/usr/bin/zsh",
+    "SHELL_PROMPT_CHAR": "z>"
+  },
+  "cwd": "/home/mcrowe",
+  "pid": 133668,
+  "ppid": 133667
+}

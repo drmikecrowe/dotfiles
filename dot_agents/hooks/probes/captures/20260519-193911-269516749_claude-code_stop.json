@@ -1,0 +1,50 @@
+{
+  "runtime": "claude-code",
+  "event": "Stop",
+  "timestamp": "20260519-193911-269516749",
+  "stdin_raw": "{\"session_id\":\"9253a465-f575-42a6-b08a-7f38c3fa09bc\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe-Programming-AI-isolated-environment-main/9253a465-f575-42a6-b08a-7f38c3fa09bc.jsonl\",\"cwd\":\"/home/mcrowe/Programming/AI/isolated-environment/main\",\"permission_mode\":\"bypassPermissions\",\"effort\":{\"level\":\"high\"},\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"**Arch Linux steps:**\\n\\n**1. Install deps**\\n```bash\\nsudo pacman -Syu --needed curl dialog freerdp git iproute2 libnotify openbsd-netcat\\n```\\n\\n**2. Set up Windows VM** \u2014 pick one backend:\\n- **Docker/Podman** (recommended, automated): follow [docs/docker.md](https://github.com/winapps-org/winapps/blob/main/docs/docker.md)\\n- **libvirt** (more control): follow [docs/libvirt.md](https://github.com/winapps-org/winapps/blob/main/docs/libvirt.md)\\n\\nBoth use KVM under the hood \u2014 make sure `kvm` and `kvm_intel`/`kvm_amd` modules load.\\n\\n**3. Create config**\\n```bash\\nmkdir -p ~/.config/winapps\\ncat > ~/.config/winapps/winapps.conf <<'EOF'\\nRDP_USER=\\\"MyWindowsUser\\\"\\nRDP_PASS=\\\"MyWindowsPassword\\\"\\nRDP_IP=\\\"127.0.0.1\\\"\\nWAFLAVOR=\\\"docker\\\"   # or podman/libvirt\\nEOF\\nchmod 600 ~/.config/winapps/winapps.conf\\n```\\n\\n**4. Test FreeRDP**\\n```bash\\nxfreerdp3 /u:\\\"MyWindowsUser\\\" /p:\\\"MyWindowsPassword\\\" /v:127.0.0.1:3389 /cert:tofu\\n```\\nWindows desktop should appear. Disconnect if it works.\\n\\n**5. Run installer**\\n```bash\\nbash <(curl https://raw.githubusercontent.com/winapps-org/winapps/main/setup.sh)\\n```\\n\\n**Arch gotchas:**\\n- FreeRDP must be v3+ \u2014 `pacman`'s `freerdp` package is v3 now, so you're fine\\n- `REMOVABLE_MEDIA=\\\"/run/media\\\"` is already correct default for Arch (udisks2 mounts there)\\n- If using Podman, prefix the xfreerdp test with `podman unshare --rootless-netns`\\n- KVM: add yourself to `kvm` group: `sudo usermod -aG kvm $USER`\",\"background_tasks\":[],\"session_crons\":[]}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "effort",
+    "hook_event_name",
+    "stop_hook_active",
+    "last_assistant_message",
+    "background_tasks",
+    "session_crons"
+  ],
+  "stdin_parsed": {
+    "session_id": "9253a465-f575-42a6-b08a-7f38c3fa09bc",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe-Programming-AI-isolated-environment-main/9253a465-f575-42a6-b08a-7f38c3fa09bc.jsonl",
+    "cwd": "/home/mcrowe/Programming/AI/isolated-environment/main",
+    "permission_mode": "bypassPermissions",
+    "effort": {
+      "level": "high"
+    },
+    "hook_event_name": "Stop",
+    "stop_hook_active": false,
+    "last_assistant_message": "**Arch Linux steps:**\n\n**1. Install deps**\n```bash\nsudo pacman -Syu --needed curl dialog freerdp git iproute2 libnotify openbsd-netcat\n```\n\n**2. Set up Windows VM** \u2014 pick one backend:\n- **Docker/Podman** (recommended, automated): follow [docs/docker.md](https://github.com/winapps-org/winapps/blob/main/docs/docker.md)\n- **libvirt** (more control): follow [docs/libvirt.md](https://github.com/winapps-org/winapps/blob/main/docs/libvirt.md)\n\nBoth use KVM under the hood \u2014 make sure `kvm` and `kvm_intel`/`kvm_amd` modules load.\n\n**3. Create config**\n```bash\nmkdir -p ~/.config/winapps\ncat > ~/.config/winapps/winapps.conf <<'EOF'\nRDP_USER=\"MyWindowsUser\"\nRDP_PASS=\"MyWindowsPassword\"\nRDP_IP=\"127.0.0.1\"\nWAFLAVOR=\"docker\"   # or podman/libvirt\nEOF\nchmod 600 ~/.config/winapps/winapps.conf\n```\n\n**4. Test FreeRDP**\n```bash\nxfreerdp3 /u:\"MyWindowsUser\" /p:\"MyWindowsPassword\" /v:127.0.0.1:3389 /cert:tofu\n```\nWindows desktop should appear. Disconnect if it works.\n\n**5. Run installer**\n```bash\nbash <(curl https://raw.githubusercontent.com/winapps-org/winapps/main/setup.sh)\n```\n\n**Arch gotchas:**\n- FreeRDP must be v3+ \u2014 `pacman`'s `freerdp` package is v3 now, so you're fine\n- `REMOVABLE_MEDIA=\"/run/media\"` is already correct default for Arch (udisks2 mounts there)\n- If using Podman, prefix the xfreerdp test with `podman unshare --rootless-netns`\n- KVM: add yourself to `kvm` group: `sudo usermod -aG kvm $USER`",
+    "background_tasks": [],
+    "session_crons": []
+  },
+  "env_vars": {
+    "CLAUDECODE": "1",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENTRYPOINT": "cli",
+    "CLAUDE_CODE_SESSION_ID": "9253a465-f575-42a6-b08a-7f38c3fa09bc",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_EFFORT": "high",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe/Programming/AI/isolated-environment/main",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/Programming/AI/isolated-environment/main/.venv/bin:/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/python/3.12/bin:/home/mcrowe/.local/share/mi...[truncated]",
+    "SHELL": "/usr/bin/zsh",
+    "SHELL_PROMPT_CHAR": "z>"
+  },
+  "cwd": "/home/mcrowe/Programming/AI/isolated-environment/main",
+  "pid": 74386,
+  "ppid": 74385
+}

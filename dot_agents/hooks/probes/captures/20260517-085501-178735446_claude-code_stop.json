@@ -1,0 +1,45 @@
+{
+  "runtime": "claude-code",
+  "event": "Stop",
+  "timestamp": "20260517-085501-178735446",
+  "stdin_raw": "{\"session_id\":\"765f90c3-e22f-401a-aab5-15bf46f35a94\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe-Programming-AI-isolated-environment-main/765f90c3-e22f-401a-aab5-15bf46f35a94.jsonl\",\"cwd\":\"/home/mcrowe/Programming/AI/isolated-environment/main\",\"permission_mode\":\"default\",\"effort\":{\"level\":\"high\"},\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"Done. Key additions:\\n\\n- **Bootstrap phase table** \u2014 exact 3 events with what each actually means, including the clarification that `bootstrap complete` = systemd fired docker-compose, not LibreChat healthy\\n- **Gap callout** \u2014 \\\"silence after `bootstrap complete` is expected\\\" so the agent doesn't misread it as an error or hang\\n- **Handoff instruction** \u2014 after all 3 phases seen, explicitly route to container logs or librechat-health, not back to bootstrap-events\"}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "effort",
+    "hook_event_name",
+    "stop_hook_active",
+    "last_assistant_message"
+  ],
+  "stdin_parsed": {
+    "session_id": "765f90c3-e22f-401a-aab5-15bf46f35a94",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe-Programming-AI-isolated-environment-main/765f90c3-e22f-401a-aab5-15bf46f35a94.jsonl",
+    "cwd": "/home/mcrowe/Programming/AI/isolated-environment/main",
+    "permission_mode": "default",
+    "effort": {
+      "level": "high"
+    },
+    "hook_event_name": "Stop",
+    "stop_hook_active": false,
+    "last_assistant_message": "Done. Key additions:\n\n- **Bootstrap phase table** \u2014 exact 3 events with what each actually means, including the clarification that `bootstrap complete` = systemd fired docker-compose, not LibreChat healthy\n- **Gap callout** \u2014 \"silence after `bootstrap complete` is expected\" so the agent doesn't misread it as an error or hang\n- **Handoff instruction** \u2014 after all 3 phases seen, explicitly route to container logs or librechat-health, not back to bootstrap-events"
+  },
+  "env_vars": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENABLE_SDK_FILE_CHECKPOINTING": "true",
+    "CLAUDE_CODE_ENABLE_TASKS": "0",
+    "CLAUDE_CODE_ENTRYPOINT": "claude-vscode",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_EFFORT": "high",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe/Programming/AI/isolated-environment/main",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/Programming/AI/isolated-environment/main/.venv/bin:/home/mcrowe/.config/carapace/bin:/home/mcrowe/.local/share/pnpm/bin:/home/mcrowe/.local/share/pnpm:/opt/cuda/bin:/home/mcrowe/.local/sh...[truncated]",
+    "SHELL": "/usr/bin/zsh"
+  },
+  "cwd": "/home/mcrowe/Programming/AI/isolated-environment/main",
+  "pid": 163209,
+  "ppid": 163208
+}

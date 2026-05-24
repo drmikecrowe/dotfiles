@@ -1,0 +1,50 @@
+{
+  "runtime": "claude-code",
+  "event": "Stop",
+  "timestamp": "20260520-055730-157992427",
+  "stdin_raw": "{\"session_id\":\"a828d0ff-e6eb-416a-96a8-e7b222d95406\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe/a828d0ff-e6eb-416a-96a8-e7b222d95406.jsonl\",\"cwd\":\"/home/mcrowe\",\"permission_mode\":\"bypassPermissions\",\"effort\":{\"level\":\"high\"},\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"Issue confirmed. You have `nvidia-open-dkms 595` installed \u2014 open module requires GSP (Turing+). Your `GP107` is Pascal \u2014 no GSP. Open driver fails, nouveau grabs GPU, closed driver can't load.\\n\\n**Fix:** swap `nvidia-open-dkms` \u2192 `nvidia-dkms` (closed), blacklist nouveau.\\n\\n```bash\\nsudo pacman -R nvidia-open-dkms\\nsudo pacman -S nvidia-dkms\\necho -e \\\"blacklist nouveau\\\\noptions nouveau modeset=0\\\" | sudo tee /etc/modprobe.d/blacklist-nouveau.conf\\nsudo mkinitcpio -P\\n```\\n\\nThen reboot.\\n\\n**Note:** You also have mixed driver versions \u2014 `lib32-nvidia-470xx-utils` (470xx legacy) alongside `nvidia-utils` 595. After confirming `nvidia-dkms` works, you should remove the 470xx legacy packages unless you specifically need them.\",\"background_tasks\":[],\"session_crons\":[]}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "effort",
+    "hook_event_name",
+    "stop_hook_active",
+    "last_assistant_message",
+    "background_tasks",
+    "session_crons"
+  ],
+  "stdin_parsed": {
+    "session_id": "a828d0ff-e6eb-416a-96a8-e7b222d95406",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe/a828d0ff-e6eb-416a-96a8-e7b222d95406.jsonl",
+    "cwd": "/home/mcrowe",
+    "permission_mode": "bypassPermissions",
+    "effort": {
+      "level": "high"
+    },
+    "hook_event_name": "Stop",
+    "stop_hook_active": false,
+    "last_assistant_message": "Issue confirmed. You have `nvidia-open-dkms 595` installed \u2014 open module requires GSP (Turing+). Your `GP107` is Pascal \u2014 no GSP. Open driver fails, nouveau grabs GPU, closed driver can't load.\n\n**Fix:** swap `nvidia-open-dkms` \u2192 `nvidia-dkms` (closed), blacklist nouveau.\n\n```bash\nsudo pacman -R nvidia-open-dkms\nsudo pacman -S nvidia-dkms\necho -e \"blacklist nouveau\\noptions nouveau modeset=0\" | sudo tee /etc/modprobe.d/blacklist-nouveau.conf\nsudo mkinitcpio -P\n```\n\nThen reboot.\n\n**Note:** You also have mixed driver versions \u2014 `lib32-nvidia-470xx-utils` (470xx legacy) alongside `nvidia-utils` 595. After confirming `nvidia-dkms` works, you should remove the 470xx legacy packages unless you specifically need them.",
+    "background_tasks": [],
+    "session_crons": []
+  },
+  "env_vars": {
+    "CLAUDECODE": "1",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENTRYPOINT": "cli",
+    "CLAUDE_CODE_SESSION_ID": "a828d0ff-e6eb-416a-96a8-e7b222d95406",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_EFFORT": "high",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/pnpm/latest:/home/mcrowe/.local/share/mise/installs/bun/latest/bin:/home/mcrowe/.local/share/mise/installs/d...[truncated]",
+    "SHELL": "/usr/bin/zsh",
+    "SHELL_PROMPT_CHAR": "z>"
+  },
+  "cwd": "/home/mcrowe",
+  "pid": 199061,
+  "ppid": 199060
+}

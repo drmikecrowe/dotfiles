@@ -1,0 +1,50 @@
+{
+  "runtime": "claude-code",
+  "event": "Stop",
+  "timestamp": "20260519-202407-164058489",
+  "stdin_raw": "{\"session_id\":\"9253a465-f575-42a6-b08a-7f38c3fa09bc\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe-Programming-AI-isolated-environment-main/9253a465-f575-42a6-b08a-7f38c3fa09bc.jsonl\",\"cwd\":\"/home/mcrowe/Programming/AI/isolated-environment/main\",\"permission_mode\":\"bypassPermissions\",\"effort\":{\"level\":\"high\"},\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"`\\\\\\\\tsclient` only exists in FreeRDP sessions \u2014 not in the VNC browser window (port 8006). VNC is just for Windows setup.\\n\\nOnce Windows is fully installed and RDP works, `winapps manual` handles the FreeRDP connection with `+home-drive` automatically:\\n\\n```bash\\nwinapps manual \\\"\\\\\\\\tsclient\\\\home\\\\mcrowe\\\\Downloads\\\\foo.exe\\\"\\n```\\n\\nIf you want a full RDP desktop session (where `\\\\\\\\tsclient` is accessible):\\n\\n```bash\\nwinapps windows\\n```\\n\\nThat opens a full Windows desktop via FreeRDP \u2014 `\\\\\\\\tsclient\\\\home` will be there in File Explorer.\",\"background_tasks\":[],\"session_crons\":[]}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "effort",
+    "hook_event_name",
+    "stop_hook_active",
+    "last_assistant_message",
+    "background_tasks",
+    "session_crons"
+  ],
+  "stdin_parsed": {
+    "session_id": "9253a465-f575-42a6-b08a-7f38c3fa09bc",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe-Programming-AI-isolated-environment-main/9253a465-f575-42a6-b08a-7f38c3fa09bc.jsonl",
+    "cwd": "/home/mcrowe/Programming/AI/isolated-environment/main",
+    "permission_mode": "bypassPermissions",
+    "effort": {
+      "level": "high"
+    },
+    "hook_event_name": "Stop",
+    "stop_hook_active": false,
+    "last_assistant_message": "`\\\\tsclient` only exists in FreeRDP sessions \u2014 not in the VNC browser window (port 8006). VNC is just for Windows setup.\n\nOnce Windows is fully installed and RDP works, `winapps manual` handles the FreeRDP connection with `+home-drive` automatically:\n\n```bash\nwinapps manual \"\\\\tsclient\\home\\mcrowe\\Downloads\\foo.exe\"\n```\n\nIf you want a full RDP desktop session (where `\\\\tsclient` is accessible):\n\n```bash\nwinapps windows\n```\n\nThat opens a full Windows desktop via FreeRDP \u2014 `\\\\tsclient\\home` will be there in File Explorer.",
+    "background_tasks": [],
+    "session_crons": []
+  },
+  "env_vars": {
+    "CLAUDECODE": "1",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENTRYPOINT": "cli",
+    "CLAUDE_CODE_SESSION_ID": "9253a465-f575-42a6-b08a-7f38c3fa09bc",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_EFFORT": "high",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe/Programming/AI/isolated-environment/main",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/Programming/AI/isolated-environment/main/.venv/bin:/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/python/3.12/bin:/home/mcrowe/.local/share/mi...[truncated]",
+    "SHELL": "/usr/bin/zsh",
+    "SHELL_PROMPT_CHAR": "z>"
+  },
+  "cwd": "/home/mcrowe/Programming/AI/isolated-environment/main",
+  "pid": 100815,
+  "ppid": 100814
+}

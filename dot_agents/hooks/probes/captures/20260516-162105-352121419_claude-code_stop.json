@@ -1,0 +1,44 @@
+{
+  "runtime": "claude-code",
+  "event": "Stop",
+  "timestamp": "20260516-162105-352121419",
+  "stdin_raw": "{\"session_id\":\"bb620a6f-2876-44bd-b41c-0693dccaf2fe\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe-Programming-MikKelTech-mw-poc-main/bb620a6f-2876-44bd-b41c-0693dccaf2fe.jsonl\",\"cwd\":\"/home/mcrowe/Programming/MikKelTech/mw-poc/main\",\"permission_mode\":\"bypassPermissions\",\"effort\":{\"level\":\"high\"},\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"Page shows **Prompt Coach PoC** at `localhost:3000`:\\n\\n- **Editor** \u2014 textbox with ghost text \\\"draft me an email\\\" / \\\"\u2026for whom?\\\"\\n- **Sidebar** with 4 regions:\\n  - **Templates (2)** \u2014 \\\"Basic generate\\\" and \\\"Detailed generate\\\" with fill-in-the-blank patterns\\n  - **Examples (2)** \u2014 weak\u2192strong prompt comparisons\\n  - **Gap Checklist** \u2014 audience, format, constraints, success criteria\\n  - **Questions** \u2014 currently showing \\\"Who is the intended audience for this content?\\\"\\n\\nLooks like analysis fired on the \\\"draft me an email\\\" placeholder text and surfaced the audience gap question.\"}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "effort",
+    "hook_event_name",
+    "stop_hook_active",
+    "last_assistant_message"
+  ],
+  "stdin_parsed": {
+    "session_id": "bb620a6f-2876-44bd-b41c-0693dccaf2fe",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe-Programming-MikKelTech-mw-poc-main/bb620a6f-2876-44bd-b41c-0693dccaf2fe.jsonl",
+    "cwd": "/home/mcrowe/Programming/MikKelTech/mw-poc/main",
+    "permission_mode": "bypassPermissions",
+    "effort": {
+      "level": "high"
+    },
+    "hook_event_name": "Stop",
+    "stop_hook_active": false,
+    "last_assistant_message": "Page shows **Prompt Coach PoC** at `localhost:3000`:\n\n- **Editor** \u2014 textbox with ghost text \"draft me an email\" / \"\u2026for whom?\"\n- **Sidebar** with 4 regions:\n  - **Templates (2)** \u2014 \"Basic generate\" and \"Detailed generate\" with fill-in-the-blank patterns\n  - **Examples (2)** \u2014 weak\u2192strong prompt comparisons\n  - **Gap Checklist** \u2014 audience, format, constraints, success criteria\n  - **Questions** \u2014 currently showing \"Who is the intended audience for this content?\"\n\nLooks like analysis fired on the \"draft me an email\" placeholder text and surfaced the audience gap question."
+  },
+  "env_vars": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENTRYPOINT": "cli",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_EFFORT": "high",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe/Programming/MikKelTech/mw-poc/main",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/.local/share/pnpm/bin:/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/pnpm/latest:/home/mcrowe/.local/share/mise/installs/bun/latest/bin:/home/...[truncated]",
+    "SHELL": "/usr/bin/zsh",
+    "SHELL_PROMPT_CHAR": "z>"
+  },
+  "cwd": "/home/mcrowe/Programming/MikKelTech/mw-poc/main",
+  "pid": 3715725,
+  "ppid": 3715724
+}

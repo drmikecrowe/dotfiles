@@ -1,0 +1,50 @@
+{
+  "runtime": "claude-code",
+  "event": "Stop",
+  "timestamp": "20260520-070112-991836706",
+  "stdin_raw": "{\"session_id\":\"138a608c-50ef-41bb-bc50-580248a2022b\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe--agents-skills/138a608c-50ef-41bb-bc50-580248a2022b.jsonl\",\"cwd\":\"/home/mcrowe/.agents/skills\",\"permission_mode\":\"bypassPermissions\",\"effort\":{\"level\":\"high\"},\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"Have enough data. Compiling full audit report.\\n\\n---\\n\\n## Skill Audit Report \u2014 2026-05-20\\n\\n### Inventory\\n\\n| Location | Real dirs | Symlinks to other |\\n|---|---|---|\\n| `~/.agents/skills/` | 80 skills | 0 |\\n| `~/.claude/skills/` | 8 skills | 40 symlinks \u2192 `.agents/skills/` |\\n\\n---\\n\\n### Critical Issues\\n\\n| Skill | File | Issue |\\n|---|---|---|\\n| `dorothy-command` | `SKILL.md:1` | **No YAML frontmatter** \u2014 missing `---` fences, `name`, `description`. Agent discovery broken. |\\n\\n---\\n\\n### High Issues (over 500-line limit)\\n\\n| Skill | Lines | Location |\\n|---|---|---|\\n| `graphify` | 1,377 | `.claude/skills/` |\\n| `humanizer` | 559 | `.claude/skills/` |\\n| `best-practices` | 583 | `.agents/skills/` |\\n| `accessibility` | 522 | `.agents/skills/` |\\n| `agent-browser` | 517 | `.agents/skills/` |\\n\\nThese need content moved to `references/` subdirs.\\n\\n---\\n\\n### Medium Issues (approaching 500-line limit)\\n\\n| Skill | Lines |\\n|---|---|\\n| `obsidian-bases` | 497 |\\n| `core-web-vitals` | 441 |\\n| `skill-creator` | 356 |\\n\\n---\\n\\n### Coverage Gap \u2014 40 `.agents/skills/` not symlinked into `.claude/skills/`\\n\\nThese skills exist in `.agents/skills/` but have **no symlink** in `.claude/skills/`. Whether that's intentional depends on your harness config \u2014 if Claude Code only scans `.claude/skills/`, these are invisible to Claude Code sessions.\\n\\n```\\naccessibility          agent-browser          api-design\\nbest-practices         blog-writer            btw\\ncode-optimizer         core-web-vitals        create-gsd-extension\\ncreate-mcp-server      create-skill           create-workflow\\ndebug-like-expert      decompose-into-slices  dependency-upgrade\\ndesign-an-interface    forensics              frontend-design\\ngithub-workflows       grill-me               handoff\\nlint                   maintain-project-log   make-interfaces-feel-better\\nobservability          packer-build           pulumi-preview-summary\\nreact-best-practices   review                 security-review\\nserena-init            spike-wrap-up          tdd\\ntest                   userinterface-wiki     verify-before-complete\\nweb-design-guidelines  web-quality-audit      write-docs\\nwrite-milestone-brief\\n```\\n\\n---\\n\\n### `.claude/skills/` Unique (no `.agents/` counterpart)\\n\\nThese 8 live **only** in `.claude/skills/` \u2014 no symlink back, no copy in `.agents/skills/`:\\n\\n`claude-md-optimizer`, `codebase-memory`, `context-handover`, `excel`, `folder-metadata`, `graphify`, `humanizer`, `skill-creator`\\n\\n---\\n\\n### Priority Fix Queue\\n\\n1. **`dorothy-command`** \u2014 add frontmatter (Critical, 5 min)\\n2. **`graphify`** \u2014 split 1,377 lines into references (High)\\n3. **`best-practices`, `humanizer`, `accessibility`, `agent-browser`** \u2014 split oversize files (High)\\n4. **Coverage gap** \u2014 decide: symlink the 40 missing, or confirm harness scans `.agents/skills/` directly\\n\\nWant me to fix `dorothy-command` frontmatter now and/or start splitting the oversize skills?\",\"background_tasks\":[],\"session_crons\":[]}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "effort",
+    "hook_event_name",
+    "stop_hook_active",
+    "last_assistant_message",
+    "background_tasks",
+    "session_crons"
+  ],
+  "stdin_parsed": {
+    "session_id": "138a608c-50ef-41bb-bc50-580248a2022b",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe--agents-skills/138a608c-50ef-41bb-bc50-580248a2022b.jsonl",
+    "cwd": "/home/mcrowe/.agents/skills",
+    "permission_mode": "bypassPermissions",
+    "effort": {
+      "level": "high"
+    },
+    "hook_event_name": "Stop",
+    "stop_hook_active": false,
+    "last_assistant_message": "Have enough data. Compiling full audit report.\n\n---\n\n## Skill Audit Report \u2014 2026-05-20\n\n### Inventory\n\n| Location | Real dirs | Symlinks to other |\n|---|---|---|\n| `~/.agents/skills/` | 80 skills | 0 |\n| `~/.claude/skills/` | 8 skills | 40 symlinks \u2192 `.agents/skills/` |\n\n---\n\n### Critical Issues\n\n| Skill | File | Issue |\n|---|---|---|\n| `dorothy-command` | `SKILL.md:1` | **No YAML frontmatter** \u2014 missing `---` fences, `name`, `description`. Agent discovery broken. |\n\n---\n\n### High Issues (over 500-line limit)\n\n| Skill | Lines | Location |\n|---|---|---|\n| `graphify` | 1,377 | `.claude/skills/` |\n| `humanizer` | 559 | `.claude/skills/` |\n| `best-practices` | 583 | `.agents/skills/` |\n| `accessibility` | 522 | `.agents/skills/` |\n| `agent-browser` | 517 | `.agents/skills/` |\n\nThese need content moved to `references/` subdirs.\n\n---\n\n### Medium Issues (approaching 500-line limit)\n\n| Skill | Lines |\n|---|---|\n| `obsidian-bases` | 497 |\n| `core-web-vitals` | 441 |\n| `skill-creator` | 356 |\n\n---\n\n### Coverage Gap \u2014 40 `.agents/skills/` not symlinked into `.claude/skills/`\n\nThese skills exist in `.agents/skills/` but have **no symlink** in `.claude/skills/`. Whether that's intentional depends on your harness config \u2014 if Claude Code only scans `.claude/skills/`, these are invisible to Claude Code sessions.\n\n```\naccessibility          agent-browser          api-design\nbest-practices         blog-writer            btw\ncode-optimizer         core-web-vitals        create-gsd-extension\ncreate-mcp-server      create-skill           create-workflow\ndebug-like-expert      decompose-into-slices  dependency-upgrade\ndesign-an-interface    forensics              frontend-design\ngithub-workflows       grill-me               handoff\nlint                   maintain-project-log   make-interfaces-feel-better\nobservability          packer-build           pulumi-preview-summary\nreact-best-practices   review                 security-review\nserena-init            spike-wrap-up          tdd\ntest                   userinterface-wiki     verify-before-complete\nweb-design-guidelines  web-quality-audit      write-docs\nwrite-milestone-brief\n```\n\n---\n\n### `.claude/skills/` Unique (no `.agents/` counterpart)\n\nThese 8 live **only** in `.claude/skills/` \u2014 no symlink back, no copy in `.agents/skills/`:\n\n`claude-md-optimizer`, `codebase-memory`, `context-handover`, `excel`, `folder-metadata`, `graphify`, `humanizer`, `skill-creator`\n\n---\n\n### Priority Fix Queue\n\n1. **`dorothy-command`** \u2014 add frontmatter (Critical, 5 min)\n2. **`graphify`** \u2014 split 1,377 lines into references (High)\n3. **`best-practices`, `humanizer`, `accessibility`, `agent-browser`** \u2014 split oversize files (High)\n4. **Coverage gap** \u2014 decide: symlink the 40 missing, or confirm harness scans `.agents/skills/` directly\n\nWant me to fix `dorothy-command` frontmatter now and/or start splitting the oversize skills?",
+    "background_tasks": [],
+    "session_crons": []
+  },
+  "env_vars": {
+    "CLAUDECODE": "1",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENTRYPOINT": "cli",
+    "CLAUDE_CODE_SESSION_ID": "138a608c-50ef-41bb-bc50-580248a2022b",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_EFFORT": "high",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe/.agents/skills",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/pnpm/latest:/home/mcrowe/.local/share/mise/installs/bun/latest/bin:/home/mcrowe/.local/share/mise/installs/d...[truncated]",
+    "SHELL": "/usr/bin/zsh",
+    "SHELL_PROMPT_CHAR": "z>"
+  },
+  "cwd": "/home/mcrowe/.agents/skills",
+  "pid": 20197,
+  "ppid": 20195
+}

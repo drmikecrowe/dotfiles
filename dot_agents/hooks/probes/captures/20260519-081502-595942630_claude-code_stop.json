@@ -1,0 +1,39 @@
+{
+  "runtime": "claude-code",
+  "event": "Stop",
+  "timestamp": "20260519-081502-595942630",
+  "stdin_raw": "{\"session_id\":\"75d29ba3-26c2-421b-a165-dc09870e4e9e\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe/75d29ba3-26c2-421b-a165-dc09870e4e9e.jsonl\",\"cwd\":\"/home/mcrowe\",\"permission_mode\":\"bypassPermissions\",\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"Nouveau still loading \u2014 baked into initramfs. Blacklist file exists but `mkinitcpio -P` never ran before reboot. Need to rebuild now:\\n\\n```bash\\nsudo mkinitcpio -P && sudo reboot\\n```\\n\\nAfter this reboot nouveau won't load.\"}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "hook_event_name",
+    "stop_hook_active",
+    "last_assistant_message"
+  ],
+  "stdin_parsed": {
+    "session_id": "75d29ba3-26c2-421b-a165-dc09870e4e9e",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe/75d29ba3-26c2-421b-a165-dc09870e4e9e.jsonl",
+    "cwd": "/home/mcrowe",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "Stop",
+    "stop_hook_active": false,
+    "last_assistant_message": "Nouveau still loading \u2014 baked into initramfs. Blacklist file exists but `mkinitcpio -P` never ran before reboot. Need to rebuild now:\n\n```bash\nsudo mkinitcpio -P && sudo reboot\n```\n\nAfter this reboot nouveau won't load."
+  },
+  "env_vars": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENTRYPOINT": "cli",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/pnpm/latest:/home/mcrowe/.local/share/mise/installs/bun/latest/bin:/home/mcrowe/.local/share/mise/installs/d...[truncated]",
+    "SHELL": "/usr/bin/zsh",
+    "SHELL_PROMPT_CHAR": "z>"
+  },
+  "cwd": "/home/mcrowe",
+  "pid": 13625,
+  "ppid": 13624
+}

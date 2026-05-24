@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Stop: interactive turn cadence. Bump a counter; every Nth turn (default 3)
+# spawn a detached summarizer pass over the transcript delta.
+set -uo pipefail
+source "$(dirname "$0")/../lib-notebook.sh"
+source "$(dirname "$0")/../lib-pi-adapter.sh"
+source "$(dirname "$0")/../lib-log.sh"
+[ -n "${AGENTS_SUMMARIZER:-}" ] && exit 0
+
+PAYLOAD=$(pi_adapt)
+SID=$(nb_json "$PAYLOAD" '.session_id')
+CWD=$(nb_json "$PAYLOAD" '.cwd')
+TRANSCRIPT=$(nb_json "$PAYLOAD" '.transcript_path')
+[ -n "$SID" ] || exit 0
+DIR=$(nb_session_dir "$SID" "$CWD") || exit 0
+mkdir -p "$DIR" 2>/dev/null || true
+log_setup "notebook-tick"
+
+THRESHOLD="${NB_TURN_THRESHOLD:-3}"
+
+exec 9>"$DIR/.turns.lock"
+flock 9
+n=$(cat "$DIR/.turns" 2>/dev/null || echo 0)
+[[ "$n" =~ ^[0-9]+$ ]] || n=0
+n=$(( n + 1 ))
+fire=0
+if [ "$n" -ge "$THRESHOLD" ]; then n=0; fire=1; fi
+echo "$n" > "$DIR/.turns"
+flock -u 9
+
+log_op "turns=$n threshold=$THRESHOLD fire=$fire SID=$SID"
+if [ "$fire" -eq 1 ]; then
+    log_op "SPAWN summarizer dir=$DIR"
+    nb_spawn_summarizer "$DIR" "$TRANSCRIPT"
+fi
+exit 0

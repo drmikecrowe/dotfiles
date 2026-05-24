@@ -1,0 +1,50 @@
+{
+  "runtime": "claude-code",
+  "event": "Stop",
+  "timestamp": "20260520-060308-287391740",
+  "stdin_raw": "{\"session_id\":\"a828d0ff-e6eb-416a-96a8-e7b222d95406\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe/a828d0ff-e6eb-416a-96a8-e7b222d95406.jsonl\",\"cwd\":\"/home/mcrowe\",\"permission_mode\":\"bypassPermissions\",\"effort\":{\"level\":\"high\"},\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"Done. Script at `~/.config/dorothy/commands/setup-driver-nvidia`.\\n\\nKey decisions:\\n- `set -euo pipefail` \u2014 aborts on any error, unset var, or pipe failure\\n- `pacman -Rdd` to remove conflicting packages without dep errors (safe \u2014 we immediately replace)\\n- Dracut target is `/tmp/initrd-nvidia-build-$$` (PID-unique), then `cp` to `/boot/<machine-id>/<kernel>/initrd`\\n- `--hostonly` keeps initrd size smaller\\n- `--tmpdir /tmp` routes dracut's working files away from /boot\\n\\nRun: `setup-driver-nvidia`\",\"background_tasks\":[],\"session_crons\":[]}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "effort",
+    "hook_event_name",
+    "stop_hook_active",
+    "last_assistant_message",
+    "background_tasks",
+    "session_crons"
+  ],
+  "stdin_parsed": {
+    "session_id": "a828d0ff-e6eb-416a-96a8-e7b222d95406",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe/a828d0ff-e6eb-416a-96a8-e7b222d95406.jsonl",
+    "cwd": "/home/mcrowe",
+    "permission_mode": "bypassPermissions",
+    "effort": {
+      "level": "high"
+    },
+    "hook_event_name": "Stop",
+    "stop_hook_active": false,
+    "last_assistant_message": "Done. Script at `~/.config/dorothy/commands/setup-driver-nvidia`.\n\nKey decisions:\n- `set -euo pipefail` \u2014 aborts on any error, unset var, or pipe failure\n- `pacman -Rdd` to remove conflicting packages without dep errors (safe \u2014 we immediately replace)\n- Dracut target is `/tmp/initrd-nvidia-build-$$` (PID-unique), then `cp` to `/boot/<machine-id>/<kernel>/initrd`\n- `--hostonly` keeps initrd size smaller\n- `--tmpdir /tmp` routes dracut's working files away from /boot\n\nRun: `setup-driver-nvidia`",
+    "background_tasks": [],
+    "session_crons": []
+  },
+  "env_vars": {
+    "CLAUDECODE": "1",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENTRYPOINT": "cli",
+    "CLAUDE_CODE_SESSION_ID": "a828d0ff-e6eb-416a-96a8-e7b222d95406",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_EFFORT": "high",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/pnpm/latest:/home/mcrowe/.local/share/mise/installs/bun/latest/bin:/home/mcrowe/.local/share/mise/installs/d...[truncated]",
+    "SHELL": "/usr/bin/zsh",
+    "SHELL_PROMPT_CHAR": "z>"
+  },
+  "cwd": "/home/mcrowe",
+  "pid": 209531,
+  "ppid": 209530
+}

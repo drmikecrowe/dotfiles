@@ -1,0 +1,50 @@
+{
+  "runtime": "claude-code",
+  "event": "Stop",
+  "timestamp": "20260520-063851-817133292",
+  "stdin_raw": "{\"session_id\":\"a828d0ff-e6eb-416a-96a8-e7b222d95406\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe/a828d0ff-e6eb-416a-96a8-e7b222d95406.jsonl\",\"cwd\":\"/home/mcrowe\",\"permission_mode\":\"bypassPermissions\",\"effort\":{\"level\":\"high\"},\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"Script updated. Key changes vs v1:\\n\\n- **Removes** `nvidia-utils 595`, `lib32-nvidia-utils 595`, `libxnvctrl 595`, `opencl-nvidia 595` \u2014 kernel module + userspace must version-match, can't mix 470xx module with 595 userspace\\n- **Installs** full 470xx stack from AUR via `yay`: `nvidia-470xx-dkms`, `nvidia-470xx-utils`, `lib32-nvidia-470xx-utils`, `libxnvctrl-470xx`\\n- Root cause in comment: Arch dropped closed-source modules from official repos entirely\\n\\nRun `setup-driver-nvidia` again. Will take longer \u2014 AUR packages build from source.\\n\\n**CUDA 13 caveat:** `cuda 13.2.1` on your system won't function \u2014 that needs driver \u2265 570.x which requires Turing+. GP107 can't do it. CUDA 11.4 max with 470xx.\",\"background_tasks\":[],\"session_crons\":[]}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "effort",
+    "hook_event_name",
+    "stop_hook_active",
+    "last_assistant_message",
+    "background_tasks",
+    "session_crons"
+  ],
+  "stdin_parsed": {
+    "session_id": "a828d0ff-e6eb-416a-96a8-e7b222d95406",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe/a828d0ff-e6eb-416a-96a8-e7b222d95406.jsonl",
+    "cwd": "/home/mcrowe",
+    "permission_mode": "bypassPermissions",
+    "effort": {
+      "level": "high"
+    },
+    "hook_event_name": "Stop",
+    "stop_hook_active": false,
+    "last_assistant_message": "Script updated. Key changes vs v1:\n\n- **Removes** `nvidia-utils 595`, `lib32-nvidia-utils 595`, `libxnvctrl 595`, `opencl-nvidia 595` \u2014 kernel module + userspace must version-match, can't mix 470xx module with 595 userspace\n- **Installs** full 470xx stack from AUR via `yay`: `nvidia-470xx-dkms`, `nvidia-470xx-utils`, `lib32-nvidia-470xx-utils`, `libxnvctrl-470xx`\n- Root cause in comment: Arch dropped closed-source modules from official repos entirely\n\nRun `setup-driver-nvidia` again. Will take longer \u2014 AUR packages build from source.\n\n**CUDA 13 caveat:** `cuda 13.2.1` on your system won't function \u2014 that needs driver \u2265 570.x which requires Turing+. GP107 can't do it. CUDA 11.4 max with 470xx.",
+    "background_tasks": [],
+    "session_crons": []
+  },
+  "env_vars": {
+    "CLAUDECODE": "1",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENTRYPOINT": "cli",
+    "CLAUDE_CODE_SESSION_ID": "a828d0ff-e6eb-416a-96a8-e7b222d95406",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_EFFORT": "high",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/pnpm/latest:/home/mcrowe/.local/share/mise/installs/bun/latest/bin:/home/mcrowe/.local/share/mise/installs/d...[truncated]",
+    "SHELL": "/usr/bin/zsh",
+    "SHELL_PROMPT_CHAR": "z>"
+  },
+  "cwd": "/home/mcrowe",
+  "pid": 8973,
+  "ppid": 8972
+}

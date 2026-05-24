@@ -1,0 +1,37 @@
+{
+  "runtime": "claude-code",
+  "event": "UserPromptSubmit",
+  "timestamp": "20260516-044118-446299801",
+  "stdin_raw": "{\"session_id\":\"84827720-fe0c-4825-9546-d8fecd396599\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe-Programming-AI-universal-hooks/84827720-fe0c-4825-9546-d8fecd396599.jsonl\",\"cwd\":\"/home/mcrowe/Programming/AI/universal-hooks\",\"permission_mode\":\"default\",\"hook_event_name\":\"UserPromptSubmit\",\"prompt\":\"You are finishing a serena-init run on project: /home/mcrowe/Programming/AI/universal-hooks\\n\\nRead the file /home/mcrowe/.agents/docs/default-llm-setup.md and apply ONLY the project-level setup items below. Do NOT touch global configs (settings.json, ~/.agents/hooks/, gsd PREFERENCES.md \u2014 those are already configured globally).\\n\\nProject-level tasks to check and apply:\\n1. Check project CLAUDE.md (and AGENTS.md if it exists) \u2014 add the Code Navigation Routing table from the 'AGENTS.md / CLAUDE.md Addition' section if missing\\n2. Verify .mcp.json at /home/mcrowe/Programming/AI/universal-hooks/.mcp.json has serena, gsd-workflow, codebase-memory-mcp, and context-mode entries \u2014 report any missing\\n3. Report what you changed (or \\\"nothing needed\\\" if already complete)\"}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "hook_event_name",
+    "prompt"
+  ],
+  "stdin_parsed": {
+    "session_id": "84827720-fe0c-4825-9546-d8fecd396599",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe-Programming-AI-universal-hooks/84827720-fe0c-4825-9546-d8fecd396599.jsonl",
+    "cwd": "/home/mcrowe/Programming/AI/universal-hooks",
+    "permission_mode": "default",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "You are finishing a serena-init run on project: /home/mcrowe/Programming/AI/universal-hooks\n\nRead the file /home/mcrowe/.agents/docs/default-llm-setup.md and apply ONLY the project-level setup items below. Do NOT touch global configs (settings.json, ~/.agents/hooks/, gsd PREFERENCES.md \u2014 those are already configured globally).\n\nProject-level tasks to check and apply:\n1. Check project CLAUDE.md (and AGENTS.md if it exists) \u2014 add the Code Navigation Routing table from the 'AGENTS.md / CLAUDE.md Addition' section if missing\n2. Verify .mcp.json at /home/mcrowe/Programming/AI/universal-hooks/.mcp.json has serena, gsd-workflow, codebase-memory-mcp, and context-mode entries \u2014 report any missing\n3. Report what you changed (or \"nothing needed\" if already complete)"
+  },
+  "env_vars": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENTRYPOINT": "sdk-cli",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe/Programming/AI/universal-hooks",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/.local/share/pnpm/bin:/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/pnpm/latest:/home/mcrowe/.local/share/mise/installs/bun/latest/bin:/home/...[truncated]",
+    "SHELL": "/usr/bin/zsh",
+    "SHELL_PROMPT_CHAR": "z>"
+  },
+  "cwd": "/home/mcrowe/Programming/AI/universal-hooks",
+  "pid": 3287477,
+  "ppid": 3287476
+}

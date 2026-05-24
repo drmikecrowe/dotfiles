@@ -1,0 +1,50 @@
+{
+  "runtime": "claude-code",
+  "event": "Stop",
+  "timestamp": "20260520-071214-864763950",
+  "stdin_raw": "{\"session_id\":\"a828d0ff-e6eb-416a-96a8-e7b222d95406\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe/a828d0ff-e6eb-416a-96a8-e7b222d95406.jsonl\",\"cwd\":\"/home/mcrowe\",\"permission_mode\":\"bypassPermissions\",\"effort\":{\"level\":\"high\"},\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"**Driver loading successfully.** `NVRM: loading NVIDIA UNIX x86_64 Kernel Module 470.256.02` \u2014 470xx closed-source module up, DRM initialized.\\n\\nBut: `optimus capabilities: enabled, status dynamic power` \u2014 this is Optimus laptop. NVIDIA is discrete GPU, Intel is primary display. Display still renders on Intel/CPU by design.\\n\\n\\\"cpu still\\\" \u2014 finish sentence. Rendering on Intel? Or something else?\\n\\nFor Optimus: NVIDIA loaded \u2260 NVIDIA drives display. Two options:\\n\\n1. **Run specific apps on NVIDIA:** `prime-run <app>`\\n2. **Force NVIDIA as primary display:** requires `nvidia-prime` + display manager config (more complex, kills battery)\\n\\nWhich do you need?\",\"background_tasks\":[],\"session_crons\":[]}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "effort",
+    "hook_event_name",
+    "stop_hook_active",
+    "last_assistant_message",
+    "background_tasks",
+    "session_crons"
+  ],
+  "stdin_parsed": {
+    "session_id": "a828d0ff-e6eb-416a-96a8-e7b222d95406",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe/a828d0ff-e6eb-416a-96a8-e7b222d95406.jsonl",
+    "cwd": "/home/mcrowe",
+    "permission_mode": "bypassPermissions",
+    "effort": {
+      "level": "high"
+    },
+    "hook_event_name": "Stop",
+    "stop_hook_active": false,
+    "last_assistant_message": "**Driver loading successfully.** `NVRM: loading NVIDIA UNIX x86_64 Kernel Module 470.256.02` \u2014 470xx closed-source module up, DRM initialized.\n\nBut: `optimus capabilities: enabled, status dynamic power` \u2014 this is Optimus laptop. NVIDIA is discrete GPU, Intel is primary display. Display still renders on Intel/CPU by design.\n\n\"cpu still\" \u2014 finish sentence. Rendering on Intel? Or something else?\n\nFor Optimus: NVIDIA loaded \u2260 NVIDIA drives display. Two options:\n\n1. **Run specific apps on NVIDIA:** `prime-run <app>`\n2. **Force NVIDIA as primary display:** requires `nvidia-prime` + display manager config (more complex, kills battery)\n\nWhich do you need?",
+    "background_tasks": [],
+    "session_crons": []
+  },
+  "env_vars": {
+    "CLAUDECODE": "1",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENTRYPOINT": "cli",
+    "CLAUDE_CODE_SESSION_ID": "a828d0ff-e6eb-416a-96a8-e7b222d95406",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_EFFORT": "high",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/pnpm/latest:/home/mcrowe/.local/share/mise/installs/bun/latest/bin:/home/mcrowe/.local/share/mise/installs/d...[truncated]",
+    "SHELL": "/usr/bin/zsh",
+    "SHELL_PROMPT_CHAR": "z>"
+  },
+  "cwd": "/home/mcrowe",
+  "pid": 7891,
+  "ppid": 7890
+}

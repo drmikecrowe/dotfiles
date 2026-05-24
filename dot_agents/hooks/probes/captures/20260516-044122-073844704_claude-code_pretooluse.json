@@ -1,0 +1,49 @@
+{
+  "runtime": "claude-code",
+  "event": "PreToolUse",
+  "timestamp": "20260516-044122-073844704",
+  "stdin_raw": "{\"session_id\":\"84827720-fe0c-4825-9546-d8fecd396599\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe-Programming-AI-universal-hooks/84827720-fe0c-4825-9546-d8fecd396599.jsonl\",\"cwd\":\"/home/mcrowe/Programming/AI/universal-hooks\",\"permission_mode\":\"default\",\"effort\":{\"level\":\"high\"},\"hook_event_name\":\"PreToolUse\",\"tool_name\":\"Glob\",\"tool_input\":{\"pattern\":\"CLAUDE.md\",\"path\":\"/home/mcrowe/Programming/AI/universal-hooks\"},\"tool_use_id\":\"toolu_01PJNRLGDfcjoQCK5PsExXh2\"}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "effort",
+    "hook_event_name",
+    "tool_name",
+    "tool_input",
+    "tool_use_id"
+  ],
+  "stdin_parsed": {
+    "session_id": "84827720-fe0c-4825-9546-d8fecd396599",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe-Programming-AI-universal-hooks/84827720-fe0c-4825-9546-d8fecd396599.jsonl",
+    "cwd": "/home/mcrowe/Programming/AI/universal-hooks",
+    "permission_mode": "default",
+    "effort": {
+      "level": "high"
+    },
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+      "pattern": "CLAUDE.md",
+      "path": "/home/mcrowe/Programming/AI/universal-hooks"
+    },
+    "tool_use_id": "toolu_01PJNRLGDfcjoQCK5PsExXh2"
+  },
+  "env_vars": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENTRYPOINT": "sdk-cli",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_EFFORT": "high",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe/Programming/AI/universal-hooks",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/.local/share/pnpm/bin:/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/pnpm/latest:/home/mcrowe/.local/share/mise/installs/bun/latest/bin:/home/...[truncated]",
+    "SHELL": "/usr/bin/zsh",
+    "SHELL_PROMPT_CHAR": "z>"
+  },
+  "cwd": "/home/mcrowe/Programming/AI/universal-hooks",
+  "pid": 3287597,
+  "ppid": 3287596
+}

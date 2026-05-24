@@ -1,0 +1,50 @@
+{
+  "runtime": "claude-code",
+  "event": "Stop",
+  "timestamp": "20260520-065923-292054585",
+  "stdin_raw": "{\"session_id\":\"a828d0ff-e6eb-416a-96a8-e7b222d95406\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe/a828d0ff-e6eb-416a-96a8-e7b222d95406.jsonl\",\"cwd\":\"/home/mcrowe\",\"permission_mode\":\"bypassPermissions\",\"effort\":{\"level\":\"high\"},\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"Fair call. I was wrong. Here's exactly what happened:\\n\\n**What I said:** 595.x closed-source driver supports Pascal. True.\\n\\n**What I missed:** Arch dropped the closed-source `nvidia`/`nvidia-dkms` packages from official repos. Only `nvidia-open-dkms` remains in official repos \u2014 and that requires Turing+. I assumed the package existed without verifying first.\\n\\nSo both statements were individually correct:\\n- 595.x supports GP107 \u2713\\n- `nvidia-dkms` doesn't exist in Arch repos \u2713\\n\\nI failed to connect them before writing the first script.\\n\\n**Actual options for GP107 + Arch:**\\n\\n| Option | Driver | CUDA | How |\\n|--------|--------|------|-----|\\n| A | 470xx closed | \u2264 11.4 only | AUR `nvidia-470xx-dkms` |\\n| B | 595.x closed | 13 works | NVIDIA `.run` installer (outside pacman) |\\n| C | nouveau | none | already running |\\n\\nOption B preserves CUDA 13 but `.run` installs fight with pacman on updates \u2014 fragile. Option A is clean but kills CUDA 13 for this card.\\n\\nWhich do you actually need \u2014 working display/GPU only, or CUDA 13?\",\"background_tasks\":[],\"session_crons\":[]}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "effort",
+    "hook_event_name",
+    "stop_hook_active",
+    "last_assistant_message",
+    "background_tasks",
+    "session_crons"
+  ],
+  "stdin_parsed": {
+    "session_id": "a828d0ff-e6eb-416a-96a8-e7b222d95406",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe/a828d0ff-e6eb-416a-96a8-e7b222d95406.jsonl",
+    "cwd": "/home/mcrowe",
+    "permission_mode": "bypassPermissions",
+    "effort": {
+      "level": "high"
+    },
+    "hook_event_name": "Stop",
+    "stop_hook_active": false,
+    "last_assistant_message": "Fair call. I was wrong. Here's exactly what happened:\n\n**What I said:** 595.x closed-source driver supports Pascal. True.\n\n**What I missed:** Arch dropped the closed-source `nvidia`/`nvidia-dkms` packages from official repos. Only `nvidia-open-dkms` remains in official repos \u2014 and that requires Turing+. I assumed the package existed without verifying first.\n\nSo both statements were individually correct:\n- 595.x supports GP107 \u2713\n- `nvidia-dkms` doesn't exist in Arch repos \u2713\n\nI failed to connect them before writing the first script.\n\n**Actual options for GP107 + Arch:**\n\n| Option | Driver | CUDA | How |\n|--------|--------|------|-----|\n| A | 470xx closed | \u2264 11.4 only | AUR `nvidia-470xx-dkms` |\n| B | 595.x closed | 13 works | NVIDIA `.run` installer (outside pacman) |\n| C | nouveau | none | already running |\n\nOption B preserves CUDA 13 but `.run` installs fight with pacman on updates \u2014 fragile. Option A is clean but kills CUDA 13 for this card.\n\nWhich do you actually need \u2014 working display/GPU only, or CUDA 13?",
+    "background_tasks": [],
+    "session_crons": []
+  },
+  "env_vars": {
+    "CLAUDECODE": "1",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_ENTRYPOINT": "cli",
+    "CLAUDE_CODE_SESSION_ID": "a828d0ff-e6eb-416a-96a8-e7b222d95406",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
+    "CLAUDE_EFFORT": "high",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/pnpm/latest:/home/mcrowe/.local/share/mise/installs/bun/latest/bin:/home/mcrowe/.local/share/mise/installs/d...[truncated]",
+    "SHELL": "/usr/bin/zsh",
+    "SHELL_PROMPT_CHAR": "z>"
+  },
+  "cwd": "/home/mcrowe",
+  "pid": 11650,
+  "ppid": 11649
+}

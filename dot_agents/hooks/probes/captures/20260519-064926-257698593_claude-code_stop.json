@@ -1,0 +1,50 @@
+{
+  "runtime": "claude-code",
+  "event": "Stop",
+  "timestamp": "20260519-064926-257698593",
+  "stdin_raw": "{\"session_id\":\"1674fe80-412a-44bd-8140-43881d62bdb3\",\"transcript_path\":\"/home/mcrowe/.claude/projects/-home-mcrowe/1674fe80-412a-44bd-8140-43881d62bdb3.jsonl\",\"cwd\":\"/home/mcrowe\",\"permission_mode\":\"auto\",\"effort\":{\"level\":\"medium\"},\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"Strong material to draw from. Proposed 10 candidate slides \u2014 pick the ones you want:\\n\\n---\\n\\n### Candidate slides \u2014 `~/.agents` + isolated-AI deep-dive\\n\\n| # | Slide | Concrete content |\\n|---|-------|------------------|\\n| **A** | **`~/.agents/` \u2014 Personal AI OS** | Layer diagram: `rules/` (stack-specific gates) \u2192 `skills/` (53 skills) \u2192 `hooks/` (event guards) \u2192 `docs/` (playbooks). Top-level `config.json` ties together. |\\n| **B** | **Hook Anatomy \u2014 Forcing Discipline** | 4 production hooks with one-line purpose: `bash-ban-raw-tools` (forces compressed tools), `code-nav-gate` (blocks raw reads until CBM/Serena fires), `code-nav-marker` (PostToolUse unlock), `handoff-session-resume` (resume context across compaction). Story: \\\"AI obeys rules it would otherwise drift from.\\\" |\\n| **C** | **Skills Catalog (53 skills)** | Bucketed grid by domain: **Testing/Quality** (tdd, test, verify-before-complete, lint, review, code-optimizer) \u00b7 **Security** (security-review, observability) \u00b7 **Design/UX** (frontend-design, design-an-interface, accessibility, core-web-vitals, web-design-guidelines) \u00b7 **AI Workflow** (grill-me, handoff, decompose-into-slices, btw, find-skills, create-skill) \u00b7 **Infra** (packer-build, pulumi-preview-summary, github-workflows) \u00b7 **Docs** (write-docs, write-milestone-brief, blog-writer, userinterface-wiki) \u00b7 **Compression** (caveman, caveman-compress, compress) |\\n| **D** | **Featured Skill \u2014 `grill-me`** | Pull description: \\\"Relentless sequential interview that stress-tests a plan until every decision branch is resolved. Blocks execution until alignment is reached.\\\" Use case: stops AI from building hand-wavy specs. |\\n| **E** | **Featured Skill \u2014 `security-review`** | STRIDE-style threat model, filing-ready report w/ severity + exploit scenario + remediation. Triggered before auth/data/input changes ship. |\\n| **F** | **Caveman Mode \u2014 Token Cost Discipline** | Compression dial (`lite`/`full`/`ultra`). ~75% input token reduction while preserving technical accuracy. RTK pipeline reduces command output 60\u201399%. Direct $ impact on AI bills. |\\n| **G** | **Isolated-AI \u2014 System Architecture** | Mermaid-style topology: Customer AWS \u2192 Cognito \u2192 CloudFront \u2192 ALB \u2192 single EC2 running 7 dockerized services + Aurora pgvector + Bedrock VPC endpoint. **Key**: data stays in customer account. |\\n| **H** | **Isolated-AI \u2014 8 Services** | `librechat` (UI) \u00b7 `litellm` (gateway) \u00b7 `isolation-service` (project boundaries) \u00b7 `dev-api` (IDE token portal) \u00b7 `ingestion` (RAG doc pipeline) \u00b7 `control-plane` (Lambdas: wake/idle/admin) \u00b7 `app-host` \u00b7 `shared` |\\n| **I** | **Isolated-AI \u2014 Decision Log (ADRs)** | 15+ committed ADRs: e.g. \\\"two-tier SMB product\\\", \\\"60-min idle threshold\\\", \\\"Cognito-only wake trigger\\\", \\\"pydoit over Makefile\\\", \\\"per-user LiteLLM key injection\\\". Demonstrates production-grade decision discipline. |\\n| **J** | **The Meta-Loop** | Diagram showing skills/hooks/rules from `~/.agents` guiding development of isolated-AI. The same discipline I'd bring to Resurgent \u2014 I eat my own dog food. |\\n\\n---\\n\\n**Recommended subset for the deck** (mark which you want \u2014 I default to all 10 if you say \\\"build them all\\\"):\\n\\n- Strong technical signal: **A, B, C, G, H, J**\\n- Adds personality/depth: **D, E, F**\\n- Adds maturity proof: **I**\\n\\nPick 5\u201310 and I generate. Want all 10?\"}",
+  "stdin_parsed_keys": [
+    "session_id",
+    "transcript_path",
+    "cwd",
+    "permission_mode",
+    "effort",
+    "hook_event_name",
+    "stop_hook_active",
+    "last_assistant_message"
+  ],
+  "stdin_parsed": {
+    "session_id": "1674fe80-412a-44bd-8140-43881d62bdb3",
+    "transcript_path": "/home/mcrowe/.claude/projects/-home-mcrowe/1674fe80-412a-44bd-8140-43881d62bdb3.jsonl",
+    "cwd": "/home/mcrowe",
+    "permission_mode": "auto",
+    "effort": {
+      "level": "medium"
+    },
+    "hook_event_name": "Stop",
+    "stop_hook_active": false,
+    "last_assistant_message": "Strong material to draw from. Proposed 10 candidate slides \u2014 pick the ones you want:\n\n---\n\n### Candidate slides \u2014 `~/.agents` + isolated-AI deep-dive\n\n| # | Slide | Concrete content |\n|---|-------|------------------|\n| **A** | **`~/.agents/` \u2014 Personal AI OS** | Layer diagram: `rules/` (stack-specific gates) \u2192 `skills/` (53 skills) \u2192 `hooks/` (event guards) \u2192 `docs/` (playbooks). Top-level `config.json` ties together. |\n| **B** | **Hook Anatomy \u2014 Forcing Discipline** | 4 production hooks with one-line purpose: `bash-ban-raw-tools` (forces compressed tools), `code-nav-gate` (blocks raw reads until CBM/Serena fires), `code-nav-marker` (PostToolUse unlock), `handoff-session-resume` (resume context across compaction). Story: \"AI obeys rules it would otherwise drift from.\" |\n| **C** | **Skills Catalog (53 skills)** | Bucketed grid by domain: **Testing/Quality** (tdd, test, verify-before-complete, lint, review, code-optimizer) \u00b7 **Security** (security-review, observability) \u00b7 **Design/UX** (frontend-design, design-an-interface, accessibility, core-web-vitals, web-design-guidelines) \u00b7 **AI Workflow** (grill-me, handoff, decompose-into-slices, btw, find-skills, create-skill) \u00b7 **Infra** (packer-build, pulumi-preview-summary, github-workflows) \u00b7 **Docs** (write-docs, write-milestone-brief, blog-writer, userinterface-wiki) \u00b7 **Compression** (caveman, caveman-compress, compress) |\n| **D** | **Featured Skill \u2014 `grill-me`** | Pull description: \"Relentless sequential interview that stress-tests a plan until every decision branch is resolved. Blocks execution until alignment is reached.\" Use case: stops AI from building hand-wavy specs. |\n| **E** | **Featured Skill \u2014 `security-review`** | STRIDE-style threat model, filing-ready report w/ severity + exploit scenario + remediation. Triggered before auth/data/input changes ship. |\n| **F** | **Caveman Mode \u2014 Token Cost Discipline** | Compression dial (`lite`/`full`/`ultra`). ~75% input token reduction while preserving technical accuracy. RTK pipeline reduces command output 60\u201399%. Direct $ impact on AI bills. |\n| **G** | **Isolated-AI \u2014 System Architecture** | Mermaid-style topology: Customer AWS \u2192 Cognito \u2192 CloudFront \u2192 ALB \u2192 single EC2 running 7 dockerized services + Aurora pgvector + Bedrock VPC endpoint. **Key**: data stays in customer account. |\n| **H** | **Isolated-AI \u2014 8 Services** | `librechat` (UI) \u00b7 `litellm` (gateway) \u00b7 `isolation-service` (project boundaries) \u00b7 `dev-api` (IDE token portal) \u00b7 `ingestion` (RAG doc pipeline) \u00b7 `control-plane` (Lambdas: wake/idle/admin) \u00b7 `app-host` \u00b7 `shared` |\n| **I** | **Isolated-AI \u2014 Decision Log (ADRs)** | 15+ committed ADRs: e.g. \"two-tier SMB product\", \"60-min idle threshold\", \"Cognito-only wake trigger\", \"pydoit over Makefile\", \"per-user LiteLLM key injection\". Demonstrates production-grade decision discipline. |\n| **J** | **The Meta-Loop** | Diagram showing skills/hooks/rules from `~/.agents` guiding development of isolated-AI. The same discipline I'd bring to Resurgent \u2014 I eat my own dog food. |\n\n---\n\n**Recommended subset for the deck** (mark which you want \u2014 I default to all 10 if you say \"build them all\"):\n\n- Strong technical signal: **A, B, C, G, H, J**\n- Adds personality/depth: **D, E, F**\n- Adds maturity proof: **I**\n\nPick 5\u201310 and I generate. Want all 10?"
+  },
+  "env_vars": {
+    "ANTHROPIC_API_KEY": "",
+    "ANTHROPIC_BASE_URL": "https://api.anthropic.com",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_DISABLE_CRON": "",
+    "CLAUDE_CODE_EMIT_TOOL_USE_SUMMARIES": "false",
+    "CLAUDE_CODE_ENABLE_ASK_USER_QUESTION_TOOL": "true",
+    "CLAUDE_CODE_ENTRYPOINT": "claude-desktop",
+    "CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST": "1",
+    "CLAUDE_CODE_SDK_HAS_OAUTH_REFRESH": "1",
+    "CLAUDE_EFFORT": "medium",
+    "CLAUDE_PROJECT_DIR": "/home/mcrowe",
+    "HOME": "/home/mcrowe",
+    "HOMEBREW_PREFIX": "/home/linuxbrew/.linuxbrew",
+    "NODE_USE_SYSTEM_CA": "1",
+    "NoDefaultCurrentDirectoryInExePath": "1",
+    "PATH": "/home/mcrowe/.local/share/mise/installs/node/22/bin:/home/mcrowe/.local/share/mise/installs/pnpm/latest:/home/mcrowe/.local/share/mise/installs/bun/latest/bin:/home/mcrowe/.local/share/mise/installs/d...[truncated]",
+    "SHELL": "/usr/bin/zsh"
+  },
+  "cwd": "/home/mcrowe",
+  "pid": 47867,
+  "ppid": 47866
+}
