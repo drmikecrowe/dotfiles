@@ -75,7 +75,7 @@ Everything else under `.gsd/` (milestones/, PROJECT.md, DECISIONS.md, KNOWLEDGE.
 
 Hook script `~/.config/hooks/clean-baseline-check.sh` does the check. Wired into:
 
-- GSD `PreMilestone` hook (`~/.pi/agent/settings.json`) — blocking, exit 2 vetoes milestone open
+- GSD `PreMilestone` hook (`~/.pi/agent/settings.json`) — runs the check, but **cannot block** under GSD/pi ("Can block: No" in the hooks spec); wired `blocking: false`, so it is **advisory/warn-only**, not a veto. The agent must still honor a dirty-tree result and resolve it.
 - Manual: run script before `EnterWorktree` or any milestone-opening action
 
 Script applies the carve-out automatically. Exit 0 = proceed. Exit 2 = blocked, stderr lists remaining dirty paths + resolution options.

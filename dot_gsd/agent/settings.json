@@ -5,82 +5,71 @@
   },
   "defaultModel": "claude-sonnet-4-6",
   "defaultProvider": "claude-code",
-  "defaultThinkingLevel": "low",
+  "defaultThinkingLevel": "high",
   "editMode": "hashline",
-  "hideThinkingBlock": false,
+  "hideThinkingBlock": true,
   "hooks": {
     "PostCompact": [
       {
-        "command": "/home/mcrowe/.agents/hooks/serena-activate.sh",
-        "timeout": 10000
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh PostCompact",
+        "timeout": 30000
       }
     ],
     "PostToolUse": [
       {
-        "command": "/home/mcrowe/.agents/hooks/code-nav-marker",
-        "timeout": 5000
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh PostToolUse",
+        "timeout": 30000
       }
     ],
-    "PreCompact": [],
+    "PreCompact": [
+      {
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreCompact",
+        "timeout": 30000,
+        "blocking": false
+      }
+    ],
     "PreMilestone": [
       {
-        "blocking": true,
-        "command": "/home/mcrowe/.config/hooks/clean-baseline-check.sh",
-        "timeout": 10000
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreMilestone",
+        "timeout": 10000,
+        "blocking": false
       }
     ],
     "PreToolUse": [
       {
-        "blocking": true,
-        "command": "/home/mcrowe/.agents/hooks/bash-ban-raw-tools",
-        "match": {
-          "tool": "bash"
-        },
-        "timeout": 10000
-      },
-      {
-        "blocking": true,
-        "command": "/home/mcrowe/.agents/hooks/code-nav-gate",
-        "match": {
-          "tool": [
-            "Read",
-            "Grep",
-            "Glob",
-            "Search"
-          ]
-        },
-        "timeout": 10000
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreToolUse",
+        "timeout": 30000
       }
     ],
     "SessionStart": [
       {
-        "command": "node /home/mcrowe/.local/share/mise/installs/node/22/lib/node_modules/context-mode/hooks/sessionstart.mjs",
-        "timeout": 10000
-      },
-      {
-        "command": "/home/mcrowe/.agents/hooks/serena-activate.sh",
-        "timeout": 10000
-      },
-      {
-        "command": "/home/mcrowe/.agents/scripts/agent-startup.sh",
-        "timeout": 10000
-      },
-      {
-        "command": "/home/mcrowe/.agents/hooks/code-nav-reminder",
-        "timeout": 5000
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh SessionStart",
+        "timeout": 30000
       }
     ],
     "Stop": [
       {
-        "_probe": true,
-        "command": "/home/mcrowe/.agents/hooks/probes/inspect-payload.sh",
-        "timeout": 10000
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh Stop",
+        "timeout": 30000
+      }
+    ],
+    "Notification": [
+      {
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh Notification",
+        "timeout": 30000
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh UserPromptSubmit",
+        "timeout": 30000
       }
     ]
   },
-  "lastChangelogVersion": "2.78.0",
   "quietStartup": true,
-  "steeringMode": "one-at-a-time",
+  "steeringMode": "all",
   "theme": "vivid",
-  "transport": "sse"
+  "transport": "sse",
+  "followUpMode": "all",
+  "lastChangelogVersion": "1.0.0"
 }

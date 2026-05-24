@@ -6,11 +6,9 @@
   ],
   "editorMode": "vim",
   "enabledPlugins": {
-    "agentmemory@agentmemory": true,
     "caveman@caveman": true,
     "claude-hud@claude-hud": true,
     "commit-commands@claude-plugins-official": true,
-    "context-mode@context-mode": true,
     "gopls-lsp@claude-plugins-official": true,
     "lua-lsp@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
@@ -64,8 +62,8 @@
       {
         "hooks": [
           {
-            "command": "/home/mcrowe/.agents/hooks/probes/inspect-payload.sh",
-            "timeout": 10,
+            "command": "/home/mcrowe/.agents/hooks/run-hook.sh ElicitationResult",
+            "timeout": 30,
             "type": "command"
           }
         ]
@@ -73,7 +71,7 @@
       {
         "hooks": [
           {
-            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID && printf running > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status'",
+            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf running > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
             "type": "command"
           }
         ]
@@ -83,16 +81,17 @@
       {
         "hooks": [
           {
-            "command": "/home/mcrowe/.agents/hooks/probes/inspect-payload.sh",
-            "timeout": 10,
+            "command": "/home/mcrowe/.agents/hooks/run-hook.sh Notification",
+            "timeout": 30,
             "type": "command"
           }
-        ]
+        ],
+        "matcher": "permission_prompt|elicitation_dialog"
       },
       {
         "hooks": [
           {
-            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID && printf waiting > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status'",
+            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf waiting > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
             "type": "command"
           }
         ],
@@ -103,17 +102,8 @@
       {
         "hooks": [
           {
-            "command": "/home/mcrowe/.agents/hooks/probes/inspect-payload.sh",
-            "timeout": 10,
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "~/.agents/hooks/serena-activate.sh",
-            "timeout": 10,
+            "command": "/home/mcrowe/.agents/hooks/run-hook.sh PostCompact",
+            "timeout": 30,
             "type": "command"
           }
         ]
@@ -123,15 +113,8 @@
       {
         "hooks": [
           {
-            "command": "~/.agents/hooks/code-nav-marker",
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "~/.agents/shims/context-mode-posttooluse",
+            "command": "/home/mcrowe/.agents/hooks/run-hook.sh PostToolUse",
+            "timeout": 30,
             "type": "command"
           }
         ],
@@ -142,7 +125,8 @@
       {
         "hooks": [
           {
-            "command": "~/.agents/shims/context-mode-precompact",
+            "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreCompact",
+            "timeout": 30,
             "type": "command"
           }
         ]
@@ -152,20 +136,8 @@
       {
         "hooks": [
           {
-            "command": "rtk hook claude",
-            "type": "command"
-          },
-          {
-            "command": "~/.agents/hooks/bash-ban-raw-tools",
-            "type": "command"
-          }
-        ],
-        "matcher": "Bash"
-      },
-      {
-        "hooks": [
-          {
-            "command": "~/.agents/hooks/code-nav-gate",
+            "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreToolUse",
+            "timeout": 30,
             "type": "command"
           }
         ],
@@ -174,7 +146,7 @@
       {
         "hooks": [
           {
-            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID && printf running > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status'",
+            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf running > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
             "type": "command"
           }
         ]
@@ -184,61 +156,30 @@
       {
         "hooks": [
           {
-            "command": "~/.agents/shims/context-mode-sessionstart",
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "~/.agents/scripts/agent-startup.sh",
-            "statusMessage": "Loading agent directives...",
-            "timeout": 10,
-            "type": "command"
-          },
-          {
-            "command": "node \"/home/mcrowe/.claude/hooks/caveman-activate.js\"",
-            "statusMessage": "Loading caveman mode...",
-            "timeout": 5,
-            "type": "command"
-          },
-          {
-            "command": "~/.agents/hooks/serena-activate.sh",
-            "timeout": 10,
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "~/.agents/hooks/handoff-session-resume",
-            "type": "command"
-          },
-          {
-            "command": "~/.agents/hooks/code-nav-reminder",
-            "type": "command"
-          }
-        ],
-        "matcher": "compact|resume"
-      },
-      {
-        "hooks": [
-          {
-            "command": "~/.agents/hooks/code-nav-reminder",
+            "command": "/home/mcrowe/.agents/hooks/run-hook.sh SessionStart",
+            "timeout": 30,
             "type": "command"
           }
         ],
         "matcher": "startup|clear"
+      },
+      {
+        "hooks": [
+          {
+            "command": "\"/home/mcrowe/.local/share/mise/installs/node/22.22.3/bin/node\" \"/home/mcrowe/.claude/hooks/caveman-activate.js\"",
+            "statusMessage": "Loading caveman mode...",
+            "timeout": 5,
+            "type": "command"
+          }
+        ]
       }
     ],
     "Stop": [
       {
         "hooks": [
           {
-            "command": "/home/mcrowe/.agents/hooks/probes/inspect-payload.sh",
-            "timeout": 10,
+            "command": "/home/mcrowe/.agents/hooks/run-hook.sh Stop",
+            "timeout": 30,
             "type": "command"
           }
         ]
@@ -246,7 +187,7 @@
       {
         "hooks": [
           {
-            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID && printf idle > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status'",
+            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf idle > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
             "type": "command"
           }
         ]
@@ -256,7 +197,16 @@
       {
         "hooks": [
           {
-            "command": "node \"/home/mcrowe/.claude/hooks/caveman-mode-tracker.js\"",
+            "command": "/home/mcrowe/.agents/hooks/run-hook.sh UserPromptSubmit",
+            "timeout": 30,
+            "type": "command"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "command": "\"/home/mcrowe/.local/share/mise/installs/node/22.22.3/bin/node\" \"/home/mcrowe/.claude/hooks/caveman-mode-tracker.js\"",
             "statusMessage": "Tracking caveman mode...",
             "timeout": 5,
             "type": "command"
@@ -266,7 +216,7 @@
       {
         "hooks": [
           {
-            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID && printf running > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status'",
+            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf running > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
             "type": "command"
           }
         ]
@@ -392,6 +342,7 @@
       "WebSearch(*)"
     ]
   },
+  "preferredNotifChannel": "notifications_disabled",
   "skipDangerousModePermissionPrompt": true,
   "statusLine": {
     "command": "npx -y ccstatusline@latest",

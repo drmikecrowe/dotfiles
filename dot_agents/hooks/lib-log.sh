@@ -19,7 +19,12 @@ _log_safe_dir() {
     if [[ -n "$git_root" ]]; then
         printf '%s' "$git_root" | sed 's|/|-|g'
     else
-        printf 'session-%s' "$PPID"
+        # No git repo: slug off cwd, NOT $PPID. The dispatcher and its child
+        # handlers run under different PPIDs, so a session-$PPID fallback
+        # scattered one event's logs across two throwaway dirs. cwd is stable
+        # (hook child cwd == project dir), so every fire from the same project
+        # now shares one findable dir. Matches Claude Code's leading-/ → - slug.
+        printf '%s' "$PWD" | sed 's|/|-|g'
     fi
 }
 

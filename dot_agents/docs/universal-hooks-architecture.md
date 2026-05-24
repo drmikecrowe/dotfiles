@@ -107,18 +107,21 @@ Blocks the `Grep`, `Glob`, `Read`, and `Search` tools on source files until an M
 
 | Event | Handler | Action |
 |-------|---------|--------|
-| `UserPromptSubmit` | `30-capture-intent.sh` | Append user prompt verbatim to `intent.md` — no LLM |
-| `Stop` | `20-notebook-tick.sh` | Bump turn counter; every 3rd turn spawn detached Haiku summarizer |
-| `PostToolUse` (gsd_*_complete) | `30-notebook-unit.sh` | Spawn summarizer at auto-mode unit boundaries (Stop never fires in auto-mode) |
-| `PreCompact` | `20-fold-tail.sh` | Synchronous final summarizer pass — brief is complete before compaction |
-| `SessionStart` / `PostCompact` | `30-inject-brief.sh` / `20-inject-brief.sh` | Assemble brief, emit between `NB_CTX_*` sentinels for context injection |
+### Context Feed (compaction recovery)
 
-### Two-stage summarizer
+The context-feed system captures session context through hook payloads and assembles a recovery brief for post-compaction injection. Fully hook-driven — no transcript parsing, no LLM summarizer.
 
-1. **`bin/extract-thread.sh`** — deterministic `jq` strip: keeps assistant text + aggregated FILES TOUCHED / COMMANDS / FAILURES; drops thinking, tool noise, raw reads. ~99% smaller than raw transcript.
-2. **`bin/summarize-thread.sh`** — Stage-2: sends delta (since `.lastline`) to Haiku, writes one immutable `notes/NNNN.md` chunk. Advances offset only on success.
+**Python package:** `bin/context_feed/` — harness adapters, brief assembly, logging. See `docs/compaction-context-feed.md` for full spec.
 
-The immutable chunk model means notes never get re-summarized — no summary drift over long sessions.
+| Event | Handler | Action |
+|-------|---------|--------|
+| `UserPromptSubmit` | `30-context-feed-capture.sh` | Capture user prompt → `intent.md` |
+| `Stop` | `20-context-feed-capture.sh` | Capture `last_assistant_message` → `notes/NNNN.md` |
+| `PostToolUse` (gsd_*_complete) | `30-notebook-unit.sh` | *(GSD/pi only — not yet migrated)* |
+| `PreCompact` | `20-context-feed-assemble.sh` | Assemble brief from `intent.md` + `notes/` |
+| `SessionStart` / `PostCompact` | `30-context-feed-inject.sh` / `20-context-feed-inject.sh` | Emit brief between `NB_CTX_*` sentinels |
+
+**Legacy pipeline** (transcript-parsing + Haiku summarizer) moved to `bin/legacy/`. See `.legacy` handler backups in each event directory.
 
 ---
 
@@ -128,7 +131,8 @@ The immutable chunk model means notes never get re-summarized — no summary dri
 |------|---------|
 | `hooks/lib-log.sh` | Sets `LOG_DIR`/`LOG_FULL`/`LOG_OPS`, tees stdout+stderr to `full.log`, exposes `log_op()`. Source in every handler. |
 | `hooks/lib-wrapper.sh` | agentmemory-specific wrapper; sources `lib-log.sh`, adds `am_log_setup()`, `am_run_node()`, `am_debug()` |
-| `hooks/lib-notebook.sh` | Notebook helpers: `nb_session_dir`, `nb_json`, `nb_trim`, `nb_spawn_summarizer`, `nb_emit_brief`, `NB_CTX_*` sentinels |
+| `hooks/lib-notebook.sh.legacy` | *(Legacy)* Old notebook helpers — `nb_spawn_summarizer`, `nb_emit_brief`, `.lastline` tracking. Replaced by `bin/context_feed/`. |
+| `hooks/lib-pi-adapter.sh` | Normalize pi/GSD payloads to match Claude Code shape (`session_id`, `cwd`, field renames). Used by GSD-only handlers not yet migrated. |
 
 ---
 

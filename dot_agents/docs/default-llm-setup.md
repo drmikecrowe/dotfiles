@@ -9,14 +9,21 @@ Four runtimes share one skill library. Hook scripts live in `~/.agents/hooks/` a
 
 ```
 ~/.agents/
+├── bin/            ← wiring tools + shared executables
+│   ├── activate-hooks      ← idempotent hook wiring (run after adding handlers)
+│   ├── serena-init         ← project bootstrap (symlinked from dorothy commands)
+│   ├── context_feed/       ← hook-driven context capture (replaces old summarizer pipeline)
+│   └── legacy/             ← retired scripts (extract-thread, summarize-thread, recent-activity)
 ├── hooks/          ← canonical shared hook SCRIPTS
-│   ├── bash-ban-raw-tools
-│   ├── code-nav-gate
-│   ├── code-nav-marker
-│   ├── code-nav-reminder
-│   ├── precompact-hook
-│   ├── handoff-session-resume
-│   └── serena-activate.sh
+│   ├── run-hook.sh         ← sole dispatcher registered in all settings.json files
+│   ├── lib-log.sh / lib-wrapper.sh  ← shared libraries
+│   ├── lib-notebook.sh.legacy ← retired notebook lib (nb_spawn_summarizer, etc.)
+│   ├── PreToolUse.d/       ← 20-bash-ban-raw-tools.sh, 30-code-nav-gate.sh
+│   ├── PostToolUse.d/      ← 10-agentmemory.sh, 20-code-nav-marker.sh, 30-notebook-unit.sh
+│   ├── SessionStart.d/     ← 10-agentmemory.sh, 20-code-nav-reminder.sh, 30-context-feed-inject.sh
+│   ├── Stop.d/             ← 10-agentmemory.sh, 20-notify.sh, 20-context-feed-capture.sh
+│   ├── PreCompact.d/ PostCompact.d/ UserPromptSubmit.d/ ElicitationResult.d/ Notification.d/
+│   └── (full handler inventory: see universal-hooks-architecture.md)
 └── skills/         ← shared skills, auto-discovered by ALL runtimes
 
 ~/.claude/          ← Claude Code runtime
@@ -25,17 +32,21 @@ Four runtimes share one skill library. Hook scripts live in `~/.agents/hooks/` a
 ├── commands/       ← /commit, /handoff
 └── hooks/          ← CC-SPECIFIC hooks only
 
-~/.pi/agent/        ← pi/GSD runtime hooks + extensions
-├── settings.json   ← hooks (GSD schema) + extensions list
-└── extensions/
-    └── agentmemory/
-        └── index.ts   ← lifecycle hooks (recall/save)
+~/.pi/agent/        ← pi/GSD runtime hooks (settings only — NO extensions here)
+└── settings.json   ← hooks (GSD schema) — NO extensions key
 
-~/.gsd/agent/       ← GSD session/UI settings (NOT hook config)
-└── settings.json
+~/.gsd/agent/       ← GSD hooks + session/UI/model settings + extensions
+├── settings.json   ← hooks (GSD schema) + defaultModel/UI
+└── extensions/     ← THE scanned extension dir; auto-discovered at startup, no settings wiring
+    └── agentmemory/
+        ├── index.ts                ← lifecycle hooks (recall/save)
+        ├── extension-manifest.json ← provides tools/commands/hooks (required for discovery)
+        ├── security.ts
+        ├── package.json
+        └── README.md
 ```
 
-**Key principle:** Hook SCRIPTS in `~/.agents/hooks/`. Hook WIRING (JSON) in each runtime's config. Same script, two config references.
+**Key principle:** Hook SCRIPTS in `~/.agents/hooks/`. Hook WIRING (JSON) in each runtime's config. Same script, many config references — both `~/.pi/agent/settings.json` and `~/.gsd/agent/settings.json` carry the full hook block. **Extensions, however, are scanned only from `~/.gsd/agent/extensions/<name>/`** — `~/.pi/agent/` holds no extensions.
 
 ---
 
@@ -183,18 +194,17 @@ systemctl --user enable --now agentmemory.service
 
 ### Step 5: Claude Code MCP wiring
 
-`~/.claude/settings.json` — already present after plugin install:
+Wire agentmemory in the **project `.mcp.json`**, alongside `serena` and `codebase-memory-mcp`:
 ```json
-"mcpServers": {
-  "agentmemory": {
-    "type": "http",
-    "url": "http://localhost:3111/mcp"
-  }
-},
-"allowedTools": ["mcp__agentmemory__*"]
+"agentmemory": {
+  "type": "http",
+  "url": "http://localhost:3111/mcp"
+}
 ```
 
-Plugin also adds `enabledPlugins["agentmemory@agentmemory"]: true` and `extraKnownMarketplaces.agentmemory`.
+**Why `.mcp.json`, not `~/.claude/settings.json`:** the `mcpServers` block in `settings.json` does not load in Claude Code (verified: a session with agentmemory wired there exposed zero `mcp__agentmemory__*` tools, while the `.mcp.json`-wired servers connected fine). `.mcp.json` is the proven path. The tradeoff is per-project: every repo needs the entry. If you want it truly global without editing each `.mcp.json`, use `claude mcp add --scope user agentmemory --transport http http://localhost:3111/mcp` (writes `~/.claude.json`) — that is the actual user-scope mechanism, not the `settings.json` `mcpServers` key.
+
+If you keep `allowedTools` in `~/.claude/settings.json`, add `mcp__agentmemory__*` there.
 
 MCP tools available in CC: `mcp__agentmemory__memory_smart_search`, `mcp__agentmemory__memory_save`, etc.
 
@@ -202,20 +212,16 @@ MCP tools available in CC: `mcp__agentmemory__memory_smart_search`, `mcp__agentm
 
 Source: https://github.com/rohitg00/agentmemory/tree/main/integrations/pi
 
-Install the extension file:
+Install the extension. It is a **multi-file directory**, not a single file — at minimum `extension-manifest.json` (required for discovery) and `index.ts`, plus `security.ts`, `package.json`, `README.md`. Drop it under the **`~/.gsd/agent/extensions/`** tree — that is the only directory the runtime scans:
 ```bash
-mkdir -p ~/.pi/agent/extensions/agentmemory
-curl -fsSL https://raw.githubusercontent.com/rohitg00/agentmemory/main/integrations/pi/index.ts \
-  -o ~/.pi/agent/extensions/agentmemory/index.ts
+mkdir -p ~/.gsd/agent/extensions/agentmemory
+base=https://raw.githubusercontent.com/rohitg00/agentmemory/main/integrations/pi
+for f in extension-manifest.json index.ts security.ts package.json README.md; do
+  curl -fsSL "$base/$f" -o ~/.gsd/agent/extensions/agentmemory/"$f"
+done
 ```
 
-Wire it in `~/.pi/agent/settings.json`:
-```json
-{
-  "hooks": {},
-  "extensions": ["~/.pi/agent/extensions/agentmemory"]
-}
-```
+**No settings wiring needed.** The runtime auto-discovers extensions by scanning `~/.gsd/agent/extensions/*/` at startup (`discoverAllManifests()` in the extension registry reads each `extension-manifest.json` and auto-enables it). Dropping the directory there is sufficient. Do **not** add an `extensions` key to any `settings.json` — there is no `extensions` array in the pi config schema, and those files carry the full hook block (clobbering with `{ "hooks": {}, ... }` would unwire every hook). **`~/.pi/agent/extensions/` is NOT scanned** — placing the extension there leaves it dead (every other working extension lives in `~/.gsd/agent/extensions/`).
 
 Extension provides:
 - `before_agent_start` hook — recalls relevant memories into session context
@@ -223,7 +229,7 @@ Extension provides:
 - Tools: `memory_health`, `memory_search`, `memory_save`
 - Command: `/agentmemory-status`
 
-**Note:** GSD uses `~/.pi/agent/settings.json` as its global hooks config — same file, one extension install covers both runtimes. `~/.gsd/agent/settings.json` is UI/model settings only.
+**Note:** Both `~/.pi/agent/settings.json` and `~/.gsd/agent/settings.json` carry the full hook block (same dispatcher, GSD schema). agentmemory's session recall/save is handled by the pi extension at `~/.gsd/agent/extensions/agentmemory/index.ts`, not by these hooks.
 
 ### Step 7: Verify
 
@@ -239,108 +245,11 @@ Import past transcripts: `agentmemory import-jsonl`
 
 ---
 
-## Hook Implementation
+## Hook System
 
-### H1: bash-ban-raw-tools
-**Source:** `~/Programming/AI/claude-code-tips/hooks/bash-ban-raw-tools`
-**Dest:** `~/.agents/hooks/bash-ban-raw-tools`
-**Behavior:** Blocks `cat/head/tail/find/grep/rg/wc` in Bash tool. Forces Read/Grep/Glob. Escape: `touch /tmp/bash-raw-unlock` (10min TTL). `rtk` commands pass through.
-```bash
-cp ~/Programming/AI/claude-code-tips/hooks/bash-ban-raw-tools ~/.agents/hooks/
-chmod +x ~/.agents/hooks/bash-ban-raw-tools
-```
+All handlers live in `~/.agents/hooks/<Event>.d/NN-name.sh`. The sole entry point in every `settings.json` is `run-hook.sh <EventName>`. Adding a handler = drop a script in the right `.d/` dir, then run `python3 ~/.agents/bin/activate-hooks` (idempotent).
 
-### H2: precompact-hook (witness-at-the-threshold)
-**Source:** `~/Programming/AI/precompact-hook`
-**Behavior:** PreCompact — pipes last ~40KB of transcript to `claude -p` subagent that generates a recovery brief. Falls back gracefully. Always exits 0.
-```bash
-# Wire directly — no copy needed:
-#   bash /home/mcrowe/Programming/AI/precompact-hook/pre-compact.sh
-```
-
-### H3: handoff-session-resume
-**Source:** `~/Programming/AI/claude-code-tips/hooks/handoff-session-resume`
-**Dest:** `~/.agents/hooks/handoff-session-resume`
-**Behavior:** SessionStart (compact|resume) — inlines `docs/handoff-context.md` as additionalContext.
-```bash
-cp ~/Programming/AI/claude-code-tips/hooks/handoff-session-resume ~/.agents/hooks/
-chmod +x ~/.agents/hooks/handoff-session-resume
-```
-
-### H4: code-nav-gate
-**Dest:** `~/.agents/hooks/code-nav-gate`
-**Behavior:** PreToolUse on `Grep|Glob|Read|Search` — blocks source file reads until CBM or Serena MCP called. Passes non-code files and system paths through.
-
-```bash
-#!/bin/bash
-set -euo pipefail
-
-INPUT=$(cat)
-TOOL=$(jq -r '.tool_name // empty' <<< "$INPUT")
-MARKER=/tmp/nav-mcp-used-$PPID
-UNLOCK=/tmp/nav-unlock-$PPID
-
-[ -f "$UNLOCK" ] && exit 0
-find /tmp -maxdepth 1 -name 'nav-*' -mtime +1 -delete 2>/dev/null || true
-
-case "$TOOL" in
-  Grep|Glob|Read|Search) ;;
-  *) exit 0 ;;
-esac
-
-FP=$(jq -r '.tool_input.file_path // .tool_input.path // .tool_input.pattern // .tool_input.glob // ""' <<< "$INPUT")
-
-if [[ "$FP" =~ \.(md|json|yaml|yml|toml|lock|txt|env|sh|cfg|conf|ini)$ ]] \
-  || [[ "$FP" =~ (\.claude|\.gsd|\.pi|\.serena|CLAUDE\.md|AGENTS\.md|hooks/|/tmp/|/var/|settings) ]]; then
-  exit 0
-fi
-
-if [ -f "$MARKER" ]; then
-  AGE=$(( $(date +%s) - $(stat -c %Y "$MARKER" 2>/dev/null || echo 0) ))
-  [ "$AGE" -lt 120 ] && exit 0
-fi
-
-cat >&2 << EOF
-BLOCKED: Raw $TOOL on source file without recent MCP call.
-
-Use CBM for exploration:   search_graph / trace_path / get_code_snippet
-Use Serena for precision:  find_symbol / get_symbols_overview / find_referencing_symbols
-
-Override (this session): touch $UNLOCK
-EOF
-exit 2
-```
-
-### H5: code-nav-marker
-**Dest:** `~/.agents/hooks/code-nav-marker`
-**Behavior:** PostToolUse — touches `/tmp/nav-mcp-used-$PPID` when CBM or Serena fires (unlocks gate for 120s).
-
-```bash
-#!/bin/bash
-set -euo pipefail
-INPUT=$(cat)
-TOOL=$(jq -r '.tool_name // empty' <<< "$INPUT")
-if [[ "$TOOL" == mcp__codebase-memory-mcp__* ]] || [[ "$TOOL" == mcp__serena__* ]]; then
-  touch /tmp/nav-mcp-used-$PPID
-fi
-exit 0
-```
-
-### H6: code-nav-reminder
-**Dest:** `~/.agents/hooks/code-nav-reminder`
-**Behavior:** SessionStart — prints routing guidance.
-
-```bash
-#!/bin/bash
-cat << 'EOF'
-Code Navigation:
-  Exploration (what/where/how):   CBM    → search_graph / trace_path / get_code_snippet
-  Precision   (known symbol/edit): Serena → find_symbol / get_symbols_overview
-  Session memory / decisions:     agentmemory → memory_smart_search
-  Non-code files (md/yaml/json):  Read directly — no gate
-  Override gate (one session):    touch /tmp/nav-unlock-$PPID
-EOF
-```
+See `~/.agents/docs/universal-hooks-architecture.md` for full architecture, handler inventory, gate system details, and continuity notebook flow.
 
 ---
 
@@ -358,134 +267,62 @@ EOF
 ```
 
 ### Hooks:
+
+All events wire through the single dispatcher. `bin/activate-hooks` generates this automatically.
+
 ```json
 "hooks": {
-  "PreToolUse": [
-    {
-      "matcher": "Bash",
-      "hooks": [
-        { "type": "command", "command": "~/.agents/hooks/bash-ban-raw-tools" }
-      ]
-    },
-    {
-      "matcher": "Grep|Glob|Read|Search",
-      "hooks": [
-        { "type": "command", "command": "~/.agents/hooks/code-nav-gate" }
-      ]
-    }
-  ],
-  "PostToolUse": [
-    {
-      "hooks": [
-        { "type": "command", "command": "~/.agents/hooks/code-nav-marker" }
-      ]
-    }
-  ],
-  "PreCompact": [
-    {
-      "hooks": [
-        { "type": "command", "command": "bash /home/mcrowe/Programming/AI/precompact-hook/pre-compact.sh", "timeout": 90 }
-      ]
-    }
-  ],
-  "SessionStart": [
-    {
-      "hooks": [
-        { "type": "command", "command": "~/.agents/hooks/serena-activate.sh", "timeout": 10 }
-      ]
-    },
-    {
-      "matcher": "compact|resume",
-      "hooks": [
-        { "type": "command", "command": "~/.agents/hooks/handoff-session-resume" },
-        { "type": "command", "command": "~/.agents/hooks/code-nav-reminder" }
-      ]
-    },
-    {
-      "matcher": "clear",
-      "hooks": [
-        { "type": "command", "command": "~/.agents/hooks/code-nav-reminder" }
-      ]
-    }
-  ]
+  "PreToolUse":       [{ "matcher": "Grep|Glob|Read|Search", "hooks": [{ "type": "command", "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreToolUse", "timeout": 30 }] }],
+  "PostToolUse":      [{ "matcher": "Bash|Read|Write|Edit|Glob|Grep|Agent", "hooks": [{ "type": "command", "command": "/home/mcrowe/.agents/hooks/run-hook.sh PostToolUse", "timeout": 30 }] }],
+  "SessionStart":     [{ "matcher": "startup|clear", "hooks": [{ "type": "command", "command": "/home/mcrowe/.agents/hooks/run-hook.sh SessionStart", "timeout": 30 }] }],
+  "Stop":             [{ "hooks": [{ "type": "command", "command": "/home/mcrowe/.agents/hooks/run-hook.sh Stop", "timeout": 30 }] }],
+  "PreCompact":       [{ "hooks": [{ "type": "command", "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreCompact", "timeout": 30 }] }],
+  "PostCompact":      [{ "hooks": [{ "type": "command", "command": "/home/mcrowe/.agents/hooks/run-hook.sh PostCompact", "timeout": 30 }] }],
+  "UserPromptSubmit": [{ "hooks": [{ "type": "command", "command": "/home/mcrowe/.agents/hooks/run-hook.sh UserPromptSubmit", "timeout": 30 }] }],
+  "Notification":     [{ "matcher": "permission_prompt|elicitation_dialog", "hooks": [{ "type": "command", "command": "/home/mcrowe/.agents/hooks/run-hook.sh Notification", "timeout": 30 }] }],
+  "ElicitationResult":[{ "hooks": [{ "type": "command", "command": "/home/mcrowe/.agents/hooks/run-hook.sh ElicitationResult", "timeout": 30 }] }]
 }
 ```
 
-### MCP servers (global — all CC sessions):
-```json
-"mcpServers": {
-  "agentmemory": {
-    "type": "http",
-    "url": "http://localhost:3111/mcp"
-  }
-}
-```
+### MCP servers:
+The `mcpServers` block in `settings.json` does **not** load in Claude Code — wire MCP servers in the project `.mcp.json` (see Project Bootstrap below), or `~/.claude.json` via `claude mcp add --scope user` for global. agentmemory goes in `.mcp.json` like the rest.
 
 ---
 
-## GSD/pi Settings (`~/.pi/agent/settings.json`)
+## GSD Settings (`~/.gsd/agent/settings.json`)
 
-Same hook scripts, GSD JSON schema:
+Same dispatcher, GSD JSON schema (no `type` key, ms timeouts, `blocking` flag).
+
+`PreMilestone` is **GSD-only** — never register it in Claude Code settings. `bin/activate-hooks` enforces this via separate `CLAUDE_EVENTS` / `GSD_EVENTS` lists.
 
 ```json
 {
   "hooks": {
-    "PreToolUse": [
-      {
-        "match": { "tool": "bash" },
-        "command": "~/.agents/hooks/bash-ban-raw-tools",
-        "blocking": true,
-        "timeout": 10000
-      },
-      {
-        "match": { "tool": ["Read", "Grep", "Glob", "Search"] },
-        "command": "~/.agents/hooks/code-nav-gate",
-        "blocking": true,
-        "timeout": 10000
-      }
-    ],
-    "PostToolUse": [
-      { "command": "~/.agents/hooks/code-nav-marker", "timeout": 5000 }
-    ],
-    "SessionStart": [
-      { "command": "~/.agents/scripts/agent-startup.sh", "timeout": 10000 },
-      { "command": "~/.agents/hooks/serena-activate.sh", "timeout": 10000 },
-      { "command": "~/.agents/hooks/code-nav-reminder", "timeout": 5000 }
-    ],
-    "PostCompact": [
-      { "command": "~/.agents/hooks/serena-activate.sh", "timeout": 10000 }
-    ],
-    "PreCompact": [
-      { "command": "bash /home/mcrowe/Programming/AI/precompact-hook/pre-compact.sh", "timeout": 90000 }
-    ],
-    "PreMilestone": [
-      {
-        "command": "~/.config/hooks/clean-baseline-check.sh",
-        "timeout": 10000,
-        "blocking": true
-      }
-    ]
-  },
-  "extensions": ["~/.pi/agent/extensions/agentmemory"]
+    "PreToolUse":       [{ "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreToolUse",       "timeout": 30000 }],
+    "PostToolUse":      [{ "command": "/home/mcrowe/.agents/hooks/run-hook.sh PostToolUse",      "timeout": 30000 }],
+    "UserPromptSubmit": [{ "command": "/home/mcrowe/.agents/hooks/run-hook.sh UserPromptSubmit", "timeout": 30000 }],
+    "Notification":     [{ "command": "/home/mcrowe/.agents/hooks/run-hook.sh Notification",     "timeout": 30000 }],
+    "SessionStart":     [{ "command": "/home/mcrowe/.agents/hooks/run-hook.sh SessionStart",     "timeout": 30000 }],
+    "Stop":             [{ "command": "/home/mcrowe/.agents/hooks/run-hook.sh Stop",             "timeout": 30000 }],
+    "PreCompact":       [{ "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreCompact",       "timeout": 30000, "blocking": false }],
+    "PostCompact":      [{ "command": "/home/mcrowe/.agents/hooks/run-hook.sh PostCompact",      "timeout": 30000 }],
+    "PreMilestone":     [{ "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreMilestone",     "timeout": 10000, "blocking": false }]
+  }
 }
 ```
 
-**Note:** Global hooks in `~/.pi/agent/settings.json` are always trusted — no `.pi/hooks.trusted` marker needed.
+**Note:** `UserPromptSubmit` and `Notification` **are** GSD/pi events (per gsd-pi `docs/user-docs/hooks.md`) and are wired above. `PreMilestone` **cannot block** under GSD/pi ("Can block: No" in the spec), so `blocking: false` is honest — the clean-baseline check is advisory, not a veto. `PreCompact` is `blocking: false` so a notebook-fold failure can never wedge compaction. agentmemory's own lifecycle is still handled by the pi extension at `~/.gsd/agent/extensions/agentmemory/index.ts`, separate from these hooks.
 
 ---
 
 ## Global Config Fixes
 
-### Fix `~/.gsd/PREFERENCES.md` models
-```yaml
-models:
-  research: claude-sonnet-4-6
-  planning: claude-opus-4-7
-  execution: claude-sonnet-4-6
-  execution_simple: claude-haiku-4-5-20251001
-  completion: claude-sonnet-4-6
-  subagent: claude-sonnet-4-6
-```
+### Default model per runtime
+Set via `defaultModel` in each runtime's `settings.json` — **not** in `~/.gsd/PREFERENCES.md` (which has no `models:` key):
+- `~/.gsd/agent/settings.json` → `"defaultModel": "claude-opus-4-7"`
+- `~/.pi/agent/settings.json` → `"defaultModel": "claude-sonnet-4-6"`
+
+Claude Code subagents use the `CLAUDE_CODE_SUBAGENT_MODEL` env var in `~/.claude/settings.json` (see Env vars block above).
 
 ### Add /handoff command
 ```bash
@@ -505,6 +342,27 @@ ln -sf ../../.agents/skills/serena-init serena-init
 
 ---
 
+## Project CLAUDE.md / AGENTS.md Addition
+
+Every project CLAUDE.md (and AGENTS.md if it exists) should include the Code Navigation Routing table so the agent knows which tool to reach for first:
+
+```markdown
+## Code Navigation Routing
+
+| Task | Tool | Commands |
+|------|------|----------|
+| Exploration — what/where/how, unfamiliar code | **CBM** | `search_graph`, `trace_path`, `get_code_snippet` |
+| Precision — known symbol, editing, type info | **Serena** | `find_symbol`, `get_symbols_overview`, `replace_symbol_body` |
+| Session memory / decisions | **agentmemory** | `memory_smart_search` |
+| Non-code files (md, yaml, json, config) | **Read directly** | no gate |
+
+Escape gate (one session): `touch /tmp/nav-unlock-$PPID`
+```
+
+`serena-init` checks for this table and adds it if missing. Run `~/.agents/bin/serena-init` in any new project.
+
+---
+
 ## Project Bootstrap
 
 ### `.mcp.json` template:
@@ -512,6 +370,10 @@ ln -sf ../../.agents/skills/serena-init serena-init
 ```json
 {
   "mcpServers": {
+    "agentmemory": {
+      "type": "http",
+      "url": "http://localhost:3111/mcp"
+    },
     "gsd-workflow": {
       "type": "stdio",
       "command": "/absolute/path/to/node",
@@ -535,18 +397,27 @@ ln -sf ../../.agents/skills/serena-init serena-init
 }
 ```
 
-agentmemory MCP is global (CC `settings.json`) — no per-project entry needed.
+agentmemory MCP goes in `.mcp.json` too (shown above) — the `settings.json` `mcpServers` block does not load in Claude Code. For a truly global entry without per-project wiring, use `claude mcp add --scope user` (writes `~/.claude.json`) instead.
 
-**GSD local-only overrides**: `.gsd/mcp.json` — same format, merged with `.mcp.json`, first definition wins.
+**`gsd-workflow` is GSD-only — add it *only if the project has a `.gsd/` folder*.** For a plain repo with no `.gsd/`, omit the `gsd-workflow` server entirely; `serena` + `codebase-memory-mcp` are the only required entries. The template above shows all three for a GSD-managed project — drop `gsd-workflow` when `.gsd/` is absent.
+
+**GSD local-only overrides**: `.gsd/mcp.json` — same format, merged with `.mcp.json`, first definition wins. Only present/meaningful when `.gsd/` exists.
 
 ### Project checklist:
+
+Always (every project):
 ```
 [ ] .mcp.json includes serena (required — GSD has no global MCP fallback)
-[ ] .mcp.json includes gsd-workflow
 [ ] .mcp.json includes codebase-memory-mcp
-[ ] After gsd init: run mcp__codebase-memory-mcp__index_repository
-[ ] agentmemory MCP is global — no per-project entry needed
+[ ] .mcp.json includes agentmemory (http://localhost:3111/mcp) — settings.json mcpServers does not load
+[ ] After install: run mcp__codebase-memory-mcp__index_repository
 [ ] code-nav-gate + code-nav-marker already wired globally — no per-project hook changes needed
+```
+
+Only if `.gsd/` exists (GSD-managed project):
+```
+[ ] .mcp.json includes gsd-workflow (skip entirely when no .gsd/)
+[ ] .gsd/mcp.json local-only overrides applied if needed
 ```
 
 ---
@@ -570,21 +441,29 @@ agentmemory MCP is global (CC `settings.json`) — no per-project entry needed.
 │   │   └── appwrite.md
 │   └── skills/                        # symlinks to ~/.agents/skills/ + local skills
 ├── .agents/
+│   ├── bin/                           # wiring tools + shared executables
+│   │   ├── activate-hooks             # idempotent hook wiring into all settings.json files
+│   │   ├── serena-init                # project bootstrap (symlinked from dorothy commands)
+│   │   └── context_feed/              # hook-driven context capture (Python)
 │   ├── hooks/                         # shared hook scripts
-│   │   ├── bash-ban-raw-tools
-│   │   ├── code-nav-gate
-│   │   ├── code-nav-marker
-│   │   ├── code-nav-reminder
-│   │   ├── handoff-session-resume
-│   │   └── serena-activate.sh
+│   │   ├── run-hook.sh                # sole dispatcher — wired into ALL agent settings.json
+│   │   ├── lib-log.sh / lib-wrapper.sh
+│   │   ├── PreToolUse.d/              # 20-bash-ban-raw-tools.sh, 30-code-nav-gate.sh
+│   │   ├── PostToolUse.d/             # 10-agentmemory.sh, 20-code-nav-marker.sh
+│   │   ├── SessionStart.d/            # 10-agentmemory.sh, 30-context-feed-inject.sh
+│   │   └── Stop.d/ PreCompact.d/ PostCompact.d/ UserPromptSubmit.d/ …
 │   └── skills/                        # 53+ skills, shared by all runtimes
 ├── .pi/agent/
-│   ├── settings.json                  # GSD/pi hooks + extensions
-│   └── extensions/
-│       └── agentmemory/
-│           └── index.ts               # lifecycle recall/save hooks
+│   └── settings.json                  # GSD/pi hooks (no extensions — none scanned here)
 ├── .gsd/agent/
-│   └── settings.json                  # GSD UI/model settings only
+│   ├── settings.json                  # GSD hooks (GSD schema) + UI/model settings
+│   └── extensions/                    # THE scanned extension dir; auto-discovered at startup
+│       └── agentmemory/
+│           ├── index.ts               # lifecycle recall/save hooks
+│           ├── extension-manifest.json
+│           ├── security.ts
+│           ├── package.json
+│           └── README.md
 ├── .agentmemory/
 │   ├── .env                           # III_REST_PORT=3111 (uncommented)
 │   └── .env.schema                    # varlock: GEMINI_API_KEY from 1Password
@@ -596,7 +475,7 @@ agentmemory MCP is global (CC `settings.json`) — no per-project entry needed.
 
 <project>/
 ├── CLAUDE.md + AGENTS.md
-├── .mcp.json                          # serena + gsd-workflow + codebase-memory-mcp
+├── .mcp.json                          # agentmemory + serena + gsd-workflow + codebase-memory-mcp
 ├── .gsd/                              # workflow state
 └── .serena/                           # Serena LSP config
 ```

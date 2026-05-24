@@ -1,6 +1,6 @@
 [tools]
 # === Runtimes ===
-node = "22"
+node = "24"
 pnpm = "latest"
 bun = "latest"
 deno = "latest"

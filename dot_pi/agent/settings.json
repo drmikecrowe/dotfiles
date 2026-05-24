@@ -1,3 +1,75 @@
 {
-  "hooks": {}
+  "collapseChangelog": true,
+  "compaction": {
+    "enabled": true
+  },
+  "defaultModel": "claude-sonnet-4-6",
+  "defaultProvider": "claude-code",
+  "defaultThinkingLevel": "high",
+  "editMode": "hashline",
+  "hideThinkingBlock": false,
+  "hooks": {
+    "PostCompact": [
+      {
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh PostCompact",
+        "timeout": 30000
+      }
+    ],
+    "PostToolUse": [
+      {
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh PostToolUse",
+        "timeout": 30000
+      }
+    ],
+    "PreCompact": [
+      {
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreCompact",
+        "timeout": 30000,
+        "blocking": false
+      }
+    ],
+    "PreMilestone": [
+      {
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreMilestone",
+        "timeout": 10000,
+        "blocking": false
+      }
+    ],
+    "PreToolUse": [
+      {
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreToolUse",
+        "timeout": 30000
+      }
+    ],
+    "SessionStart": [
+      {
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh SessionStart",
+        "timeout": 30000
+      }
+    ],
+    "Stop": [
+      {
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh Stop",
+        "timeout": 30000
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh UserPromptSubmit",
+        "timeout": 30000
+      }
+    ],
+    "Notification": [
+      {
+        "command": "/home/mcrowe/.agents/hooks/run-hook.sh Notification",
+        "timeout": 30000
+      }
+    ]
+  },
+  "lastChangelogVersion": "2.78.0",
+  "quietStartup": true,
+  "steeringMode": "all",
+  "theme": "vivid",
+  "transport": "sse",
+  "followUpMode": "all"
 }
