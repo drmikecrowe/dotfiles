@@ -46,7 +46,7 @@ function M:peek(job)
 
   child:start_kill()
   if job.skip > 0 and i < job.skip + limit then
-    ya.mgr_emit("peek", {
+    ya.emit("peek", {
       math.max(0, i - limit),
       only_if = job.file.url,
       upper_bound = true,
@@ -67,7 +67,7 @@ function M:seek(job)
   local scroll_offset = job.units
 
   -- Emit a new peek event with the updated skip value.
-  ya.mgr_emit("peek", {
+  ya.emit("peek", {
     math.max(0, cx.active.preview.skip + scroll_offset),
     only_if = job.file.url,
   })

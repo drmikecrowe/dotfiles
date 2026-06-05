@@ -39,7 +39,7 @@ quick-terminal-animation-duration = 0.2
 quick-terminal-autohide = true
 # Must use W3C physical key code "Backquote" — "grave"/"backtick" fail with sequence keybinds
 # KDE+Wayland supports global: via XDG Global Shortcuts portal
-keybind = global:ctrl+Backquote=toggle_quick_terminal
+keybind = global:ctrl+shift+Backquote=toggle_quick_terminal
 
 # ── Keybinds — tmux-style ctrl+s leader ──────────────────────────────────────
 keybind = ctrl+s>c=new_tab

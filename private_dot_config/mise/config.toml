@@ -10,6 +10,14 @@ rust = "latest"
 "npm:varlock" = "latest"
 shellcheck = "latest"
 packer = "latest"
+osv-scanner = "latest"
+usage = "latest"
+"github:can1357/oh-my-pi" = "latest"
+"pipx:hindsight-api" = "latest"
+supabase = "latest"
 
 [settings]
 experimental = true
+
+[settings.python]
+default_packages_file = "~/.config/dorothy/config/default-python-packages"

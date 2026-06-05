@@ -1,317 +1,90 @@
 {
-  "allowedTools": [
-    "mcp__serena__*",
-    "mcp__codebase-memory-mcp__*",
-    "mcp__agentmemory__*"
-  ],
-  "editorMode": "vim",
-  "enabledPlugins": {
-    "caveman@caveman": true,
-    "claude-hud@claude-hud": true,
-    "commit-commands@claude-plugins-official": true,
-    "gopls-lsp@claude-plugins-official": true,
-    "lua-lsp@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
-    "serena@claude-plugins-official": false,
-    "typescript-lsp@claude-plugins-official": true,
-    "warp@claude-code-warp": true
-  },
   "env": {
     "BASH_MAX_OUTPUT_LENGTH": "10000",
-    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80",
     "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
     "ENABLE_PROMPT_CACHING_1H": "1",
     "MAX_MCP_OUTPUT_TOKENS": "10000"
   },
-  "extraKnownMarketplaces": {
-    "agentmemory": {
-      "source": {
-        "repo": "rohitg00/agentmemory",
-        "source": "github"
-      }
-    },
-    "caveman": {
-      "source": {
-        "repo": "JuliusBrussee/caveman",
-        "source": "github"
-      }
-    },
-    "claude-code-warp": {
-      "source": {
-        "repo": "warpdotdev/claude-code-warp",
-        "source": "github"
-      }
-    },
-    "claude-hud": {
-      "source": {
-        "repo": "jarrodwatts/claude-hud",
-        "source": "github"
-      }
-    },
-    "withzombies-hyper": {
-      "source": {
-        "repo": "withzombies/hyperpowers",
-        "source": "github"
-      }
-    }
-  },
-  "hasCompletedClaudeInChromeOnboarding": false,
-  "hooks": {
-    "ElicitationResult": [
-      {
-        "hooks": [
-          {
-            "command": "/home/mcrowe/.agents/hooks/run-hook.sh ElicitationResult",
-            "timeout": 30,
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf running > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
-            "type": "command"
-          }
-        ]
-      }
-    ],
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "command": "/home/mcrowe/.agents/hooks/run-hook.sh Notification",
-            "timeout": 30,
-            "type": "command"
-          }
-        ],
-        "matcher": "permission_prompt|elicitation_dialog"
-      },
-      {
-        "hooks": [
-          {
-            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf waiting > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
-            "type": "command"
-          }
-        ],
-        "matcher": "permission_prompt|elicitation_dialog"
-      }
-    ],
-    "PostCompact": [
-      {
-        "hooks": [
-          {
-            "command": "/home/mcrowe/.agents/hooks/run-hook.sh PostCompact",
-            "timeout": 30,
-            "type": "command"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "hooks": [
-          {
-            "command": "/home/mcrowe/.agents/hooks/run-hook.sh PostToolUse",
-            "timeout": 30,
-            "type": "command"
-          }
-        ],
-        "matcher": "Bash|Read|Write|Edit|NotebookEdit|Glob|Grep|TodoWrite|Agent"
-      }
-    ],
-    "PreCompact": [
-      {
-        "hooks": [
-          {
-            "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreCompact",
-            "timeout": 30,
-            "type": "command"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "hooks": [
-          {
-            "command": "/home/mcrowe/.agents/hooks/run-hook.sh PreToolUse",
-            "timeout": 30,
-            "type": "command"
-          }
-        ],
-        "matcher": "Grep|Glob|Read|Search"
-      },
-      {
-        "hooks": [
-          {
-            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf running > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
-            "type": "command"
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "command": "/home/mcrowe/.agents/hooks/run-hook.sh SessionStart",
-            "timeout": 30,
-            "type": "command"
-          }
-        ],
-        "matcher": "startup|clear"
-      },
-      {
-        "hooks": [
-          {
-            "command": "\"/home/mcrowe/.local/share/mise/installs/node/22.22.3/bin/node\" \"/home/mcrowe/.claude/hooks/caveman-activate.js\"",
-            "statusMessage": "Loading caveman mode...",
-            "timeout": 5,
-            "type": "command"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "command": "/home/mcrowe/.agents/hooks/run-hook.sh Stop",
-            "timeout": 30,
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf idle > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
-            "type": "command"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "command": "/home/mcrowe/.agents/hooks/run-hook.sh UserPromptSubmit",
-            "timeout": 30,
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "\"/home/mcrowe/.local/share/mise/installs/node/22.22.3/bin/node\" \"/home/mcrowe/.claude/hooks/caveman-mode-tracker.js\"",
-            "statusMessage": "Tracking caveman mode...",
-            "timeout": 5,
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf running > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
-            "type": "command"
-          }
-        ]
-      }
-    ]
-  },
-  "mcpServers": {
-    "agentmemory": {
-      "type": "http",
-      "url": "http://localhost:3111/mcp"
-    },
-    "serena": {
-      "url": "http://127.0.0.1:8765/mcp"
-    }
-  },
-  "model": "claude-sonnet-4-6",
   "permissions": {
     "allow": [
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git status:*)",
-      "Bash(git log:*)",
-      "Bash(git diff:*)",
-      "Bash(git branch:*)",
-      "Bash(git checkout:*)",
-      "Bash(git switch:*)",
-      "Bash(git fetch:*)",
-      "Bash(git merge:*)",
-      "Bash(git rebase:*)",
-      "Bash(git stash:*)",
-      "Bash(git tag:*)",
-      "Bash(git show:*)",
-      "Bash(git blame:*)",
-      "Bash(git shortlog:*)",
-      "Bash(dolt commit:*)",
+      "Bash(awk:*)",
+      "Bash(cargo:*)",
+      "Bash(cat:*)",
+      "Bash(chmod:*)",
+      "Bash(cp:*)",
+      "Bash(curl:*)",
+      "Bash(cut:*)",
       "Bash(dolt add:*)",
-      "Bash(dolt status:*)",
-      "Bash(dolt log:*)",
-      "Bash(dolt diff:*)",
       "Bash(dolt branch:*)",
       "Bash(dolt checkout:*)",
+      "Bash(dolt commit:*)",
+      "Bash(dolt diff:*)",
       "Bash(dolt fetch:*)",
+      "Bash(dolt log:*)",
       "Bash(dolt merge:*)",
-      "Bash(dolt sql:*)",
-      "Bash(dolt table:*)",
       "Bash(dolt schema:*)",
-      "Bash(npm run:*)",
-      "Bash(npm install:*)",
-      "Bash(npm test:*)",
-      "Bash(npm build:*)",
-      "Bash(pnpm run:*)",
-      "Bash(pnpm install:*)",
-      "Bash(pnpm test:*)",
-      "Bash(pnpm build:*)",
-      "Bash(npx:*)",
-      "Bash(node:*)",
-      "Bash(python:*)",
-      "Bash(python3:*)",
-      "Bash(pip install:*)",
-      "Bash(pip3 install:*)",
-      "Bash(cat:*)",
-      "Bash(ls:*)",
-      "Bash(rg:*)",
-      "Bash(fd:*)",
-      "Bash(sed:*)",
-      "Bash(awk:*)",
-      "Bash(head:*)",
-      "Bash(tail:*)",
-      "Bash(wc:*)",
-      "Bash(sort:*)",
-      "Bash(uniq:*)",
-      "Bash(cut:*)",
-      "Bash(jq:*)",
+      "Bash(dolt sql:*)",
+      "Bash(dolt status:*)",
+      "Bash(dolt table:*)",
       "Bash(echo:*)",
-      "Bash(printf:*)",
-      "Bash(mkdir:*)",
-      "Bash(touch:*)",
-      "Bash(cp:*)",
-      "Bash(mv:*)",
-      "Bash(chmod:*)",
-      "Bash(which:*)",
-      "Bash(type:*)",
       "Bash(env:*)",
       "Bash(export:*)",
-      "Bash(source:*)",
-      "Bash(curl:*)",
-      "Bash(wget:*)",
-      "Bash(make:*)",
-      "Bash(cargo:*)",
+      "Bash(fd:*)",
+      "Bash(git add:*)",
+      "Bash(git blame:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git commit:*)",
+      "Bash(git diff:*)",
+      "Bash(git fetch:*)",
+      "Bash(git log:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git shortlog:*)",
+      "Bash(git show:*)",
+      "Bash(git stash:*)",
+      "Bash(git status:*)",
+      "Bash(git switch:*)",
+      "Bash(git tag:*)",
       "Bash(go:*)",
-      "Read(*)",
-      "Write(*)",
+      "Bash(head:*)",
+      "Bash(jq:*)",
+      "Bash(ls:*)",
+      "Bash(make:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(node:*)",
+      "Bash(npm build:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(npm test:*)",
+      "Bash(npx:*)",
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "Bash(playwriter:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm run:*)",
+      "Bash(pnpm test:*)",
+      "Bash(printf:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(rg:*)",
+      "Bash(sed:*)",
+      "Bash(sort:*)",
+      "Bash(source:*)",
+      "Bash(tail:*)",
+      "Bash(touch:*)",
+      "Bash(type:*)",
+      "Bash(uniq:*)",
+      "Bash(wc:*)",
+      "Bash(wget:*)",
+      "Bash(which:*)",
       "Edit(*)",
       "MultiEdit(*)",
-      "Bash(playwriter:*)"
+      "Read(*)",
+      "Write(*)"
     ],
     "deny": [
       "Bash(grep:*)",
@@ -342,12 +115,110 @@
       "WebSearch(*)"
     ]
   },
-  "preferredNotifChannel": "notifications_disabled",
-  "skipDangerousModePermissionPrompt": true,
-  "statusLine": {
-    "command": "npx -y ccstatusline@latest",
-    "padding": 0,
-    "type": "command"
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/mcrowe/.claude/hooks/context-mode-cache-heal.mjs"
+          }
+        ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/cbm-session-reminder"
+          }
+        ]
+      },
+      {
+        "matcher": "resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/cbm-session-reminder"
+          }
+        ]
+      },
+      {
+        "matcher": "clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/cbm-session-reminder"
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/cbm-session-reminder"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Grep|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/cbm-code-discovery-gate",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
   },
-  "voiceEnabled": true
+  "statusLine": {
+    "type": "command",
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0
+  },
+  "enabledPlugins": {
+    "commit-commands@claude-plugins-official": true,
+    "gopls-lsp@claude-plugins-official": true,
+    "lua-lsp@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "hindsight-memory@hindsight": true,
+    "context-mode@context-mode": true
+  },
+  "extraKnownMarketplaces": {
+    "context-mode": {
+      "source": {
+        "source": "github",
+        "repo": "mksglu/context-mode"
+      }
+    },
+    "hindsight": {
+      "source": {
+        "source": "github",
+        "repo": "vectorize-io/hindsight"
+      }
+    }
+  },
+  "effortLevel": "medium",
+  "skipDangerousModePermissionPrompt": true,
+  "editorMode": "vim",
+  "preferredNotifChannel": "notifications_disabled",
+  "voiceEnabled": true,
+  "allowedTools": [
+    "mcp__codebase-memory-mcp__*",
+    "mcp__context-mode__*"
+  ],
+  "hasCompletedClaudeInChromeOnboarding": false,
+  "mcpServers": {
+    "context-mode": {
+      "command": "context-mode"
+    }
+  },
+  "model": "opus"
 }
