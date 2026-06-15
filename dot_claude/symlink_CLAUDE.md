@@ -1,1 +1,0 @@
-/home/mcrowe/AGENTS.md
