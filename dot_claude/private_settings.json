@@ -177,8 +177,9 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "npx -y ccstatusline@latest",
-    "padding": 0
+    "command": "ccstatusline",
+    "padding": 0,
+    "refreshInterval": 10
   },
   "enabledPlugins": {
     "commit-commands@claude-plugins-official": true,
@@ -188,7 +189,7 @@
     "rust-analyzer-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
-    "hindsight-memory@hindsight": true,
+    "hindsight-memory@hindsight": false,
     "context-mode@context-mode": true
   },
   "extraKnownMarketplaces": {
@@ -219,6 +220,5 @@
     "context-mode": {
       "command": "context-mode"
     }
-  },
-  "model": "opus"
+  }
 }

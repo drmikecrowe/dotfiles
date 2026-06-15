@@ -12,9 +12,12 @@ shellcheck = "latest"
 packer = "latest"
 osv-scanner = "latest"
 usage = "latest"
-"github:can1357/oh-my-pi" = "latest"
+"github:can1357/oh-my-pi" = "15.13.3"
 "pipx:hindsight-api" = "latest"
 supabase = "latest"
+"npm:@mermaid-js/mermaid-cli" = "latest"
+"npm:pyright" = "latest"
+"github:bee-san/rustscan" = "latest"
 
 [settings]
 experimental = true

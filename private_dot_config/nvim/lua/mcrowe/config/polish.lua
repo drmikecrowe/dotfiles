@@ -19,8 +19,9 @@ function M.setup()
         -- Only run once
         if vim.g.neotree_opened then return end
         
-        -- Open Neo-tree first
-        vim.cmd("Neotree show")
+        -- Open Neo-tree first. reveal_force_cwd auto-changes cwd to the opened
+        -- file's dir when it's outside cwd, suppressing the "Change cwd?" y/n prompt.
+        vim.cmd("Neotree show reveal_force_cwd")
         vim.g.neotree_opened = true
         
         -- Schedule to find and activate a non-empty buffer if available

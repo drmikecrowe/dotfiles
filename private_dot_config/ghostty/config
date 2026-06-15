@@ -21,9 +21,9 @@ background-opacity = 0.95
 background-blur = 20
 
 # ── Shell ─────────────────────────────────────────────────────────────────────
-command = zsh
+command = zsh -l
 shell-integration = detect
-shell-integration-features = cursor,sudo,title
+shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
 
 # ── Scrollback ────────────────────────────────────────────────────────────────
 scrollback-limit = 10000000

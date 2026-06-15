@@ -132,6 +132,18 @@ config.mouse_bindings = {
       action = act.PasteFrom('PrimarySelection'),
    },
 
+   -- ===== Scroll: move through scrollback =====
+   {
+      event = { Down = { streak = 1, button = { WheelUp = 1 } } },
+      mods = 'NONE',
+      action = act.ScrollByLine(-3),
+   },
+   {
+      event = { Down = { streak = 1, button = { WheelDown = 1 } } },
+      mods = 'NONE',
+      action = act.ScrollByLine(3),
+   },
+
    -- ===== CTRL+Scroll: font size =====
    {
       event = { Down = { streak = 1, button = { WheelUp = 1 } } },
