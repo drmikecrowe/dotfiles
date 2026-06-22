@@ -12,12 +12,14 @@ shellcheck = "latest"
 packer = "latest"
 osv-scanner = "latest"
 usage = "latest"
-"github:can1357/oh-my-pi" = "15.13.3"
+"github:can1357/oh-my-pi" = "16.1.10"
 "pipx:hindsight-api" = "latest"
 supabase = "latest"
 "npm:@mermaid-js/mermaid-cli" = "latest"
 "npm:pyright" = "latest"
 "github:bee-san/rustscan" = "latest"
+"github:cai0baa/cmux-for-linux" = "latest"
+hugo-extended = "latest"
 
 [settings]
 experimental = true

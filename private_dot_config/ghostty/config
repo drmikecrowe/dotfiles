@@ -5,6 +5,11 @@ font-family = "JetBrainsMono Nerd Font"
 font-size = 12
 font-feature = +liga
 
+# Fixed font sizes for switching by screen resolution (ctrl+0 resets to font-size above)
+keybind = ctrl+shift+1=set_font_size:10
+keybind = ctrl+shift+2=set_font_size:12
+keybind = ctrl+shift+3=set_font_size:14
+
 # ── Theme ─────────────────────────────────────────────────────────────────────
 theme = "light:Catppuccin Latte,dark:Catppuccin Mocha"
 

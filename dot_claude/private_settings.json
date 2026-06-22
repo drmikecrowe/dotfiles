@@ -115,66 +115,7 @@
       "WebSearch(*)"
     ]
   },
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/home/mcrowe/.claude/hooks/context-mode-cache-heal.mjs"
-          }
-        ]
-      },
-      {
-        "matcher": "startup",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/cbm-session-reminder"
-          }
-        ]
-      },
-      {
-        "matcher": "resume",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/cbm-session-reminder"
-          }
-        ]
-      },
-      {
-        "matcher": "clear",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/cbm-session-reminder"
-          }
-        ]
-      },
-      {
-        "matcher": "compact",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/cbm-session-reminder"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Grep|Glob",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/cbm-code-discovery-gate",
-            "timeout": 5
-          }
-        ]
-      }
-    ]
-  },
+  "hooks": {},
   "statusLine": {
     "type": "command",
     "command": "ccstatusline",
@@ -189,7 +130,6 @@
     "rust-analyzer-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
-    "hindsight-memory@hindsight": false,
     "context-mode@context-mode": true
   },
   "extraKnownMarketplaces": {
@@ -203,6 +143,12 @@
       "source": {
         "source": "github",
         "repo": "vectorize-io/hindsight"
+      }
+    },
+    "claude-code-warp": {
+      "source": {
+        "source": "github",
+        "repo": "warpdotdev/claude-code-warp"
       }
     }
   },
