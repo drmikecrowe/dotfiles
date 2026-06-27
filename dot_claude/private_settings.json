@@ -1,4 +1,20 @@
 {
+  "allowedTools": [
+    "mcp__codebase-memory-mcp__*",
+    "mcp__context-mode__*"
+  ],
+  "editorMode": "vim",
+  "effortLevel": "medium",
+  "enabledPlugins": {
+    "code-simplifier@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "context-mode@context-mode": true,
+    "gopls-lsp@claude-plugins-official": true,
+    "lua-lsp@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
+  },
   "env": {
     "BASH_MAX_OUTPUT_LENGTH": "10000",
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80",
@@ -6,6 +22,62 @@
     "ENABLE_PROMPT_CACHING_1H": "1",
     "MAX_MCP_OUTPUT_TOKENS": "10000"
   },
+  "hasCompletedClaudeInChromeOnboarding": false,
+  "hooks": {
+    "ElicitationResult": [
+      {
+        "hooks": [
+          {
+            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf running > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf waiting > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
+            "type": "command"
+          }
+        ],
+        "matcher": "permission_prompt|elicitation_dialog"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf running > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf idle > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; mkdir -p /tmp/aoe-hooks/$AOE_INSTANCE_ID 2>/dev/null; printf running > /tmp/aoe-hooks/$AOE_INSTANCE_ID/status 2>/dev/null; exit 0'",
+            "type": "command"
+          }
+        ]
+      }
+    ]
+  },
+  "mcpServers": {},
+  "model": "opus[1m]",
   "permissions": {
     "allow": [
       "Bash(awk:*)",
@@ -86,6 +158,7 @@
       "Read(*)",
       "Write(*)"
     ],
+    "defaultMode": "auto",
     "deny": [
       "Bash(grep:*)",
       "Bash(find:*)",
@@ -110,61 +183,18 @@
       "Bash(fdisk:*)",
       "Bash(ssh:*)",
       "Bash(scp:*)",
-      "Bash(rsync:*)",
-      "WebFetch(*)",
-      "WebSearch(*)"
+      "Bash(rsync:*)"
     ]
   },
-  "hooks": {},
-  "statusLine": {
-    "type": "command",
-    "command": "ccstatusline",
-    "padding": 0,
-    "refreshInterval": 10
-  },
-  "enabledPlugins": {
-    "commit-commands@claude-plugins-official": true,
-    "gopls-lsp@claude-plugins-official": true,
-    "lua-lsp@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true,
-    "context-mode@context-mode": true
-  },
-  "extraKnownMarketplaces": {
-    "context-mode": {
-      "source": {
-        "source": "github",
-        "repo": "mksglu/context-mode"
-      }
-    },
-    "hindsight": {
-      "source": {
-        "source": "github",
-        "repo": "vectorize-io/hindsight"
-      }
-    },
-    "claude-code-warp": {
-      "source": {
-        "source": "github",
-        "repo": "warpdotdev/claude-code-warp"
-      }
-    }
-  },
-  "effortLevel": "medium",
-  "skipDangerousModePermissionPrompt": true,
-  "editorMode": "vim",
   "preferredNotifChannel": "notifications_disabled",
-  "voiceEnabled": true,
-  "allowedTools": [
-    "mcp__codebase-memory-mcp__*",
-    "mcp__context-mode__*"
-  ],
-  "hasCompletedClaudeInChromeOnboarding": false,
-  "mcpServers": {
-    "context-mode": {
-      "command": "context-mode"
-    }
-  }
+  "skipAutoPermissionPrompt": true,
+  "skipDangerousModePermissionPrompt": true,
+  "statusLine": {
+    "command": "/home/mcrowe/.local/share/mise/shims/ccstatusline",
+    "padding": 0,
+    "refreshInterval": 10,
+    "type": "command"
+  },
+  "tui": "fullscreen",
+  "voiceEnabled": true
 }

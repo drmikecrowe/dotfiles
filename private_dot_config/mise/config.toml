@@ -20,6 +20,9 @@ supabase = "latest"
 "github:bee-san/rustscan" = "latest"
 "github:cai0baa/cmux-for-linux" = "latest"
 hugo-extended = "latest"
+"npm:repomix" = "latest"
+"npm:ccstatusline" = "latest"
+"npm:agent-carnet" = "latest"
 
 [settings]
 experimental = true
