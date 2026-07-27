@@ -6,3 +6,14 @@
 .tmux/tmux.conf.old
 .zsh-custom/.local
 .config/dorothy/commands.local
+
+# Kept in git for recovery, never written to $HOME: root-owned files plus their
+# installer. See office-tv-switch/README.md.
+office-tv-switch
+
+# Desk-specific USB A/B switch + TV automation. Opt in per machine with
+# [data.officeTv] enabled = true in ~/.config/chezmoi/chezmoi.toml.
+{{- if not (dig "officeTv" "enabled" false .) }}
+.local/bin/cosmic-usb-display.sh
+.config/systemd/user/cosmic-usb-display.service
+{{- end }}

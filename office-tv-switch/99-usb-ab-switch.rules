@@ -1,0 +1,18 @@
+# VIA Labs USB3 A/B switch -> office monitor HDMI toggle
+#
+# Match on ENV{PRODUCT} (vendor/product/bcd, leading zeros stripped) because
+# it is the ONE identifier present in BOTH add and remove uevents. The ID_*
+# properties (ID_VENDOR_ID/ID_MODEL_ID) are set by usb_id only on add and are
+# absent from the real remove event, so matching on them never fires on detach.
+#
+# DEVTYPE=="usb_device" restricts to the hub's device node so each rule fires
+# exactly once (not once per child USB interface).
+#
+# systemd-run --no-block detaches the curl from the udev cgroup, which udev
+# otherwise kills the instant the event handler returns.
+
+# Hub attached -> HDMI 1
+ACTION=="add",    SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ENV{PRODUCT}=="2109/817/*", RUN+="/usr/bin/systemd-run --no-block --collect /usr/local/bin/toggle_tv_hdmi.sh hdmi1"
+
+# Hub detached -> HDMI 2
+ACTION=="remove", SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ENV{PRODUCT}=="2109/817/*", RUN+="/usr/bin/systemd-run --no-block --collect /usr/local/bin/toggle_tv_hdmi.sh hdmi2"
