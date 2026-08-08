@@ -27,5 +27,14 @@ hugo-extended = "latest"
 [settings]
 experimental = true
 
+# Trust every mise.toml under these roots without a per-directory `mise trust`. The harnessed repo
+# is a bare+worktree layout: each new task worktree is a fresh path, so an untrusted config would
+# otherwise greet every new worktree. Scoped to the repo root, which covers main/, .bare/, and both
+# .claude/worktrees/ trees -- not to ~/Programming, so a freshly cloned third-party repo still has
+# to be trusted explicitly.
+# The path must be ABSOLUTE: mise does not expand `~` here, and an unexpanded entry silently
+# matches nothing while still printing as "trusted" in `mise trust --show`.
+trusted_config_paths = ["{{ .chezmoi.homeDir }}/Programming/Personal/harnessed"]
+
 [settings.python]
 default_packages_file = "~/.config/dorothy/config/default-python-packages"
