@@ -3,3 +3,7 @@ set -gx SHELL_PROMPT_CHAR 'f>'
 set -gx STARSHIP_CONFIG $HOME/.config/dorothy/config/starship.toml
 
 source '/home/mcrowe/.local/share/dorothy/init.fish' # Dorothy
+
+
+# Added by Antigravity CLI installer
+set -gx PATH "/home/mcrowe/.local/bin" $PATH

@@ -51,6 +51,7 @@ keybind = ctrl+s>c=new_tab
 keybind = ctrl+s>n=next_tab
 keybind = ctrl+s>p=previous_tab
 keybind = ctrl+s>\=new_split:right
+keybind = ctrl+s>v=new_split:right
 keybind = ctrl+s>s=new_split:down
 keybind = ctrl+s>h=goto_split:left
 keybind = ctrl+s>j=goto_split:bottom

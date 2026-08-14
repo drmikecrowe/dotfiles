@@ -1971,6 +1971,19 @@ exclude_kpad_devs_UserCustom_lst = [
 
 ]
 
+# ── Reserve physical Right Alt as the voxtype push-to-talk key (voxtype hotkey = RIGHTALT) ──
+# Problem: built-in modmaps remap RIGHT_ALT -> RIGHT_CTRL (GUI ~line 2416, Terms ~line 2526),
+# the SAME code Left Alt / Mac-Cmd emits, so voxtype (listening for one keycode) fired on BOTH alts.
+# xwaykeyz apply_modmap() is FIRST-match-wins (it `break`s on the first matching conditional
+# modmap; transform.py ~line 553), and _MODMAPS[0] (the "Trigger Modmap: Context Pre-Check",
+# ~line 1926) is excluded from the match loop. So this override must register (a) AFTER that
+# index-0 trigger and (b) BEFORE the RIGHT_ALT remaps at ~2413/2523. This slice is the only
+# upgrade-safe region in that window. `when` must be a real callable (apply_modmap calls
+# .conditional(ctx) with no None-guard, so when=None would crash on Right-Alt press).
+modmap("user override - Right Alt passthrough for voxtype PTT", {
+    Key.RIGHT_ALT:              Key.RIGHT_ALT,
+}, when = lambda ctx: True)
+
 ###  SLICE_MARK_END: exclude_kpad_devs  ###  EDITS OUTSIDE THESE MARKS WILL BE LOST ON UPGRADE
 ###################################################################################################
 
@@ -4099,17 +4112,54 @@ keymap("User hardware keys", {
     not ctx_app_is_remote
 )
 
-# Ghostty workspace switching fix (COSMIC, Windows-type keyboard).
-# In terminal context toshy keeps physical Ctrl as Ctrl but maps physical Win->Alt,
-# so the workspace combo arrives as Ctrl+Alt+arrow. COSMIC switches workspaces on
-# Super+Alt+arrow (verified: that's what the working GUI context emits), so the
-# terminal combo never matches. Re-emit the working Super+Alt+arrow combo.
-keymap("User: Ghostty COSMIC workspace switch", {
+# Terminal COSMIC shortcut re-emit (any terminal app, not just Ghostty).
+# In terminal context toshy keeps physical Ctrl as Ctrl, maps physical Win->Alt, and
+# maps physical Alt->RIGHT_CTRL ("Cmd"), so no physical combo can produce a literal
+# Super modifier from inside a terminal - COSMIC's Super-based shortcuts are
+# otherwise unreachable there. Re-emit the same Super+Alt+Up/Down that GUI context
+# produces natively (Ctrl->Super, Win->Alt), now that COSMIC's custom shortcuts file
+# has a matching Super+Alt+Down -> NextWorkspace binding alongside Super+Alt+Up ->
+# PreviousWorkspace (it was previously missing, which also broke this combo in GUI
+# apps, not just terminals):
+#   Physical Ctrl+Win+Up   -> Super+Alt+Up   -> COSMIC: PreviousWorkspace
+#   Physical Ctrl+Win+Down -> Super+Alt+Down -> COSMIC: NextWorkspace
+#   Physical Ctrl+Alt+H    -> Super+Ctrl+h   -> COSMIC: copyq toggle
+#     (physical Ctrl and physical Alt both land on Ctrl-flavored output here, so this
+#     is matched as LC+RC held together, distinct from a plain Ctrl+H keystroke)
+keymap("User: Terminal COSMIC shortcut re-emit", {
     C("Alt-C-Up"):              [bind, C("Super-Alt-Up")],      # Switch to workspace above
     C("Alt-C-Down"):            [bind, C("Super-Alt-Down")],    # Switch to workspace below
+    C("LC-RC-H"):               [bind, C("Super-C-h")],         # copyq toggle
+    C("LC-RC-G"):               [bind, C("Super-C-g")],         # COSMIC: ToggleWindowFloating
 }, when = lambda ctx:
     cnfg.screen_has_focus and
-    matchProps(clas="^.*ghostty.*$")(ctx)
+    ctx_app_is_terminal
+)
+
+# COSMIC ToggleWindowFloating (Super+Ctrl+g in COSMIC's custom shortcuts file).
+# In GUI context physical Ctrl+Alt+G already emits Super+RIGHT_CTRL+g natively, so
+# no translation is needed for most apps. This keymap exists only to win the
+# first-match-wins race against the later app-specific keymaps that claim the same
+# combo (Zed's Super-RC-g -> "Select all occurrences", Sublime's Super-C-g ->
+# find_all_under), so the WM shortcut behaves identically in every GUI app.
+keymap("User: COSMIC float toggle", {
+    C("Super-RC-g"):            [bind, C("Super-C-g")],         # COSMIC: ToggleWindowFloating
+}, when = lambda ctx:
+    cnfg.screen_has_focus and
+    not ctx_app_is_terminal
+)
+
+# Zed (GUI app) gets toshy's Mac remap: physical Ctrl -> Super. That breaks the
+# few places Zed needs a literal Ctrl (integrated terminal toggle + ^C/^D). Convert
+# physical-Ctrl (arrives as Super) back to literal Ctrl for just those keys. Mac
+# Cmd shortcuts use a different physical key (Alt->Cmd), so copy/paste is unaffected.
+keymap("User: Zed literal Ctrl for terminal", {
+    C("Super-Grave"):           [bind, C("C-Grave")],           # Toggle integrated terminal (Zed binds ctrl-`)
+    C("Super-C"):               [bind, C("C-C")],               # ^C / SIGINT in integrated terminal
+    C("Super-D"):               [bind, C("C-D")],               # ^D / EOF in integrated terminal
+}, when = lambda ctx:
+    cnfg.screen_has_focus and
+    matchProps(clas="^dev.zed.Zed")(ctx)
 )
 
 ###  SLICE_MARK_END: user_apps  ###  EDITS OUTSIDE THESE MARKS WILL BE LOST ON UPGRADE
