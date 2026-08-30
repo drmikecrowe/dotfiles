@@ -1,3 +1,5 @@
+# ⚠️ Deprecated
+
 <p align="center">
   <img
     src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f5d1.svg"
@@ -7,7 +9,7 @@
 
 <p align="center">
   <a href="https://github.com/uhs-robert/recycle-bin.yazi/stargazers"><img src="https://img.shields.io/github/stars/uhs-robert/recycle-bin.yazi?colorA=192330&colorB=khaki&style=for-the-badge&cacheSeconds=4300"></a>
-  <a href="https://github.com/sxyazi/yazi" target="_blank" rel="noopener noreferrer"><img alt="Yazi 0.25+" src="https://img.shields.io/badge/Yazi-0.25%2B-blue?style=for-the-badge&cacheSeconds=4300&labelColor=192330" /></a>
+  <a href="https://github.com/sxyazi/yazi" target="_blank" rel="noopener noreferrer"><img alt="Yazi 0.26" src="https://img.shields.io/badge/Yazi-0.26-blue?style=for-the-badge&cacheSeconds=4300&labelColor=192330" /></a>
   <a href="https://github.com/uhs-robert/recycle-bin.yazi/issues"><img src="https://img.shields.io/github/issues/uhs-robert/recycle-bin.yazi?colorA=192330&colorB=skyblue&style=for-the-badge&cacheSeconds=4300"></a>
   <a href="https://github.com/uhs-robert/recycle-bin.yazi/contributors"><img src="https://img.shields.io/github/contributors/uhs-robert/recycle-bin.yazi?colorA=192330&colorB=8FD1C7&style=for-the-badge&cacheSeconds=4300"></a>
   <a href="https://github.com/uhs-robert/recycle-bin.yazi/network/members"><img src="https://img.shields.io/github/forks/uhs-robert/recycle-bin.yazi?colorA=192330&colorB=CFA7FF&style=for-the-badge&cacheSeconds=4300"></a>
@@ -16,6 +18,47 @@
 <p align="center">
 A blazing fast, minimal <strong>Recycle Bin</strong> for the <a target="_blank" rel="noopener noreferrer" href="https://github.com/sxyazi/yazi">Yazi</a> terminal file‑manager.
 </p>
+
+## ⚠️ Why Deprecated?
+
+Yazi now provides native trash browsing and restoration as of v26.8.15 through its built-in Trash VFS, introduced in [#4144](https://github.com/sxyazi/yazi/pull/4144). On current versions of Yazi, use `g` -> `t` to open the trash.
+
+The only missing feature this plugin provides is **age-based deletion**, which can be replicated with `trash-cli` and the [keymap](#keymap-age-based-delete) or [opener](#opener-age-based-delete) provided below.
+
+As a result, this project has been superseded upstream and is no longer maintained.
+
+This repository remains available for users of older Yazi versions and for historical reference.
+
+### Keymap (age-based delete)
+
+In `keymap.toml`:
+
+```toml
+[mgr]
+prepend_keymap = [
+  { on = ["R", "e"], run = "shell 'trash-empty' --block --interactive", desc = "Empty trash older than N days" },
+]
+```
+
+### Opener (age-based delete)
+
+In `yazi.toml`:
+
+```toml
+[opener]
+trash-empty = [
+  { run = 'printf "Delete trash older than how many days? "; read age; trash-empty "$age"; printf "\nPress Enter to return to Yazi..."; read _', block = true, desc = "Empty trash by age" },
+]
+```
+
+Then add the opener to your open rules via `prepend_rules` or `append_rules` like so:
+
+```toml
+[open]
+prepend_rules = [
+  { mime = "trash/**", use = ["open", "trash","trash-empty"] },
+]
+```
 
 ## 🕶️ What does it do?
 
@@ -28,6 +71,8 @@ Browse, restore, or permanently delete trashed files without leaving your termin
 > **Cross-Platform Support**
 >
 > This plugin supports Linux and macOS systems.
+>
+> On macOS, this plugin uses trash-cli's Freedesktop-spec trash (`~/.local/share/Trash`), **not** the native Finder Trash (`~/.Trash`). trash-cli's maintainer has confirmed it will likely never support the proprietary macOS Trash. See [Configuration](#️-configuration) and [Key Mapping](#-key-mapping) for the required macOS setup.
 
 ## 🧠 What it does under the hood
 
@@ -46,14 +91,22 @@ This plugin serves as a wrapper for the [trash-cli](https://github.com/andreafra
 
 ## 📋 Requirements
 
-| Software  | Minimum     | Notes                                                                                     |
-| --------- | ----------- | ----------------------------------------------------------------------------------------- |
-| Yazi      | `>=25.5.31` | untested on 25.6+                                                                         |
-| trash-cli | any         | **Linux**: `sudo dnf/apt/pacman install trash-cli`<br>**macOS**: `brew install trash-cli` |
+| Software  | Minimum   | Notes                                                                                     |
+| --------- | --------- | ----------------------------------------------------------------------------------------- |
+| Yazi      | `26.8.15` | Last supported version                                                                    |
+| trash-cli | any       | **Linux**: `sudo dnf/apt/pacman install trash-cli`<br>**macOS**: `brew install trash-cli` |
 
 The plugin uses the following trash-cli commands: `trash-list`, `trash-empty`, `trash-restore`, and `trash-rm`.
 
-## 📦 Installation
+> [!IMPORTANT]
+> **macOS only:** yazi's default delete action sends files to the native Finder Trash (`~/.Trash`), which trash-cli cannot read (see [Cross-Platform Support](#-what-does-it-do)). For this plugin to see files you delete, you must also rebind your delete key to trash-cli's own `trash-put` instead of yazi's built-in trash action — see [Key Mapping](#-key-mapping).
+
+## 📦 Legacy Installation
+
+> [!WARNING]
+> This project is no longer maintained.
+>
+> Yazi now provides native trash browsing and restoration as of v26.8.15 through its built-in Trash VFS, introduced in [#4144](https://github.com/sxyazi/yazi/pull/4144).
 
 Install the plugin via Yazi's package manager:
 
@@ -131,6 +184,21 @@ prepend_keymap = [
 > [!IMPORTANT]
 > Remember that you are the only one who is responsible for managing and resolving your keybind conflicts.
 
+---
+
+### 🍎 macOS: Rebind Delete to trash-cli
+
+yazi's default `d`/`D` delete keys move files to the native Finder Trash (`~/.Trash`), which trash-cli cannot read. To keep deletes and this plugin pointed at the same trash, override delete on macOS to call `trash-put` directly:
+
+```toml
+[mgr]
+prepend_keymap = [
+  { on = "d", run = "shell 'trash-put \"$@\"' --confirm", desc = "Trash (trash-cli)" },
+]
+```
+
+This replaces yazi's built-in trash action with trash-cli's, so files land in `~/.local/share/Trash` where `recycle-bin.yazi` can browse, restore, and empty them. They will no longer appear in Finder's Trash.
+
 ## 🚀 Usage
 
 ### 📝 Example using the recommended preset
@@ -161,8 +229,7 @@ prepend_keymap = [
 
 - The plugin automatically discovers trash directories using `trash-list --trash-dirs`
 - If no directories are found, create the standard location:
-  - **Linux**: `mkdir -p ~/.local/share/Trash/{files,info}`
-  - **macOS**: `mkdir -p ~/.Trash`
+  - **Linux and macOS**: `mkdir -p ~/.local/share/Trash/{files,info}`
 - You can also specify a custom path in your configuration
 
 **"No files selected" warning:**
