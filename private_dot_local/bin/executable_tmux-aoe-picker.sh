@@ -19,26 +19,41 @@ set -euo pipefail
 
 TAB=$(printf '\t')
 
+# One jump key per row, in list order. Rows past the last key still pick with
+# the cursor; they just get no key.
+KEYS=abcdefghijklmnopqrstuvwxyz0123456789
+
 harness_map() {
 	aoe ps --json 2>/dev/null |
 		jq -r '.[] | "\(.session[0:8])\t\(.agent // "-")"' 2>/dev/null || true
 }
 
-# hash -> project workdir. Session rows are per-profile, so every profile is
-# queried; `aoe ps` is profile-agnostic but does not carry the path.
-workdir_map() {
-	local profile
-	aoe profile list 2>/dev/null |
-		awk '/^[[:space:]]+/ { gsub(/^[[:space:]]*\*?[[:space:]]*/, ""); print $1 }' |
-		while IFS= read -r profile; do
-			aoe -p "$profile" list --json 2>/dev/null |
-				jq -r '.[] | "\(.id[0:8])\t\(.path)"' 2>/dev/null || true
-		done
+# hash -> label, workdir, runtime. The label is aoe's group plus the project,
+# which the tmux name cannot give: aoe truncates the project there and carries
+# no group at all, so "all" and three "main" rows are indistinguishable.
+#
+# Titles come in three shapes: "shell", "claude/host old-coder extras", and the
+# older "main [claude/host] extras". The project is therefore the first word,
+# unless the first word is a tool/runtime pair, in which case it is the second.
+# That pair is worth keeping -- it is the only place host vs container shows --
+# so it goes to the harness column, which `aoe ps` fills with the tool alone.
+session_meta() {
+	aoe list --all --json 2>/dev/null |
+		jq -r '
+			.[]
+			| (.title | split(" ")) as $t
+			| (if ($t[0] | test("/")) then $t[0] else "" end) as $rt
+			| (if $rt == "" then $t[0] else ($t[1] // $t[0]) end) as $proj
+			| (if .group == "" then "" else .group + "-" end) as $g
+			| [.id[0:8], $g + $proj, .path, $rt]
+			| @tsv
+		' 2>/dev/null || true
 }
 
 list() {
-	local agents
+	local agents meta
 	agents=$(harness_map)
+	meta=$(session_meta)
 
 	tmux list-sessions -F '#{session_name}' | while IFS= read -r name; do
 		case $name in
@@ -64,10 +79,17 @@ list() {
 		harness=$(printf '%s\n' "$agents" |
 			awk -F'\t' -v h="$hash" '$1 == h { print $2; exit }')
 
-		printf '%s\t%s\t%s\t%s\n' "$proj" "${harness:--}" "$role" "$name"
+		label=$(printf '%s\n' "$meta" |
+			awk -F'\t' -v h="$hash" '$1 == h { print $2; exit }')
+		runtime=$(printf '%s\n' "$meta" |
+			awk -F'\t' -v h="$hash" '$1 == h { print $4; exit }')
+
+		printf '%s\t%s\t%s\t%s\n' "${label:-$proj}" "${runtime:-${harness:--}}" "$role" "$name"
 	done |
 		sort -t"$TAB" -k3,3 -k1,1 -k2,2 |
-		awk -F'\t' '{ printf "%-24s %-8s %-5s\t%s\n", $1, $2, $3, $4 }'
+		awk -F'\t' -v keys="$KEYS" '
+			{ k = substr(keys, NR, 1); if (k == "") k = " "
+			  printf "%s  %-30s %-16s %-5s\t%s\n", k, $1, $2, $3, $4 }'
 }
 
 # Create the paired terminal session if the picked agent has none. Detached, so
@@ -87,7 +109,7 @@ ensure_term() {
 	fi
 
 	hash=${agent##*_}
-	cwd=$(workdir_map | awk -F'\t' -v h="$hash" '$1 == h { print $2; exit }')
+	cwd=$(session_meta | awk -F'\t' -v h="$hash" '$1 == h { print $3; exit }')
 	if [ -z "$cwd" ] || [ ! -d "$cwd" ]; then
 		cwd=$(tmux display-message -p -t "=$agent" '#{pane_current_path}')
 	fi
@@ -95,14 +117,28 @@ ensure_term() {
 	tmux new-session -d -s "$term" -c "$cwd" "${SHELL:-/bin/sh}" -l
 }
 
+binds=()
+key_list=
+for ((i = 0; i < ${#KEYS}; i++)); do
+	k=${KEYS:i:1}
+	binds+=(--bind "$k:pos($((i + 1)))+accept")
+	key_list+=${key_list:+,}$k
+done
+# A bound key never reaches the search field, so a-z cannot be typed while the
+# jump keys live. "/" releases them and turns searching on; there is no way
+# back, which is why the picker starts with --disabled rather than the reverse.
+binds+=(--bind "/:unbind($key_list)+enable-search")
+
 sel=$(list | fzf \
 	--delimiter='\t' \
 	--with-nth=1 \
 	--no-sort \
+	--disabled \
+	"${binds[@]}" \
 	--height=100% \
 	--reverse \
 	--prompt='session > ' \
-	--header='project                  harness  role') || exit 0
+	--header='key  group-project                  harness           role  ("/" to search)') || exit 0
 
 target=${sel##*"$TAB"}
 [ -n "$target" ] || exit 0
