@@ -10,8 +10,9 @@ Write blog posts for Mike's 11ty blog at `~/Programming/Personal/11ty-blog`.
 ## Workflow
 
 1. Create post with `scripts/new-post.py "Title"`
-2. Write frontmatter and content following the rules below
-3. Place featured image in post's `images/` directory
+2. Ask Mike which opener he wants (see Openers) and wait for his answer
+3. Write frontmatter and content following the rules below
+4. Place featured image in post's `images/` directory
 
 ## Frontmatter
 
@@ -56,24 +57,30 @@ _This post was written with AI assistance (Claude) for structure and formatting.
 
 ## Openers
 
-Pick one pattern:
+**Stop and ask Mike which opener he wants before you draft the post.** Do not pick one
+yourself. Offer the patterns below, with a one-line example built from this post's
+actual subject, and wait for his answer.
 
-1. **Confession** (signature pattern):
-   ```markdown
-   Let me start with a confession:
+- **Confession** — the mistake, the wrong assumption, the thing you put off.
+  "I have been wrong about this for years."
+- **Problem scenario** — drop the reader into the failure.
+  "I ran into a case where the build passed locally and died in CI."
+- **Rhetorical question** — name the itch the reader already has.
+  "Have you ever wished you could see what your agent actually sent?"
+- **Surprising result** — lead with the number or conclusion, explain after.
+  "Switching one flag cut the token spend by 90%."
+- **Strong opinion** — stake the claim in the first sentence, defend it in the post.
+  "Most retry logic makes outages worse."
+- **Scene** — a specific moment, time and place, then widen out.
+  "2am, third deploy of the night, and the dashboard was still red."
 
-   > **I expected an expensive cloud model to win.**
-   ```
-
-2. **Problem scenario**: "I ran into a case where..."
-
-3. **Rhetorical question**: "Have you ever wished..."
+Rotate. If recent posts used the same pattern, say so when you ask.
 
 ## Post Structure
 
-Follow **Problem -> Journey -> Solution -> Reflection -> Close**:
+Follow **Opener -> Journey -> Solution -> Reflection -> Close**:
 
-1. **Hook** — confession, frustration, or interesting question
+1. **Opener** — the pattern Mike chose; see Openers above
 2. **Context** — why this matters, what you tried
 3. **Journey** — show broken/naive approach before the fix
 4. **Solution** — the working code/approach

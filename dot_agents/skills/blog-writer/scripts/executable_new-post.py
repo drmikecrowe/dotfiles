@@ -39,10 +39,6 @@ featured_image: images/featured.png
 excerpt: ""
 ---
 
-Let me start with a confession:
-
-> **[Your confession here]**
-
 ## The Problem
 
 [Describe the problem/scenario]

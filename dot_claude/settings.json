@@ -1,27 +1,17 @@
 {
-  "agentPushNotifEnabled": true,
-  "allowedTools": ["mcp__codebase-memory-mcp__*", "mcp__context-mode__*"],
-  "editorMode": "vim",
-  "effortLevel": "medium",
-  "enabledPlugins": {
-    "code-simplifier@claude-plugins-official": true,
-    "commit-commands@claude-plugins-official": true,
-    "context-mode@context-mode": false,
-    "gopls-lsp@claude-plugins-official": true,
-    "lua-lsp@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true
-  },
   "env": {
     "BASH_MAX_OUTPUT_LENGTH": "10000",
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80",
-    "CLAUDE_CODE_DISABLE_MOUSE": "1",
     "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-4-6",
     "ENABLE_PROMPT_CACHING_1H": "1",
-    "MAX_MCP_OUTPUT_TOKENS": "10000"
+    "MAX_MCP_OUTPUT_TOKENS": "10000",
+    "CLAUDE_CODE_DISABLE_MOUSE": "1"
   },
-  "hasCompletedClaudeInChromeOnboarding": false,
+  "permissions": {
+    "defaultMode": "auto",
+    "mode": "auto"
+  },
+  "model": "opus[1m]",
   "hooks": {
     "SessionStart": [
       {
@@ -119,21 +109,35 @@
       }
     ]
   },
-  "mcpServers": {},
-  "model": "opus[1m]",
-  "permissions": {
-    "defaultMode": "auto",
-    "mode": "auto"
-  },
-  "preferredNotifChannel": "notifications_disabled",
-  "skipAutoPermissionPrompt": true,
-  "skipWorkflowUsageWarning": true,
   "statusLine": {
+    "type": "command",
     "command": "/home/mcrowe/.local/share/mise/shims/ccstatusline",
     "padding": 0,
-    "refreshInterval": 10,
-    "type": "command"
+    "refreshInterval": 10
   },
+  "enabledPlugins": {
+    "code-simplifier@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "context-mode@context-mode": false,
+    "gopls-lsp@claude-plugins-official": true,
+    "lua-lsp@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
+  },
+  "effortLevel": "medium",
   "tui": "fullscreen",
-  "voiceEnabled": true
+  "skipWorkflowUsageWarning": true,
+  "theme": "dark",
+  "editorMode": "vim",
+  "preferredNotifChannel": "notifications_disabled",
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "voiceEnabled": true,
+  "allowedTools": [
+    "mcp__codebase-memory-mcp__*",
+    "mcp__context-mode__*"
+  ],
+  "hasCompletedClaudeInChromeOnboarding": false,
+  "mcpServers": {}
 }

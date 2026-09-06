@@ -7,6 +7,12 @@
 .zsh-custom/.local
 .config/dorothy/commands.local
 
+# Omarchy owns these on Omarchy machines: ~/.config/nvim is a LazyVim install wired
+# to `omarchy theme set`, and ~/.bashrc sources Omarchy's env-bootstrap + default rc.
+.config/nvim
+.bashrc
+.bash_profile
+
 # Kept in git for recovery, never written to $HOME: root-owned files plus their
 # installer. See office-tv-switch/README.md.
 office-tv-switch
