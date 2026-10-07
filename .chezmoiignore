@@ -17,6 +17,10 @@
 # installer. See office-tv-switch/README.md.
 office-tv-switch
 
+# Kept in git for reference, never written to $HOME.
+# See gpg-yubikey/README.md.
+gpg-yubikey
+
 # Desk-specific USB A/B switch + TV automation. Opt in per machine with
 # [data.officeTv] enabled = true in ~/.config/chezmoi/chezmoi.toml.
 {{- if not (dig "officeTv" "enabled" false .) }}
