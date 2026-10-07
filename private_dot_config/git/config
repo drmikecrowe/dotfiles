@@ -1,0 +1,183 @@
+[alias]
+	a = "add"
+	aic = "!git diff | sgpt 'Generate git commit message, for my changes' > /tmp/gitmsg && git commit -F /tmp/gitmsg"
+	aliases = "config --get-regexp ^alias\\."
+	archive-branch = "! f() { git tag archive/$1 $1 && git branch -D $1;}; f"
+	b = "branch"
+	bc = "checkout -b"
+	bl = "branch -v"
+	bm = "branch -M"
+	bs = "show-branch -a"
+	bx = "branch -D"
+	c = "commit -v"
+	ca = "commit --all -v"
+	cam = "commit --all --message"
+	camend = "commit --amend --reuse-message HEAD"
+	cm = "commit --message"
+	co = "checkout"
+	co0 = "checkout HEAD --"
+	cp = "cherry-pick"
+	cundo = "reset --soft HEAD^"
+	d = "diff"
+	dft = "-c diff.external=difft diff"
+	dftc = "-c diff.external=difft diff --staged"
+	showft = "-c diff.external=difft show"
+	dc = "diff --staged"
+	dh = "diff HEAD"
+	ds = "diff --staged"
+	f = "fetch"
+	fap = "fetch --all --prune"
+	fm = "pull"
+	fo = "fetch origin"
+	fuckit = "reset --hard"
+	grep = "log --pretty=\"format:%Cgreen%H %Cblue%s\" --name-status --grep"
+	head = "log -n1"
+	heads = "!git log origin/master.. --format='%Cred%h%Creset;%C(yellow)%an%Creset;%H;%Cblue%f%Creset' | git name-rev --stdin --always --name-only | column -t -s';'"
+	hub = "browse"
+	hubd = "compare"
+	ia = "add"
+	ir = "reset"
+	l = "log --topo-order --pretty=format:'%C(yellow)%h %C(cyan)%cn %C(blue)%cr%C(reset) %s'"
+	ld = "log --topo-order --stat --patch --full-diff --pretty=format:'%C(bold)%C(yellow)Commit:%C(reset) %C(yellow)%H%C(red)%d%n%C(bold)%C(yellow)Author:%C(reset) %C(cyan)%an <%ae>%n%C(bold)%C(yellow)Date:%C(reset)   %C(blue)%ai (%ar)%C(reset)%n%+B'"
+	lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+	lg1 = "log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
+	lg2 = "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
+	lga = "log --topo-order --all --graph --pretty=format:'%C(yellow)%h %C(cyan)%cn%C(reset) %s %C(red)%d%C(reset)%n'"
+	lh = "shortlog --summary --numbered"
+	llf = "fsck --lost-found"
+	lm = "log --topo-order --pretty=format:'%s'"
+	longlog = "log --pretty=format:'%C(yellow)%h %C(cyan)%cn %C(blue)%cr%C(reset) %s' --graph"
+	lost = "!git fsck | awk '/dangling commit/ {print $3}' | git show --format='SHA1: %C(yellow)%h%Creset %f' --stdin | awk '/SHA1/ {sub(\"SHA1: \", \"\"); print}'"
+	ls = "log --topo-order --stat --pretty=format:'%C(bold)%C(yellow)Commit:%C(reset) %C(yellow)%H%C(red)%d%n%C(bold)%C(yellow)Author:%C(reset) %C(cyan)%an <%ae>%n%C(bold)%C(yellow)Date:%C(reset)   %C(blue)%ai (%ar)%C(reset)%n%+B'"
+	m = "merge"
+	missing-commits = "!git log -p --no-merges $1 ^develop"
+	mom = "merge origin/master"
+	momn = "merge origin/main"
+	p = "push"
+	pa = "push --all"
+	pnv = "push --no-verify"
+	prune-branches = "!f() { git fetch --all --prune; git-delete-merged-branches --effort=3 --branch master; }; f"
+	pt = "push --tags"
+	r = "rebase"
+	ra = "rebase --abort"
+	rc = "rebase --continue"
+	re = "remote"
+	rea = "remote add"
+	rel = "remote --verbose"
+	rem = "remote rename"
+	rename = "!f() { git branch -m $1 $2; git push origin :$1; git push --set-upstream origin $2; }; f"
+	rex = "remote rm"
+	ri = "rebase --interactive"
+	rom = "rebase origin/master"
+	rs = "rebase --skip"
+	s = "status"
+	safereset = "!f() { \ttrap 'echo ERROR: Operation failed; return' ERR; \techo Making sure there are no changes...; \tlast_status=$(git status --porcelain);\tif [[ $last_status != \"\" ]]; then\techo There are dirty files:;echo \"$last_status\";\techo;\techo -n \"Enter D if you would like to DISCARD these changes or W to commit them as WIP: \";\tread dirty_operation;\tif [ \"$dirty_operation\" == \"D\" ]; then \techo Resetting...;\tgit reset --hard;\telif [ \"$dirty_operation\" == \"W\" ]; then\techo Comitting WIP...;\tgit commit -a --message='WIP' > /dev/null && echo WIP Comitted;\telse\techo Operation cancelled;\texit 1;\tfi;\tfi;\t}; \tf"
+	test-merge = "merge --no-commit --no-ff"
+	tomerge = "!sh -c 'git branch -r --no-merged ${2:-HEAD} | grep -Ev HEAD | grep -Ev \"(\\*|master|maint|next|proposed|demo-stable)\" | grep ${1:-.}' -"
+	unpushed-branches = "!git log --branches --not --remotes --no-walk --decorate --oneline"
+	log-brief = "log --format='%C(yellow)%h%C(reset) %G? %C(blue)%cr%C(reset) %s'"
+	clone-worktree = "!f() { url=\"$1\"; name=$(basename \"$url\" .git); dest=$(realpath -m \"${2:-$name}\"); if [ -e \"$dest\" ]; then echo \"Error: '$dest' already exists\"; exit 1; fi; mkdir -p \"$dest\"; git clone --bare \"$url\" \"$dest/.bare\"; printf 'gitdir: ./.bare\\n' > \"$dest/.git\"; git -C \"$dest\" config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'; git -C \"$dest\" fetch; branch=$(git -C \"$dest\" symbolic-ref --short HEAD); git -C \"$dest\" worktree add \"$dest/$branch\" \"$branch\"; printf 'Hub: %s\\nWorktree: %s/%s\\n' \"$dest\" \"$dest\" \"$branch\"; }; f"
+
+[core]
+	editor = "nvim"
+
+[credential]
+	helper = "store --file ~/.git-credentials"
+
+; [credential "https://gist.github.com"]
+; 	helper =
+; 	helper = !gh auth git-credential
+;
+; [credential "https://github.com"]
+; 	helper =
+; 	helper = !gh auth git-credential
+
+[diff]
+	tool = "meld"
+	; difftastic is opt-in, not global: `external` here breaks any tool that
+	; parses unified diff output (agents, `git add -p`, patch pipelines).
+	; Use `git dft` / `git dftc` / `git showft`, or `-c diff.external=difft`.
+	; external = difft
+
+[difftool]
+	cmd = "bcompare $LOCAL $REMOTE"
+	prompt = false
+
+[gpg "ssh"]
+	program = "/opt/1Password/op-ssh-sign"
+	allowedSignersFile = "~/.config/git/allowed_signers"
+
+[init]
+	defaultBranch = "main"
+
+[merge]
+	tool = "meld"
+
+[mergetool]
+	cmd = "meld $LOCAL $MERGED $REMOTE"
+	keepBackup = false
+
+[pull]
+	rebase = "false"
+
+[push]
+	autoSetupRemote = "true"
+
+[branch]
+	sort = -committerdate
+
+[commit]
+	gpgsign = true
+
+[fetch]
+	prune = true
+
+[merge]
+	conflictstyle = zdiff3
+
+[rebase]
+	autoStash = true
+
+[rerere]
+	enabled = true
+
+[tag]
+	gpgsign = true
+
+[filter "strongbox"]
+	clean = strongbox -clean %f
+	smudge = strongbox -smudge %f
+	required = true
+
+[diff "strongbox"]
+	textconv = strongbox -diff
+
+[merge "strongbox"]
+	driver = strongbox -merge-file %O -merge-file %A -merge-file %B -merge-file %L -merge-file %P -merge-file %S -merge-file %X -merge-file %Y
+
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential
+
+# --- adopted from Omarchy's stock config (/usr/share/omarchy/config/git/config) ---
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+	mnemonicPrefix = true
+[commit]
+	verbose = true
+[column]
+	ui = auto
+[tag]
+	sort = -version:refname
+[rerere]
+	autoupdate = true
+
+# Client identities and url rewrites. Encrypted in chezmoi; git silently ignores
+# a missing include, so a machine without the key still gets a working config.
+[include]
+	path = clients.gitconfig

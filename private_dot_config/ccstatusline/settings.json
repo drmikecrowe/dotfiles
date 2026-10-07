@@ -1,0 +1,58 @@
+{
+  "version": 4,
+  "lines": [
+    [
+      {
+        "id": "1",
+        "type": "model",
+        "color": "cyan"
+      },
+      {
+        "id": "3",
+        "type": "context-length",
+        "color": "brightBlack"
+      },
+      {
+        "id": "eeaa4eb2-9a75-473b-86e8-62a265ec417f",
+        "type": "context-percentage-usable",
+        "backgroundColor": "bgBrightMagenta"
+      },
+      {
+        "id": "5",
+        "type": "git-branch",
+        "color": "magenta"
+      },
+      {
+        "id": "62dd47a2-652a-476b-b405-aad9704a6da2",
+        "type": "current-working-dir",
+        "backgroundColor": "bgBrightBlack"
+      }
+    ]
+  ],
+  "flexMode": "full-minus-40",
+  "compactThreshold": 60,
+  "colorLevel": 2,
+  "defaultPadding": " ",
+  "inheritSeparatorColors": false,
+  "globalBold": false,
+  "gitCacheTtlSeconds": 5,
+  "minimalistMode": false,
+  "powerline": {
+    "enabled": true,
+    "separators": [
+      ""
+    ],
+    "separatorInvertBackground": [
+      false
+    ],
+    "startCaps": [],
+    "endCaps": [],
+    "theme": "monokai",
+    "autoAlign": false,
+    "continueThemeAcrossLines": true
+  },
+  "installation": {
+    "method": "pinned",
+    "installedVersion": "2.2.22"
+  }
+}

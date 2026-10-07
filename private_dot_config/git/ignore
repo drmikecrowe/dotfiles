@@ -1,0 +1,11 @@
+.cache/
+.DS_Store
+.direnv/
+.venv
+.idea/
+*.swp
+.history
+npm-debug.log
+.specstory
+
+**/.claude/settings.local.json
