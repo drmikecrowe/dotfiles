@@ -1,3 +1,13 @@
+## Up-arrow is bound to Atuin (see custom/90-atuin.zsh). Scope it to prefix
+## matching so typing "ssh " and pressing up filters to commands starting with
+## "ssh ", rather than the fuzzy matching Ctrl-R uses.
+search_mode_shell_up_key_binding = "prefix"
+filter_mode_shell_up_key_binding = "global"
+
+## Up-arrow shows an inline dropdown instead of taking over the screen.
+## Raise or set to 0 for full screen.
+inline_height_shell_up_key_binding = 20
+
 ## where to store your database, default is your system data directory
 ## mac: ~/Library/Application Support/com.elliehuxtable.atuin/history.db
 ## linux: ~/.local/share/atuin/history.db

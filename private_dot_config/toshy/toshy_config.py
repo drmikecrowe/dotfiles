@@ -773,6 +773,9 @@ keyboards_UserCustom_dct = {
     # Valid types to map device to: Apple, Windows, IBM, Chromebook (case sensitive)
     # Example:
     'My Keyboard Device Name': 'Apple',
+    # K780 is switched to Mac layout (fn+O), so it emits Cmd/Opt, not Win/Alt.
+    # Toshy matches on device name and would otherwise classify it as Windows.
+    'Logitech K780': 'Apple',
 }
 
 ###  SLICE_MARK_END: kbtype_override  ###  EDITS OUTSIDE THESE MARKS WILL BE LOST ON UPGRADE
@@ -2463,7 +2466,6 @@ modmap("Cond modmap - GUI - Win kbd - Opt held", {
 )
 modmap("Cond modmap - GUI - Mac kbd - multi_lang OFF", {
     # - Mac Only
-    Key.RIGHT_META:             Key.RIGHT_CTRL,                 # Mac - Multi-language (Remove)
     Key.RIGHT_CTRL:             Key.RIGHT_META,                 # Mac - Multi-language (Remove)
 }, when = lambda ctx:
     not cnfg.multi_lang and
@@ -2474,6 +2476,7 @@ modmap("Cond modmap - GUI - Mac kbd - multi_lang OFF", {
 modmap("Cond modmap - GUI - Mac kbd", {
     # - Mac Only
     Key.LEFT_CTRL:              Key.LEFT_META,                  # Mac
+    Key.RIGHT_META:             Key.LEFT_META,                  # Right Cmd -> dedicated WM Super
     # LEFT_META (Cmd) handled by the held companion / Super tap multi; LEFT_ALT (Opt) is passthrough
 }, when = lambda ctx:
     cnfg.screen_has_focus and
@@ -2574,7 +2577,6 @@ modmap("Cond modmap - Terms - Win kbd - Opt held", {
 modmap("Cond modmap - Terms - Mac kbd - multi_lang OFF", {
     # - Mac Only
     # Left Ctrl Stays Left Ctrl
-    Key.RIGHT_META:             Key.RIGHT_CTRL,                 # Mac - Multi-language (Remove)
     Key.RIGHT_CTRL:             Key.LEFT_CTRL,                  # Mac - Multi-language (Remove)
 }, when = lambda ctx:
     not cnfg.multi_lang and
@@ -2587,6 +2589,8 @@ modmap("Cond modmap - Terms - Mac kbd", {
     # Left Ctrl Stays Left Ctrl
     Key.LEFT_CTRL:              Key.LEFT_CTRL,                  # Mac (self-modmap)
     Key.RIGHT_ALT:              Key.RIGHT_ALT,                  # Mac (self-modmap)
+    # Only Super source in terminals; LEFT_CTRL must stay literal Ctrl for SIGINT
+    Key.RIGHT_META:             Key.LEFT_META,                  # Right Cmd -> dedicated WM Super
     # LEFT_META (Cmd) handled by the held companion / Super tap multi; LEFT_ALT (Opt) is passthrough
 }, when = lambda ctx:
     cnfg.screen_has_focus and
@@ -4112,41 +4116,15 @@ keymap("User hardware keys", {
     not ctx_app_is_remote
 )
 
-# Terminal COSMIC shortcut re-emit (any terminal app, not just Ghostty).
-# In terminal context toshy keeps physical Ctrl as Ctrl, maps physical Win->Alt, and
-# maps physical Alt->RIGHT_CTRL ("Cmd"), so no physical combo can produce a literal
-# Super modifier from inside a terminal - COSMIC's Super-based shortcuts are
-# otherwise unreachable there. Re-emit the same Super+Alt+Up/Down that GUI context
-# produces natively (Ctrl->Super, Win->Alt), now that COSMIC's custom shortcuts file
-# has a matching Super+Alt+Down -> NextWorkspace binding alongside Super+Alt+Up ->
-# PreviousWorkspace (it was previously missing, which also broke this combo in GUI
-# apps, not just terminals):
-#   Physical Ctrl+Win+Up   -> Super+Alt+Up   -> COSMIC: PreviousWorkspace
-#   Physical Ctrl+Win+Down -> Super+Alt+Down -> COSMIC: NextWorkspace
-#   Physical Ctrl+Alt+H    -> Super+Ctrl+h   -> COSMIC: copyq toggle
-#     (physical Ctrl and physical Alt both land on Ctrl-flavored output here, so this
-#     is matched as LC+RC held together, distinct from a plain Ctrl+H keystroke)
-keymap("User: Terminal COSMIC shortcut re-emit", {
-    C("Alt-C-Up"):              [bind, C("Super-Alt-Up")],      # Switch to workspace above
-    C("Alt-C-Down"):            [bind, C("Super-Alt-Down")],    # Switch to workspace below
-    C("LC-RC-H"):               [bind, C("Super-C-h")],         # copyq toggle
-    C("LC-RC-G"):               [bind, C("Super-C-g")],         # COSMIC: ToggleWindowFloating
+# Terminal WM shortcut re-emit.
+# In terminal context physical Ctrl stays literal Ctrl, so physical Ctrl+Opt+H arrives
+# as Ctrl+Alt+H, not the Super+Alt+H that GUI context produces. Re-emit so the same
+# physical chord reaches the Hyprland binding from inside a terminal.
+keymap("User: Terminal WM shortcut re-emit", {
+    C("LC-Alt-H"):              [bind, C("Super-Alt-H")],       # Clipboard manager (Maccy chord)
 }, when = lambda ctx:
     cnfg.screen_has_focus and
     ctx_app_is_terminal
-)
-
-# COSMIC ToggleWindowFloating (Super+Ctrl+g in COSMIC's custom shortcuts file).
-# In GUI context physical Ctrl+Alt+G already emits Super+RIGHT_CTRL+g natively, so
-# no translation is needed for most apps. This keymap exists only to win the
-# first-match-wins race against the later app-specific keymaps that claim the same
-# combo (Zed's Super-RC-g -> "Select all occurrences", Sublime's Super-C-g ->
-# find_all_under), so the WM shortcut behaves identically in every GUI app.
-keymap("User: COSMIC float toggle", {
-    C("Super-RC-g"):            [bind, C("Super-C-g")],         # COSMIC: ToggleWindowFloating
-}, when = lambda ctx:
-    cnfg.screen_has_focus and
-    not ctx_app_is_terminal
 )
 
 # Zed (GUI app) gets toshy's Mac remap: physical Ctrl -> Super. That breaks the
@@ -6009,8 +5987,8 @@ if DESKTOP_ENV == 'gnome':
 
 if DESKTOP_ENV == 'hyprland':
     keymap("GenGUI overrides: Hyprland", {
-        # C("RC-Space"):             [iEF2NT(),Key.LEFT_META],        # Open Launcher with Cmd+Space
-        C("RC-Space"):             [C("Super-d"), iEF2NT()],        # Open Launcher with Cmd+Space
+        # Omarchy's launcher is SUPER+SPACE ("Omarchy menu"); it has no SUPER+D binding.
+        C("RC-Space"):             [C("Super-Space"), iEF2NT()],    # Open Launcher with Cmd+Space
     }, when = lambda ctx:
         cnfg.screen_has_focus and
         ctx_ovl_macos_globals and
@@ -6194,16 +6172,6 @@ keymap("General GUI", {
     # Fn to Alt style remaps
     C("RAlt-Enter"):            C("insert"),                    # Insert
 
-    # emacs style
-    C("Super-a"):               C("Home"),                      # Beginning of Line
-    C("Super-e"):               C("End"),                       # End of Line
-    C("Super-b"):               C("Left"),
-    C("Super-f"):               C("Right"),
-    C("Super-n"):               C("Down"),
-    C("Super-p"):               C("Up"),
-    C("Super-k"):              [C("Shift-End"), C("Backspace")],
-    C("Super-d"):               C("Delete"),
-
     # This is better done with a native custom shortcut in each DE
     # C("Alt-RC-Space"):          C(""),                          # Open Finder - Placeholder not-deepin
 
@@ -6218,7 +6186,6 @@ keymap("General GUI", {
     C("Shift-RC-Up"):           C("C-Shift-Home"),              # Extend Selection to Beginning of File
     C("Shift-RC-Down"):         C("C-Shift-End"),               # Extend Selection to End of File
 
-    C("Super-Backspace"):       C("C-Backspace"),               # Delete Word Left of Cursor
     C("Shift-Alt-Backspace"):   C("C-Backspace"),               # Delete Word Left of Cursor (alt)
     C("Super-Delete"):          C("C-Delete"),                  # Delete Word Right of Cursor
     C("Shift-Alt-Delete"):      C("C-Delete"),                  # Delete Word Right of Cursor (alt)
