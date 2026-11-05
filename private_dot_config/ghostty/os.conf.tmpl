@@ -1,7 +1,19 @@
-# Per-OS ghostty settings, included from personal.conf.
-# none = no server-side decorations; use with tiling WMs or KDE with CSD
+# Per-OS ghostty settings, included from personal.conf (loaded last, so these
+# override the Omarchy base config).
 {{ if eq .chezmoi.os "linux" -}}
+# none = no server-side decorations; use with tiling WMs or KDE with CSD
 window-decoration = none
 {{- else -}}
+# macOS: the Omarchy base is Linux/Hyprland-oriented; restore the Mac look.
 window-decoration = auto
+theme = "light:Catppuccin Latte,dark:Catppuccin Mocha"
+font-family = "JetBrainsMono Nerd Font"
+window-padding-x = 8
+window-padding-y = 8
+maximize = true
+background-opacity = 0.95
+background-blur = 20
+command = zsh -l
+shell-integration = detect
+shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
 {{- end }}
