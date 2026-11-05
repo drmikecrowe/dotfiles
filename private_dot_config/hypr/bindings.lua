@@ -52,3 +52,5 @@ hl.unbind("SUPER + CTRL + H")
 o.bind("SUPER + CTRL + H", "Clipboard manager", "copyq toggle")
 o.bind("SUPER + CTRL + SHIFT + H", "Hardware menu", "omarchy-menu toggle hardware")
 
+-- Ghostty quick terminal: Ghostty 1.4 grabs its global: keybinds from the compositor itself.
+-- Do not bind Ctrl+Shift+Grave here, or Hyprland denies Ghostty's request (already_bound).

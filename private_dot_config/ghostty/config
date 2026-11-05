@@ -1,9 +1,9 @@
 # Dynamic theme colors
 config-file = ?"~/.local/state/omarchy/current/theme/ghostty.conf"
 
-# Shell: $SHELL is bash in the session env, so ghostty would launch a
-# non-login bash. Force an interactive login zsh.
-command = "/usr/bin/zsh --login --interactive"
+# Shell: $SHELL is bash in the session env, so ghostty would launch bash.
+# Force an interactive zsh (.zshrc loads Dorothy, so --login adds nothing).
+command = "/usr/bin/zsh --interactive"
 
 # Font
 font-family = "AnonymicePro Nerd Font"
