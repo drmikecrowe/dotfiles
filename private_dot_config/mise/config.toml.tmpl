@@ -12,7 +12,7 @@ shellcheck = "latest"
 packer = "latest"
 osv-scanner = "latest"
 usage = "latest"
-"github:can1357/oh-my-pi" = "16.1.10"
+"github:can1357/oh-my-pi" = "latest"
 "pipx:hindsight-api" = "latest"
 supabase = "latest"
 "npm:@mermaid-js/mermaid-cli" = "latest"
@@ -24,7 +24,10 @@ hugo-extended = "latest"
 "npm:ccstatusline" = "latest"
 "npm:agent-carnet" = "latest"
 codex = "latest"
-"github:zzet/gortex" = "0.64.7"
+gh = "latest"
+claude = "latest"
+opencode = "latest"
+"npm:@agentclientprotocol/claude-agent-acp" = "0.89.1"
 
 [settings]
 experimental = true
@@ -38,5 +41,11 @@ experimental = true
 # matches nothing while still printing as "trusted" in `mise trust --show`.
 trusted_config_paths = ["{{ .chezmoi.homeDir }}/Programming/Personal/harnessed"]
 
-[settings.python]
-default_packages_file = "~/.config/dorothy/config/default-python-packages"
+# [settings.python]
+# default_packages_file = "~/.config/dorothy/config/default-python-packages"
+
+[settings.upgrade]
+auto_prune = false
+
+[settings.npm]
+package_manager = "pnpm"
