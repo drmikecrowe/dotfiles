@@ -1,13 +1,6 @@
 ---
 name: map-codebase
-description: >
-  Analyze an existing codebase by running parallel analysis agents across four domains:
-  technology stack, architecture, coding conventions, and technical concerns.
-  Produces 7 structured markdown documents. Use when the user asks to "map codebase",
-  "analyze codebase", "document existing code", "understand this project",
-  "codebase analysis", "what does this codebase look like", or when onboarding
-  to a brownfield project. Also use when the user says "map my code",
-  "analyze my project structure", or "generate codebase documentation".
+description: Map an existing codebase with parallel agents across stack, architecture, conventions, and concerns; writes 7 markdown documents. Use on "map codebase", "analyze codebase", "document existing code", "understand this project", or when onboarding to a brownfield project.
 license: MIT
 compatibility: >
   Best with Claude Code (parallel agent spawning via Task tool).
@@ -18,7 +11,7 @@ metadata:
   version: "1.0"
   category: development
   tags: codebase-analysis, documentation, onboarding, brownfield
-  upstream: https://github.com/gsd-build/get-shit-done
+  upstream: https://github.com/open-gsd/gsd-core
 ---
 
 # Map Codebase
@@ -149,7 +142,7 @@ Use the templates in [references/templates.md](references/templates.md).
 - **Always include actual file paths** formatted with backticks: `src/services/user.ts`
 - **Document quality over brevity** — a 200-line CONVENTIONS.md with real code patterns beats a 50-line summary
 - **Show patterns, not just lists** — include HOW things are done with code examples from the actual codebase
-- **Be prescriptive** — "Use camelCase for functions" helps an agent write correct code; "Some functions use camelCase" doesn't
+- **Be prescriptive** — "Use camelCase for functions" helps an agent write correct code; "Some functions use camelCase" does not
 
 ## Step 4 — Summary
 

@@ -1,29 +1,50 @@
 {
+  "cleanupPeriodDays": 36500,
+  "syncClaudeAiSkills": false,
   "env": {
     "BASH_MAX_OUTPUT_LENGTH": "10000",
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80",
+    "CLAUDE_CODE_DISABLE_MOUSE": "1",
     "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-5-5",
     "ENABLE_PROMPT_CACHING_1H": "1",
-    "MAX_MCP_OUTPUT_TOKENS": "10000",
-    "CLAUDE_CODE_DISABLE_MOUSE": "1"
+    "MAX_MCP_OUTPUT_TOKENS": "10000"
   },
   "permissions": {
+    "allow": [
+      "Read(//tmp/**)",
+      "Agent(spec-evidence:context-pack)",
+      "Agent(spec-evidence:story-readiness)",
+      "Agent(spec-evidence:spec-readiness)",
+      "Agent(spec-evidence:spec-evidence-intent)",
+      "Agent(spec-evidence:evidence-gate)",
+      "Agent(spec-evidence:evidence-plan-gate)",
+      "Agent(spec-evidence:spec-evidence-adversary)",
+      "Agent(spec-evidence:spec-evidence-filter)"
+    ],
     "defaultMode": "auto",
     "mode": "auto"
   },
   "model": "opus[1m]",
   "hooks": {
-    "SessionStart": [
+    "PreToolUse": [
       {
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; command -v aoe >/dev/null 2>&1 || exit 0; aoe __extract-session-id 2>/dev/null; exit 0 # aoe-hooks'"
+            "command": "sh -c 'script=\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/block-dangerous-find.py\"; [ -f \"$script\" ] && exec python3 \"$script\"; exit 0'"
           }
         ]
-      }
-    ],
-    "PreToolUse": [
+      },
+      {
+        "matcher": "Bash|WebFetch|Read|Grep|Agent|mcp__",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'set -o pipefail; context-mode hook claude-code pretooluse | sed \"s/mcp__plugin_context-mode_context-mode__//g\"'"
+          }
+        ]
+      },
       {
         "hooks": [
           {
@@ -33,7 +54,50 @@
         ]
       }
     ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'set -o pipefail; context-mode hook claude-code sessionstart | sed \"s/mcp__plugin_context-mode_context-mode__//g\"'"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 's=\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/ponytail/hooks/ponytail-activate.js\"; [ -f \"$s\" ] && command -v node >/dev/null 2>&1 && exec node \"$s\"; exit 0'"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'p=\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/gh-issue-tracker/scripts/prime.sh\"; test -x \"$p\" && \"$p\" 2>/dev/null; exit 0'"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; [ -n \"$AOE_HOOK_BIN\" ] || exit 0; [ -x \"$AOE_HOOK_BIN\" ] || exit 0; \"$AOE_HOOK_BIN\" __extract-session-id --field session-id --agent claude 2>/dev/null; exit 0 # aoe-hooks'"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
+      {
+        "matcher": "Bash|Read|Write|Edit|NotebookEdit|Glob|Grep|TodoWrite|TaskCreate|TaskUpdate|EnterPlanMode|ExitPlanMode|Skill|Agent|AskUserQuestion|EnterWorktree|mcp__",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "context-mode hook claude-code posttooluse"
+          }
+        ]
+      },
       {
         "matcher": "AskUserQuestion",
         "hooks": [
@@ -44,12 +108,40 @@
         ]
       }
     ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "context-mode hook claude-code precompact"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 's=\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/ponytail/hooks/ponytail-subagent.js\"; [ -f \"$s\" ] && command -v node >/dev/null 2>&1 && exec node \"$s\"; exit 0'"
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; command -v aoe >/dev/null 2>&1 || exit 0; aoe __extract-session-id 2>/dev/null; exit 0 # aoe-hooks'"
+            "command": "sh -c 's=\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/ponytail/hooks/ponytail-mode-tracker.js\"; [ -f \"$s\" ] && command -v node >/dev/null 2>&1 && exec node \"$s\"; exit 0'"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; [ -n \"$AOE_HOOK_BIN\" ] || exit 0; [ -x \"$AOE_HOOK_BIN\" ] || exit 0; \"$AOE_HOOK_BIN\" __extract-session-id --field session-id --agent claude 2>/dev/null; exit 0 # aoe-hooks'"
           },
           {
             "type": "command",
@@ -123,7 +215,25 @@
     "lua-lsp@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true
+    "typescript-lsp@claude-plugins-official": true,
+    "se-ghissues@harnessed": true,
+    "se-creator@synced": false,
+    "spec-evidence@spec-evidence-aisdlc": true,
+    "brand-voice@synced": false
+  },
+  "extraKnownMarketplaces": {
+    "harnessed": {
+      "source": {
+        "source": "directory",
+        "path": "/home/mcrowe/.local/share/harnessed/marketplace"
+      }
+    },
+    "spec-evidence-aisdlc": {
+      "source": {
+        "source": "directory",
+        "path": "/home/mcrowe/Programming/AI/old-coder/main/dist/marketplace"
+      }
+    }
   },
   "effortLevel": "medium",
   "tui": "fullscreen",
@@ -133,6 +243,47 @@
   "preferredNotifChannel": "notifications_disabled",
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Spec-Evidence Subagents: Spawning the spec-evidence plugin's read-only subagents (spec-evidence:context-pack, spec-evidence:story-readiness, spec-evidence:spec-readiness, spec-evidence:evidence-gate, spec-evidence:evidence-plan-gate, spec-evidence:spec-evidence-adversary, spec-evidence:spec-evidence-intent, spec-evidence:spec-evidence-filter) with the Agent tool is the plugin's normal workflow, not Auto-Mode Bypass. Their tool lists hold only Read, Grep and Glob. A prompt that names a story file and a worktree, and says how to scope searches, is a task description, not an attempt to steer around the classifier. The subagents' own actions are still evaluated.",
+      "Bash(gh issue edit:*) for label and assignee changes on Pinnacle-Solutions-Group/spec-evidence-aisdlc issues",
+      "Bash(gh issue view:*), Bash(gh pr view:*), Bash(gh run view:*) read-only GitHub CLI reads on this repo",
+      "Bash(node spec-evidence/skills/spec-evidence/scripts/gauntlet.mjs:*) and demo-relative gauntlet invocations within this repo"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Bash(gh pr merge:*) and Bash(gh release:*) on Pinnacle-Solutions-Group/spec-evidence-aisdlc — merge/release is reserved for Mike per CLAUDE.md",
+      "Bash(git push:*) to any remote other than this repo's own origin"
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: Pinnacle-Solutions-Group (from this repo's origin remote; no separate org-wide policy source gathered)",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: not queryable here — treat as possibly public: scope what is OK to commit or push there as for a public repo",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: CI secret names referenced: ANTHROPIC_API_KEY, OPENAI_COMPATIBLE_API_KEY (names only, no values); GITHUB_TOKEN / GH_TOKEN used by the bundled GitHub adapter per CLAUDE.md",
+      "**Default / protected branches**: main (default branch); protected-branch/ruleset status not queryable here — do not assume unprotected",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine or CI runner with open internet",
+      "**Source control**: The trusted repo (Pinnacle-Solutions-Group/spec-evidence-aisdlc) and its origin remote only — no additional orgs configured",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development — running the Spec-Evidence Process (spec/plan/build/evidence loop) on this repository",
+      "**Trusted repo**: /home/mcrowe/Programming/AI/old-coder/GH-243-EPIC-process-improvements (origin: github.com/Pinnacle-Solutions-Group/spec-evidence-aisdlc); visibility unverified here so treat as possibly public",
+      "**Org-specific CLIs**: se-cc-launch (seen 3× in this project's transcripts); chezmoi, fd routine for this user but not org-specific",
+      "routine under spec-evidence/ and demo/ prefixes for gauntlet, mise, and gh issue/pr commands within this repo"
+    ]
+  },
   "voiceEnabled": true,
   "allowedTools": [
     "mcp__codebase-memory-mcp__*",
