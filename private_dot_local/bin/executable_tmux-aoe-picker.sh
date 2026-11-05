@@ -23,6 +23,12 @@ TAB=$(printf '\t')
 # the cursor; they just get no key.
 KEYS=abcdefghijklmnopqrstuvwxyz0123456789
 
+# `aoe ps` is ~450ms of the ~530ms this picker needs, so the popup opens on the
+# previous run's rows and fzf swaps in fresh ones (start:reload) while you are
+# still reading. Every run rewrites the cache, so nothing else has to maintain it.
+CACHE=${XDG_CACHE_HOME:-$HOME/.cache}/tmux-aoe-picker.list
+SELF=$(readlink -f "$0")
+
 harness_map() {
 	aoe ps --json 2>/dev/null |
 		jq -r '.[] | "\(.session[0:8])\t\(.agent // "-")"' 2>/dev/null || true
@@ -117,6 +123,14 @@ ensure_term() {
 	tmux new-session -d -s "$term" -c "$cwd" "${SHELL:-/bin/sh}" -l
 }
 
+# What fzf reloads from, and what refreshes the cache for the next open.
+if [ "${1-}" = --list ]; then
+	mkdir -p "$(dirname "$CACHE")"
+	list >"$CACHE.$$" && mv "$CACHE.$$" "$CACHE"
+	cat "$CACHE"
+	exit 0
+fi
+
 binds=()
 key_list=
 for ((i = 0; i < ${#KEYS}; i++)); do
@@ -128,8 +142,12 @@ done
 # jump keys live. "/" releases them and turns searching on; there is no way
 # back, which is why the picker starts with --disabled rather than the reverse.
 binds+=(--bind "/:unbind($key_list)+enable-search")
+# "load", not "start": start fires before fzf has read the cached rows, and the
+# reload then cancels that reader, so the popup shows nothing until the rebuild
+# finishes. Unbinding load first stops the reload's own load event looping.
+binds+=(--bind "load:unbind(load)+reload($SELF --list)")
 
-sel=$(list | fzf \
+sel=$({ cat "$CACHE" 2>/dev/null || true; } | fzf \
 	--delimiter='\t' \
 	--with-nth=1 \
 	--no-sort \
