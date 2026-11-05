@@ -27,3 +27,8 @@ require("default.hypr.toggles")
 
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
+
+-- Float and center CopyQ and 1Password. 1Password reports its class as
+-- com.onepassword.OnePassword, which Omarchy's ^(1[p|P]assword)$ rule misses.
+o.window("^(com\\.github\\.hluk\\.copyq)$", { tag = "+floating-window" })
+o.window("^(com\\.onepassword\\.OnePassword)$", { no_screen_share = true, tag = "+floating-window" })

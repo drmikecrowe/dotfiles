@@ -44,8 +44,11 @@ hl.unbind("SUPER + SHIFT + TAB")
 o.bind("SUPER + BRACKETRIGHT", "Next workspace", hl.dsp.focus({ workspace = "e+1" }))
 o.bind("SUPER + BRACKETLEFT", "Previous workspace", hl.dsp.focus({ workspace = "e-1" }))
 
--- Clipboard manager on the Maccy chord (physical left ctrl + start). Toshy's Mac
--- path emits Super+Alt+H for that in GUI apps; the terminal re-emit keymap in
--- toshy_config.py converts the terminal-context Ctrl+Alt+H to match.
+-- Clipboard manager on the Maccy chord: physical left ctrl + start + H. Left ctrl is
+-- a literal Ctrl and start is Super, so that chord arrives as SUPER+CTRL+H in every
+-- context. Omarchy binds its Hardware menu there by default, so that moves aside.
 hl.unbind("SUPER + CTRL + V")
-o.bind("SUPER + ALT + H", "Clipboard manager", "omarchy-shell shell toggle omarchy.clipboard")
+hl.unbind("SUPER + CTRL + H")
+o.bind("SUPER + CTRL + H", "Clipboard manager", "copyq toggle")
+o.bind("SUPER + CTRL + SHIFT + H", "Hardware menu", "omarchy-menu toggle hardware")
+

@@ -485,6 +485,10 @@ terminals = [
     "dev.warp.Warp",
     "eterm",
     ".*ghostty.*",
+    # Omarchy launches its shell windows as Ghostty with a custom app_id, so the
+    # ghostty pattern above does not match them and they fall through to the GUI
+    # modmaps (physical Ctrl becomes Super, breaking ^C/^D in the shell).
+    "org.omarchy.agent",
     # "ghostty",                        # Replaced with double-wildcard ghostty pattern
     # "ghostty-debug",                  # Replaced with double-wildcard ghostty pattern
     "gnome-terminal",
@@ -2431,7 +2435,7 @@ modmap("Cond modmap - GUI - Win kbd - multi_lang OFF", {
     # - Default Win
     Key.RIGHT_ALT:              Key.RIGHT_CTRL,                 # WinMac - Multi-language (Remove)
     Key.RIGHT_META:             Key.RIGHT_ALT,                  # WinMac - Multi-language (Remove)
-    Key.RIGHT_CTRL:             Key.RIGHT_META,                 # WinMac - Multi-language (Remove)
+    Key.RIGHT_CTRL:             Key.LEFT_META,                  # Right Ctrl = WM Super
 }, when = lambda ctx:
     not cnfg.multi_lang and
     cnfg.screen_has_focus and
@@ -2441,8 +2445,10 @@ modmap("Cond modmap - GUI - Win kbd - multi_lang OFF", {
 modmap("Cond modmap - GUI - Win kbd", {
     # - Default Mac/Win
     # - Default Win
-    Key.LEFT_CTRL:              Key.LEFT_META,                  # WinMac
-    # LEFT_ALT (Cmd) and LEFT_META (Opt) handled by the held companions / Super tap multis
+    Key.LEFT_CTRL:              Key.LEFT_CTRL,                  # Ctrl stays Ctrl (self-modmap)
+    Key.LEFT_META:              Key.LEFT_META,                  # Win = WM Super (self-modmap)
+    # Registers before the "Opt held" companion below, so first-match-wins keeps Win as Super.
+    # LEFT_ALT (Cmd) handled by the held companion / Super tap multi
 }, when = lambda ctx:
     cnfg.screen_has_focus and
     ctx_kbd_is_windows and
@@ -2475,8 +2481,9 @@ modmap("Cond modmap - GUI - Mac kbd - multi_lang OFF", {
 )
 modmap("Cond modmap - GUI - Mac kbd", {
     # - Mac Only
-    Key.LEFT_CTRL:              Key.LEFT_META,                  # Mac
-    Key.RIGHT_META:             Key.LEFT_META,                  # Right Cmd -> dedicated WM Super
+    Key.LEFT_CTRL:              Key.LEFT_CTRL,                  # Ctrl stays Ctrl (self-modmap)
+    Key.LEFT_ALT:               Key.LEFT_META,                  # 3rd key = WM Super (matches laptop Win)
+    Key.RIGHT_META:             Key.RIGHT_ALT,                  # Right of space = voxtype PTT (matches laptop)
     # LEFT_META (Cmd) handled by the held companion / Super tap multi; LEFT_ALT (Opt) is passthrough
 }, when = lambda ctx:
     cnfg.screen_has_focus and
@@ -2541,7 +2548,7 @@ modmap("Cond modmap - Terms - Win kbd - multi_lang OFF", {
     # - Default Win
     Key.RIGHT_ALT:              Key.RIGHT_CTRL,                 # WinMac - Multi-language (Remove)
     Key.RIGHT_META:             Key.RIGHT_ALT,                  # WinMac - Multi-language (Remove)
-    Key.RIGHT_CTRL:             Key.LEFT_CTRL,                  # WinMac - Multi-language (Remove)
+    Key.RIGHT_CTRL:             Key.LEFT_META,                  # Right Ctrl = WM Super, also in terminals
 }, when = lambda ctx:
     not cnfg.multi_lang and
     cnfg.screen_has_focus and
@@ -2552,7 +2559,8 @@ modmap("Cond modmap - Terms - Win kbd", {
     # - Default Mac/Win
     # - Default Win
     Key.LEFT_CTRL:              Key.LEFT_CTRL,                  # WinMac
-    # LEFT_ALT (Cmd) and LEFT_META (Opt) handled by the held companions / Super tap multis
+    Key.LEFT_META:              Key.LEFT_META,                  # Win = WM Super, also in terminals
+    # LEFT_ALT (Cmd) handled by the held companion / Super tap multi
 }, when = lambda ctx:
     cnfg.screen_has_focus and
     ctx_kbd_is_windows and
@@ -2588,9 +2596,10 @@ modmap("Cond modmap - Terms - Mac kbd", {
     # - Mac Only
     # Left Ctrl Stays Left Ctrl
     Key.LEFT_CTRL:              Key.LEFT_CTRL,                  # Mac (self-modmap)
+    Key.LEFT_ALT:               Key.LEFT_META,                  # 3rd key = WM Super, also in terminals
     Key.RIGHT_ALT:              Key.RIGHT_ALT,                  # Mac (self-modmap)
     # Only Super source in terminals; LEFT_CTRL must stay literal Ctrl for SIGINT
-    Key.RIGHT_META:             Key.LEFT_META,                  # Right Cmd -> dedicated WM Super
+    Key.RIGHT_META:             Key.RIGHT_ALT,                  # Right of space = voxtype PTT (matches laptop)
     # LEFT_META (Cmd) handled by the held companion / Super tap multi; LEFT_ALT (Opt) is passthrough
 }, when = lambda ctx:
     cnfg.screen_has_focus and
@@ -4110,21 +4119,14 @@ keymap("User hardware keys", {
     # PUT UNIVERSAL REMAPS FOR HARDWARE KEYS HERE
     # KEYMAP WILL BE ACTIVE IN ALL DESKTOP ENVIRONMENTS/DISTROS
 
+    # The K780 is in Mac mode, so its Fn+Del (screenshot key) emits Cmd+Shift+3
+    # rather than PrtScr. Toshy converts that to Print for GNOME/KDE/XFCE only,
+    # so under Hyprland it arrived unmapped and Omarchy's PRINT bind never fired.
+    C("RC-Shift-Key_3"):        C("Print"),                     # K780 Fn+Del -> Omarchy screenshot
 
 }, when = lambda ctx:
     cnfg.screen_has_focus and
     not ctx_app_is_remote
-)
-
-# Terminal WM shortcut re-emit.
-# In terminal context physical Ctrl stays literal Ctrl, so physical Ctrl+Opt+H arrives
-# as Ctrl+Alt+H, not the Super+Alt+H that GUI context produces. Re-emit so the same
-# physical chord reaches the Hyprland binding from inside a terminal.
-keymap("User: Terminal WM shortcut re-emit", {
-    C("LC-Alt-H"):              [bind, C("Super-Alt-H")],       # Clipboard manager (Maccy chord)
-}, when = lambda ctx:
-    cnfg.screen_has_focus and
-    ctx_app_is_terminal
 )
 
 # Zed (GUI app) gets toshy's Mac remap: physical Ctrl -> Super. That breaks the
@@ -4135,6 +4137,16 @@ keymap("User: Zed literal Ctrl for terminal", {
     C("Super-Grave"):           [bind, C("C-Grave")],           # Toggle integrated terminal (Zed binds ctrl-`)
     C("Super-C"):               [bind, C("C-C")],               # ^C / SIGINT in integrated terminal
     C("Super-D"):               [bind, C("C-D")],               # ^D / EOF in integrated terminal
+    C("Super-Shift-C"):         C("C-Shift-C"),                 # Old Linux terminal copy
+    C("Super-Shift-V"):         C("C-Shift-V"),                 # Old Linux terminal paste
+    # Cmd-C/V/X as C-c/v/x hit vim (ctrl-c = normal mode, ctrl-v = visual block) and
+    # the terminal (ctrl-c = SIGINT). The Insert-key variants copy/paste in Editor and
+    # Terminal contexts and vim leaves them alone.
+    C("RC-c"):                  C("C-Insert"),                  # Copy
+    C("RC-v"):                  C("Shift-Insert"),              # Paste
+    C("RC-x"):                  C("Shift-Delete"),              # Cut
+    # General GUI's C-Shift-Backspace does not delete to line start in Zed
+    C("RC-Backspace"):         [C("Shift-Home"), C("Backspace")], # Delete to beginning of line
 }, when = lambda ctx:
     cnfg.screen_has_focus and
     matchProps(clas="^dev.zed.Zed")(ctx)
