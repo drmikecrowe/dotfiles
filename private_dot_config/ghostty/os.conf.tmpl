@@ -1,0 +1,7 @@
+# Per-OS ghostty settings, included from personal.conf.
+# none = no server-side decorations; use with tiling WMs or KDE with CSD
+{{ if eq .chezmoi.os "linux" -}}
+window-decoration = none
+{{- else -}}
+window-decoration = auto
+{{- end }}
