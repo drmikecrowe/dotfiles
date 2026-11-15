@@ -234,7 +234,7 @@
     "spec-evidence-aisdlc": {
       "source": {
         "source": "directory",
-        "path": "/home/mcrowe/Programming/AI/old-coder/main/dist/marketplace"
+        "path": "/home/mcrowe/Programming/Pinnacle/spec-evidence/main/dist/marketplace"
       }
     }
   },
@@ -293,5 +293,6 @@
     "mcp__context-mode__*"
   ],
   "hasCompletedClaudeInChromeOnboarding": false,
-  "mcpServers": {}
+  "mcpServers": {},
+  "remoteControlAtStartup": true
 }
