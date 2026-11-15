@@ -7,6 +7,9 @@
     "CLAUDE_CODE_DISABLE_MOUSE": "1",
     "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-5-5",
     "ENABLE_PROMPT_CACHING_1H": "1",
+    "GIT_CONFIG_COUNT": "1",
+    "GIT_CONFIG_KEY_0": "include.path",
+    "GIT_CONFIG_VALUE_0": "/home/mcrowe/.config/git/automation.gitconfig",
     "MAX_MCP_OUTPUT_TOKENS": "10000"
   },
   "permissions": {
