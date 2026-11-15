@@ -31,24 +31,6 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh -c 'script=\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/block-dangerous-find.py\"; [ -f \"$script\" ] && exec python3 \"$script\"; exit 0'"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash|WebFetch|Read|Grep|Agent|mcp__",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -c 'set -o pipefail; context-mode hook claude-code pretooluse | sed \"s/mcp__plugin_context-mode_context-mode__//g\"'"
-          }
-        ]
-      },
-      {
         "hooks": [
           {
             "type": "command",
@@ -62,45 +44,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'set -o pipefail; context-mode hook claude-code sessionstart | sed \"s/mcp__plugin_context-mode_context-mode__//g\"'"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh -c 's=\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/ponytail/hooks/ponytail-activate.js\"; [ -f \"$s\" ] && command -v node >/dev/null 2>&1 && exec node \"$s\"; exit 0'"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh -c 'p=\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/gh-issue-tracker/scripts/prime.sh\"; test -x \"$p\" && \"$p\" 2>/dev/null; exit 0'"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
             "command": "sh -c '[ -n \"$AOE_INSTANCE_ID\" ] || exit 0; [ -n \"$AOE_HOOK_BIN\" ] || exit 0; [ -x \"$AOE_HOOK_BIN\" ] || exit 0; \"$AOE_HOOK_BIN\" __extract-session-id --field session-id --agent claude 2>/dev/null; exit 0 # aoe-hooks'"
           }
         ]
       }
     ],
     "PostToolUse": [
-      {
-        "matcher": "Bash|Read|Write|Edit|NotebookEdit|Glob|Grep|TodoWrite|TaskCreate|TaskUpdate|EnterPlanMode|ExitPlanMode|Skill|Agent|AskUserQuestion|EnterWorktree|mcp__",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "context-mode hook claude-code posttooluse"
-          }
-        ]
-      },
       {
         "matcher": "AskUserQuestion",
         "hooks": [
@@ -111,35 +60,7 @@
         ]
       }
     ],
-    "PreCompact": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "context-mode hook claude-code precompact"
-          }
-        ]
-      }
-    ],
-    "SubagentStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh -c 's=\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/ponytail/hooks/ponytail-subagent.js\"; [ -f \"$s\" ] && command -v node >/dev/null 2>&1 && exec node \"$s\"; exit 0'"
-          }
-        ]
-      }
-    ],
     "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh -c 's=\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/ponytail/hooks/ponytail-mode-tracker.js\"; [ -f \"$s\" ] && command -v node >/dev/null 2>&1 && exec node \"$s\"; exit 0'"
-          }
-        ]
-      },
       {
         "hooks": [
           {
