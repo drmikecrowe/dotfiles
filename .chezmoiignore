@@ -27,3 +27,11 @@ gpg-yubikey
 .local/bin/cosmic-usb-display.sh
 .config/systemd/user/cosmic-usb-display.service
 {{- end }}
+
+# Claude's own git signing and push wiring (keys stay in ~/.ssh/signing, never here).
+# Opt in per machine with [data.claudeGit] enabled = true in
+# ~/.config/chezmoi/chezmoi.toml.
+{{- if not (dig "claudeGit" "enabled" false .) }}
+.config/git/automation.gitconfig
+.config/git/automation-*.gitconfig
+{{- end }}
