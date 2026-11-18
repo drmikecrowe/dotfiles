@@ -33,3 +33,8 @@ esac
 
 # Per-host overrides, not managed by chezmoi (same pattern as Dorothy's interactive.<host>.sh).
 [[ -r $ZDOTDIR/zshrc.$(uname -n).zsh ]] && source "$ZDOTDIR/zshrc.$(uname -n).zsh"
+
+{{- if stat (joinPath .chezmoi.homeDir ".zshrc-8451") }}
+
+source $HOME/.zshrc-8451
+{{- end }}
