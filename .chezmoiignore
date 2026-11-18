@@ -34,4 +34,5 @@ gpg-yubikey
 {{- if not (dig "claudeGit" "enabled" false .) }}
 .config/git/automation.gitconfig
 .config/git/automation-*.gitconfig
+.config/git/allowed_signers.asc
 {{- end }}
