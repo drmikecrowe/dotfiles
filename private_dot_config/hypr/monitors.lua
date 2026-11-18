@@ -2,10 +2,10 @@
 -- List current monitors and supported resolutions with: hyprctl monitors all
 
 local omarchy_gdk_scale = 1
--- Laptop panel runs at 1 with the TV attached, smaller when alone. 0.9 is not a
--- valid scale for 1920x1080; Hyprland rounds it to 0.8333333.
+-- Laptop panel runs 1:1 docked and alone. For a smaller UI alone, use 0.8333333
+-- (0.9 is not a valid scale for 1920x1080).
 local omarchy_monitor_scale_docked = 1
-local omarchy_monitor_scale_alone = 0.8333333
+local omarchy_monitor_scale_alone = 1
 
 hl.env("GDK_SCALE", tostring(omarchy_gdk_scale))
 
@@ -34,14 +34,9 @@ hl.monitor({ output = "HDMI-A-1", mode = "3840x2160@30", position = "auto-left",
 -- Portrait/rotated secondary monitor (transform: 1 = 90°, 3 = 270°).
 -- hl.monitor({ output = "DP-2", mode = "preferred", position = "auto", scale = 1, transform = 1 })
 
--- Pin workspaces to monitors. A Hyprland workspace lives on exactly one
--- monitor, so without these rules "switch to workspace N" jumps focus to
--- whichever monitor happened to create N first. Workspaces 9-10 stay unpinned.
-hl.workspace_rule({ workspace = "1", monitor = "HDMI-A-1", persistent = true })
-hl.workspace_rule({ workspace = "2", monitor = "HDMI-A-1", persistent = true })
-hl.workspace_rule({ workspace = "3", monitor = "HDMI-A-1", persistent = true })
-hl.workspace_rule({ workspace = "4", monitor = "HDMI-A-1", persistent = true })
-hl.workspace_rule({ workspace = "5", monitor = "eDP-1", persistent = true })
-hl.workspace_rule({ workspace = "6", monitor = "eDP-1", persistent = true })
-hl.workspace_rule({ workspace = "7", monitor = "eDP-1", persistent = true })
-hl.workspace_rule({ workspace = "8", monitor = "eDP-1", persistent = true })
+-- Keep four workspaces alive on each monitor. Omarchy 4.5 numbers them per
+-- monitor block (~/.local/state/omarchy/monitor-workspaces): laptop 1-10, TV 11-20.
+for slot = 1, 4 do
+  hl.workspace_rule({ workspace = tostring(10 + slot), monitor = "HDMI-A-1", persistent = true })
+  hl.workspace_rule({ workspace = tostring(slot), monitor = "eDP-1", persistent = true })
+end
