@@ -35,4 +35,6 @@ gpg-yubikey
 .config/git/automation.gitconfig
 .config/git/automation-*.gitconfig
 .config/git/allowed_signers.asc
+.config/git/automation.gitconfig.asc
+.config/git/automation-*.gitconfig.asc
 {{- end }}
