@@ -11,8 +11,8 @@ Edit the source, never a generated copy.
 | Rules, skills, commands, hooks, permissions, MCP servers | `~/.rulesync` (private repo `drmikecrowe/rulesync-config`) | `~/.claude/CLAUDE.md`, `~/.claude/skills`, `~/.claude/commands`, `~/.claude/settings.json`, `~/.claude.json` |
 | Dotfiles, including this file | `~/.local/share/chezmoi` | the files in `~` |
 
-- After you edit the source, run `cd ~ && rulesync generate`. `rulesync generate --check` reports drift. `~/rulesync.jsonc` links to `~/.rulesync/rulesync.jsonc`.
-- A machine that has `~/.rulesync.local/generate.sh` runs that script instead. It layers machine-only settings over the shared source.
+- After you edit the source, run `~/.rulesync/scripts/generate.sh`. `~/rulesync.jsonc` links to `~/.rulesync/rulesync.jsonc`.
+- The script layers `~/.rulesync/machines/<short hostname>` over the shared source when that directory exists, and `generate.sh --check` reports drift.
 - chezmoi does not manage `~/.claude/settings.json`. rulesync generates it.
 
 ## Dotfiles
