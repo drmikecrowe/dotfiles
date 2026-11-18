@@ -38,3 +38,13 @@ gpg-yubikey
 .config/git/automation.gitconfig.asc
 .config/git/automation-*.gitconfig.asc
 {{- end }}
+
+# Client-specific git identities (encrypted). On by default; turn off on a machine that
+# cannot decrypt them with [data.gitClients] enabled = false in ~/.config/chezmoi/chezmoi.toml.
+{{- if not (dig "gitClients" "enabled" true .) }}
+.config/git/clients.gitconfig.asc
+.config/git/gitconfig-Mikkel.asc
+.config/git/gitconfig-Personal.asc
+.config/git/gitconfig-Pinnacle.asc
+.config/git/gitconfig-WRStudios.asc
+{{- end }}
