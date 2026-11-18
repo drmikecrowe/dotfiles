@@ -1,6 +1,6 @@
 # Home Directory
 
-Project instructions for an agent whose working directory is `~`. Global rules do not live here. harnessed ships them to each harness (Claude Code plugin `context.md`, omp `RULES.md`, codex `AGENTS.md`), so this file holds only facts about this directory.
+Project instructions for an agent whose working directory is `~`. Global rules do not live here. rulesync generates them for each tool, so this file holds only facts about this directory.
 
 ## Where agent config comes from
 
@@ -8,10 +8,12 @@ Edit the source, never a generated copy.
 
 | What | Source | Generated copies (do not edit) |
 |---|---|---|
-| Base rules (floor, harness-mechanics, prompt-defense, markdown) | `~/Programming/Personal/harnessed/main/catalog/recipes/mikes-universal-setup` | `~/.local/share/harnessed/`, `~/.omp/agent/RULES.md` |
-| Personal recipes, stacks, `communication` rule | `~/.config/harnessed/catalog` (git repo) | same as above |
-| React rule and hand-kept skills | `~/.agents/rules/react.md`, `~/.agents/skills` (symlinked into the `local` recipe) | same as above |
-| Dotfiles, including this file and `~/.claude/settings.json` | `~/.local/share/chezmoi` | the files in `~` |
+| Rules, skills, commands, hooks, permissions, MCP servers | `~/.rulesync` (private repo `drmikecrowe/rulesync-config`) | `~/.claude/CLAUDE.md`, `~/.claude/skills`, `~/.claude/commands`, `~/.claude/settings.json`, `~/.claude.json` |
+| Dotfiles, including this file | `~/.local/share/chezmoi` | the files in `~` |
+
+- After you edit the source, run `cd ~ && rulesync generate`. `rulesync generate --check` reports drift. `~/rulesync.jsonc` links to `~/.rulesync/rulesync.jsonc`.
+- A machine that has `~/.rulesync.local/generate.sh` runs that script instead. It layers machine-only settings over the shared source.
+- chezmoi does not manage `~/.claude/settings.json`. rulesync generates it.
 
 ## Dotfiles
 
