@@ -43,6 +43,40 @@ hl.unbind("SUPER + TAB")
 hl.unbind("SUPER + SHIFT + TAB")
 o.bind("SUPER + BRACKETRIGHT", "Next workspace", hl.dsp.focus({ workspace = "e+1" }))
 o.bind("SUPER + BRACKETLEFT", "Previous workspace", hl.dsp.focus({ workspace = "e-1" }))
+-- Toshy turns physical Alt into Right Ctrl in GUI apps, so Ctrl+Alt+arrow never
+-- reaches Hyprland. Physical Ctrl+Win+arrow arrives as SUPER+CTRL; this replaces
+-- Omarchy's grouped-window focus there.
+hl.unbind("SUPER + CTRL + LEFT")
+hl.unbind("SUPER + CTRL + RIGHT")
+o.bind("SUPER + CTRL + RIGHT", "Next workspace", hl.dsp.focus({ workspace = "e+1" }))
+o.bind("SUPER + CTRL + LEFT", "Previous workspace", hl.dsp.focus({ workspace = "e-1" }))
+
+-- Omarchy 4.5 gives each monitor its own workspaces 1-10, and Super+N picks slot N
+-- on the focused monitor. Keep the old fixed layout instead: Super+1-4 are TV slots
+-- 1-4 and Super+5-8 are laptop slots 1-4, whichever monitor has focus. With the
+-- TV unplugged, its keys fall back to the focused monitor.
+local function slot_monitor(name)
+  return hl.get_monitor(name) or hl.get_active_monitor()
+end
+
+for key = 1, 8 do
+  local name = key <= 4 and "HDMI-A-1" or "eDP-1"
+  local slot = (key - 1) % 4 + 1
+  local code = "code:" .. tostring(key + 9)
+  local focus_named, focus_here = o.workspaces.focus(slot, name), o.workspaces.focus(slot)
+  o.rebind("SUPER + " .. code, "Switch to workspace " .. key, function()
+    hl.dispatch(hl.get_monitor(name) and focus_named or focus_here)
+  end)
+  for _, follow in ipairs({ true, false }) do
+    local mods = follow and "SUPER + SHIFT + " or "SUPER + SHIFT + ALT + "
+    o.rebind(mods .. code, (follow and "Move window to workspace " or "Move window silently to workspace ") .. key, function()
+      local window = hl.get_active_window()
+      if not window then return end
+      local id = o.workspaces.workspace_id(slot_monitor(name), slot)
+      hl.dispatch(hl.dsp.window.move({ workspace = tostring(id), follow = follow, window = "address:" .. window.address }))
+    end)
+  end
+end
 
 -- Clipboard manager on the Maccy chord: physical left ctrl + start + H. Left ctrl is
 -- a literal Ctrl and start is Super, so that chord arrives as SUPER+CTRL+H in every
@@ -54,3 +88,9 @@ o.bind("SUPER + CTRL + SHIFT + H", "Hardware menu", "omarchy-menu toggle hardwar
 
 -- Ghostty quick terminal: Ghostty 1.4 grabs its global: keybinds from the compositor itself.
 -- Do not bind Ctrl+Shift+Grave here, or Hyprland denies Ghostty's request (already_bound).
+
+-- Dictation keys from before Alt + Space and Right Alt became the defaults.
+-- Remove these lines to give the keys back to applications.
+if o.dictation_installed and o.dictation_installed() then
+  o.bind("SUPER + CTRL + X", "Toggle dictation", "omarchy-dictation toggle")
+end

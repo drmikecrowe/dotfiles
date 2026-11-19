@@ -851,6 +851,14 @@ not_win_type_rgx    = re.compile("IBM|Chromebook|Apple", re.I)
 ###################################################################################################
 ###  SLICE_MARK_START: user_custom_lists  ###  EDITS OUTSIDE THESE MARKS WILL BE LOST ON UPGRADE
 
+# Herdr hosts terminals: treat it as one so physical Ctrl stays Ctrl (^C, Herdr's ctrl-shift-* keys).
+# The upstream list sits outside a slice, so append here and rebuild everything derived from it.
+terminals.append('herdr-app')
+termStr = toRgxStr(terminals)
+terminals_lod = create_list_of_dicts(terminals)
+terms_and_remotes_lst = terminals + remotes
+terms_and_remotes_Str = toRgxStr(terms_and_remotes_lst)
+terminals_and_remotes_lod = [{lst: terminals_lod}, {lst: remotes_lod}]
 
 
 ###  SLICE_MARK_END: user_custom_lists  ###  EDITS OUTSIDE THESE MARKS WILL BE LOST ON UPGRADE
